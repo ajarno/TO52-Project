@@ -30,3 +30,6 @@ _Dans l'environnement créé..._
 | Créer un projet | `django-admin startproject PROJECT_NAME  .` |
 | Lancer le projet | `python manage.py runserver` |
 | Créer une application | `django-admin startapp APP_NAME` | 
+| Enregistrer un modèle | Dans models.py et déclarer dans admin.py |
+| Créer une vue pour un modèle | `python manage.py makemigrations`|
+| Lier les modèles à la base de données | `python manage.py migrate`| 
