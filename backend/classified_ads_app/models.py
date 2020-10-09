@@ -66,7 +66,7 @@ class Category(models.Model):
     slug = models.SlugField()
 
     # Allow to define subcategories
-    main_category = models.ForeignKey('self', blank=True, null=True,
+    main_category = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE,
                                       db_column='MainCategory', related_name='subcategories')
 
 
@@ -92,4 +92,3 @@ class Picture(models.Model):
     ad_id = models.ForeignKey(Ad, db_column='AdId', on_delete=models.CASCADE, related_name='pictures')
     pic = models.ImageField(upload_to='pictures/', blank=True)
     # url = models.CharField(max_length=150)
-

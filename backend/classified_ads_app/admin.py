@@ -1,16 +1,7 @@
 from django.contrib import admin
-from classified_ads_app.models import Book, BookNumber, Character, Author
+from classified_ads_app.models import Category, Picture, Ad, UserAccount
 
-
-# Register your models here.
-@admin.register(Book)
-class BookAdmin(admin.ModelAdmin):
-    list_display = ['title', 'description']
-    list_filter = ['published']  # offer filtering on this field
-    search_fields = ['title', 'description']
-    # fields = ['title', 'description']  # editable fields
-
-
-admin.site.register(BookNumber)
-admin.site.register(Character)
-admin.site.register(Author)
+admin.site.register(UserAccount)
+admin.site.register(Category)
+admin.site.register(Ad)
+admin.site.register(Picture)
