@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 
@@ -58,7 +59,7 @@ class Ad(models.Model):
     published = models.DateField(auto_now_add=True)
     headline = models.CharField(max_length=75)
     description = models.TextField(max_length=1500)
-    price = models.IntegerField(default=0)
+    price = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(500000)])
     adress_postal_code = models.CharField(max_length=10, db_column='AdAdressPostalCode', blank=True)
     adress_city = models.CharField(max_length=30, db_column='AdAdressCity', blank=True)
 

@@ -9,6 +9,7 @@ from .serializers import CategorySerializer, AdMiniSerializer, AdSerializer, Cat
 class SubCategoryViewSet(viewsets.ModelViewSet):
     serializer_class = SubCategoryMiniSerializer
     queryset = SubCategory.objects.all()
+    http_method_names = ['get']
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -19,6 +20,7 @@ class SubCategoryViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategoryMiniSerializer
     queryset = Category.objects.all()
+    http_method_names = ['get']
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
