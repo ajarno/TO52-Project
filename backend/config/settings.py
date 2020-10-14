@@ -37,8 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework'
+    'api'
     'classified_ads_app',
 ]
+
+AUTH_USER_MODEL = 'classified_ads_app.User'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
