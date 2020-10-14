@@ -17,7 +17,7 @@ from .permissions import IsOwnerProfileOrReadOnly
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (AllowAny,)
+    #permission_classes = (AllowAny,) revoir
 
 # Register API
 class RegisterView(generics.GenericAPIView):
