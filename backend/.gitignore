@@ -3,8 +3,9 @@ venv/
 #OS 
 .DS_Store
 
-**/__pycache__/
-**/migrations/
-
 #remove __pycache__ folder
 #git rm -r --cached . && git add . && git commit -m "fixing .gitignore"
+
+**/__pycache__/
+.idea/
+**/migrations/
