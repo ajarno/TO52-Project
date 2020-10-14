@@ -37,9 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework'
-    'api'
+    'rest_framework',
+    #'rest_framework.authtoken',
     'classified_ads_app',
+    'knox', #replace the default token library of rest_framework
+    'django_countries', # documentation : https://pypi.org/project/django-countries/
+    
 ]
 
 AUTH_USER_MODEL = 'classified_ads_app.User'
@@ -54,6 +57,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'knox.auth.TokenAuthentication',
+    ]
+}
 
 ROOT_URLCONF = 'config.urls'
 
