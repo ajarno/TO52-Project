@@ -6,7 +6,7 @@ _Front-end de l'application UT'annonces_
     - [Récupérer l'application](#récupérer-lapplication)
     - [Lancement en local](#lancement-en-local)
     - [Ajouter une page](#ajouter-une-page)
-    - [Ajouter un composant](#ajouter-un·e-composant-/-fonction)
+    - [Ajouter un composant](#ajouter-une-composantfonction)
 1. [**Test**](#test)
 1. [**Déploiement**](#déploiement)
 1. [**Ressources et tutos**](#ressources-et-tutos)

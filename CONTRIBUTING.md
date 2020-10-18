@@ -1,10 +1,10 @@
 # How to contribute to the app
 
- 1. [Opening an issue](#opening-an-issue)
+ 1. [**Opening an issue**](#opening-an-issue)
     - [Adding a new feature or changing an existing one](#adding-a-new-feature-or-changing-an-existing-one)
     - [Did you find a bug?](#did-you-find-a-bug)
- 1. [Working on a branch](#working-on-a-branch)
- 1. [Coding rules](#coding-rules)
+ 1. [**Working on a branch**](#working-on-a-branch)
+ 1. [**Coding rules**](#coding-rules)
     - [Coding conventions](#coding-conventions)
     - [Commit message guidelines](#commit-message-guidelines)
 

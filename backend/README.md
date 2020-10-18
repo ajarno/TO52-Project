@@ -35,7 +35,7 @@ Les outils et dépendances étant installés, le lancement de l'application est 
 Pour lancer une version de développement du site en local, exécuter `python manage.py runserver`. 
 L'application se lancera à l'adresse [http://localhost:8000](http://localhost:8000) dans le navigateur. Ne pas hésiter à relancer l'application selon les modifications.
 
-Lire le fichier [**python-guidelines.md](./python-guidelines.md) pour plus d'indications.
+Lire le fichier [**python-guidelines.md**](./python-guidelines.md) pour plus d'indications.
 
 ## Déploiement
 
