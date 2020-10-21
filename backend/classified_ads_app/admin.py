@@ -1,11 +1,11 @@
 from django.contrib import admin
 from .models import (
-    Discussion, User,UserProfile
+    Chat, User,UserProfile
 )
 from classified_ads_app.models import Category, Picture, Ad, User, SubCategory
 
 # Register your models here.
-admin.site.register(Discussion)
+admin.site.register(Chat)
 admin.site.register(UserProfile)
 
 

@@ -18,7 +18,8 @@ from django.urls import path
 from django.conf.urls import include
 
 urlpatterns = [
-    #path('classified_ads_app/', include('classified_ads_app.urls')),
     path('admin/', admin.site.urls),
     path('api/', include('classified_ads_app.urls')),
+     path('api/auth/',include('djoser.urls')),
+    path('api/auth/',include('djoser.urls.jwt')),
 ]

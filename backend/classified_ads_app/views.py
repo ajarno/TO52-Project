@@ -1,41 +1,37 @@
-from django.shortcuts import render
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework import viewsets,status
+from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from rest_framework.response import Response
-from knox.models import AuthToken
-from .models import Discussion, User, UserProfile
-from .serializers import ( DiscussionSerializer, UserSerializer, UserProfileSerializer,RegisterSerializer)
+from .models import Chat, User, UserProfile
+from .serializers import ( ChatSerializer, UserSerializer, UserProfileSerializer)
 from rest_framework.generics import (ListCreateAPIView,
 RetrieveUpdateDestroyAPIView,)
-from rest_framework import generics, permissions
-from .permissions import IsOwnerProfileOrReadOnly
+from .permissions import IsOwnerProfileOrReadOnly,IsOwnerChatOrReadOnly
 from classified_ads_app.models import Category, Ad, SubCategory
 from .serializers import CategorySerializer, AdMiniSerializer, AdSerializer, CategoryMiniSerializer, \
     SubCategorySerializer, SubCategoryMiniSerializer
+from rest_framework.decorators import action
 
 
 
+# UserViewSet
+class UserViewSet(ListCreateAPIView):
+    queryset=User.objects.all()
+    serializer_class=UserSerializer
+    permission_classes=[IsAuthenticated]
 
-# User ViewSet
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    #permission_classes = (AllowAny,) revoir
+    @action(detail=True, methods=['post'])
+    def saved_ads(self, request):
+        try:
+            user = request.user
+            saved_ads = user.saved_ads
+            response = {'message': 'Les annonces sauvégardées', 'result': saved_ads}
+            return Response(response, status=status.HTTP_200_OK)
+        except:
+            response = "Une erreur est survenue lors du traitement de l'opération"
+            return Response(response, status=status.HTTP_200_OK)
+       
 
-# Register API
-class RegisterView(generics.GenericAPIView):
-    serializer_class = RegisterSerializer
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        return Response({
-        "user": UserSerializer(user, context=self.get_serializer_context()).data,
-        "token": AuthToken.objects.create(user)[1]
-        })
-
-
+#Create user profile
 class UserProfileListCreateView(ListCreateAPIView):
     queryset=UserProfile.objects.all()
     serializer_class=UserProfileSerializer
@@ -45,17 +41,53 @@ class UserProfileListCreateView(ListCreateAPIView):
         user=self.request.user
         serializer.save(user=user)
 
-
+#Get user profile details
 class userProfileDetailView(RetrieveUpdateDestroyAPIView):
     queryset=UserProfile.objects.all()
     serializer_class=UserProfileSerializer
     permission_classes=[IsOwnerProfileOrReadOnly,IsAuthenticated]
 
         
-# Discussion ViewSets
-class DiscussionViewSet(viewsets.ModelViewSet):
-    queryset = Discussion.objects.all()
-    serializer_class = DiscussionSerializer
+# Chat ViewSets
+class UserChatViewSet(viewsets.ModelViewSet):
+    queryset = Chat.objects.all()
+    serializer_class = ChatSerializer
+    permission_classes=[IsAuthenticated,IsOwnerChatOrReadOnly]
+
+    #les chats envoyés par l'utilisateur pour une annonce donnée
+    def ad_chats_sent_byuser(self, request,pk=None):
+        user = request.user
+        related_ad =  Ad.objects.get(id=pk)
+        chats = Chat.objects.all().filter(sender= user,related_ad=related_ad)
+        return chats
+
+    #les chats recus par l'utilisateur pour une annonce donnée
+    def ad_chats_received_byuser(self, request,pk=None):
+        user = request.user
+        related_ad =  Ad.objects.get(id=pk)
+        chats = Chat.objects.all().filter(receiver= user,related_ad=related_ad)
+        return chats
+    
+    #les chats reçu et envoyé par l'utilisateur pour une annonce donnée`
+    @action(detail=True, methods=['POST'])
+    def ad_chats_byuser(self, request,pk=None):
+        ad_chats_byuser = self.ad_chats_sent_byuser(request,pk).concat(self.ad_chats_received_byuser(request,pk))
+        try:
+            response = {'message': 'les chats reçu et envoyé par l''utilisateur pour une annonce donnée', 'result': ad_chats_byuser}
+            return Response(response, status=status.HTTP_200_OK)
+        except:
+            response = "Une erreur est survenue lors du traitement de l'opération"
+            return Response(response, status=status.HTTP_200_OK)
+
+        
+# Chat ViewSets
+class AdminChatViewSet(viewsets.ModelViewSet):
+    queryset=Chat.objects.all()
+    serializer_class=ChatSerializer
+    permission_classes=[IsAuthenticated,IsAdminUser]
+
+
+
 
 
 class SubCategoryViewSet(viewsets.ModelViewSet):

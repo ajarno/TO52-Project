@@ -1,9 +1,11 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser, BaseUserManager
 )
 from django_countries.fields import CountryField
+from phonenumber_field.modelfields import PhoneNumberField
 
 class UserManager(BaseUserManager):
     def create_user(self,email, password =None, is_active=True,is_staff=False,is_admin=False):
@@ -44,7 +46,7 @@ class UserManager(BaseUserManager):
     need to modify default login method with username
     by email auth
 """
-class User(AbstractBaseUser):
+class User(AbstractBaseUser,PermissionsMixin):
     # Attributes
     email     = models.EmailField(max_length=80, unique=True)
     active    = models.BooleanField(default=True) # can login
@@ -77,6 +79,31 @@ class User(AbstractBaseUser):
     def is_active(self):
         return self.active
 
+    @property
+    def is_superuser(self):
+        return self.is_admin
+
+
+
+
+
+# Definition of a method to rename the users avatar  uploaded
+def user_avatar_path(instance, filename):
+    # Set the path
+    upload_to = 'static/images/avatars/{userid}/'.format(userid=instance.id)
+
+    # Build the filename
+    # Get the extension
+    ext = filename.split('.')[-1]
+    # Set the filename as random string
+    from uuid import uuid4
+    filename = '{}.{}'.format(uuid4().hex, ext)
+
+    # Return the whole path to the file
+    import os
+    return os.path.join(upload_to, filename)
+    
+
 """
     This class contain extra informations
     about user
@@ -86,10 +113,12 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE)
 
    # Attributes
+    #upload at specific location
+    avatar = models.ImageField(upload_to=user_avatar_path)
     validated = models.BooleanField(default=False)
     surname = models.CharField(max_length=35,blank=True)
     first_name = models.CharField(max_length=35,blank=True)
-    tel = models.CharField(max_length=15)
+    tel = PhoneNumberField()
     adress_street = models.CharField(max_length=200, db_column='UserAdressStreet', blank=True)
     adress_postal_code = models.CharField(max_length=10, db_column='UserAdressPostalCode', blank=True)
     adress_city = models.CharField(max_length=30, db_column='UserAdressCity', blank=True)
@@ -99,20 +128,6 @@ class UserProfile(models.Model):
         return  self.first_name + " " + self.surname + ">"
 
 
-# Define discussion model
-
-class Discussion(models.Model):
-    # Foreign keys 
-    sender = models.ForeignKey(User,on_delete=models.CASCADE, related_name='sender_discussion')
-    receiver = models.ForeignKey(User,on_delete=models.CASCADE, related_name='receiver_discussion')
-    #related_ad = models.ForeignKey(Ad,on_delete=models.CASCADE, related_name='ad')
-   
-    # Attributes
-    created_at = models.DateField(auto_now_add=True)
-    content = models.TextField(max_length=1500,blank=False)
-
-    def __str__(self):
-        return self.sender.__str__ + " send " + self.content + " to " + self.receiver.__str__ + " about + self.related_ad.headline + >"
 
 # Define the Categories available
 class Category(models.Model):
@@ -178,6 +193,7 @@ def path_and_rename(instance, filename):
     return os.path.join(upload_to, filename)
 
 
+
 # TODO: Save online the pictures instead of inside the folder
 # Define the Picture model linked to an Ad
 class Picture(models.Model):
@@ -186,3 +202,18 @@ class Picture(models.Model):
 
     def __str__(self):
         return self.pic.url
+
+# Define discussion model
+
+class Chat(models.Model):
+    # Foreign keys 
+    sender = models.ForeignKey(User,on_delete=models.CASCADE, related_name='sender_chat')
+    receiver = models.ForeignKey(User,on_delete=models.CASCADE, related_name='receiver_chat')
+    related_ad = models.ForeignKey(Ad,on_delete=models.CASCADE, related_name='chats')
+   
+    # Attributes
+    created_at = models.DateField(auto_now_add=True)
+    content = models.TextField(max_length=1500,blank=False)
+
+    def __str__(self):
+        return   "  {} a envoyé  le message : {} à {}  pour l'annonce : {} ".format(self.sender.email,self.content,self.receiver.email,self.related_ad.headline)
