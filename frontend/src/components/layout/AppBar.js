@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
   },
   appBar: {
     background: "white",
-    height: "10vh",
+    height: "9vh",
   },
   toolbar: {
     display: "flex",

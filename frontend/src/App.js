@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
     flexDirection: "column",
-    minHeight: "calc(100vh - 4rem)",
+    minHeight: "calc(100vh - 9vh)",
   },
 }));
 
