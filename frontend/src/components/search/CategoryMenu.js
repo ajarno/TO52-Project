@@ -51,9 +51,12 @@ export default function CategoryMenu() {
       }
     }
     loadCategories().then((categories) => {
-      const index = categories.findIndex(
-        (category) => category.slug === window.location.pathname.substring(1)
-      );
+      let index = -1;
+      if (categories) {
+        index = categories.findIndex(
+          (category) => category.slug === window.location.pathname.substring(1)
+        );
+      }
       index < 0 ? setValue(false) : setValue(index);
     });
   }, []);
@@ -73,7 +76,7 @@ export default function CategoryMenu() {
           variant="scrollable"
           scrollButtons="auto"
         >
-          {searchState.categories.map((category) => {
+          {searchState.categories && searchState.categories.map((category) => {
             return (
               <Tab
                 className={classes.tab}
