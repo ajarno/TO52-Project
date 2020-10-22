@@ -1,26 +1,22 @@
-// import React, { useEffect, useState } from 'react';
 import React from "react";
 import { ThemeProvider } from "@material-ui/core/styles";
 import "./App.css";
 import DenseAppBar from "./components/layout/AppBar";
-import Footer from "./components/layout/Footer"
+import Footer from "./components/layout/Footer";
 import theme from "./styles/Theme";
+import CategoryMenu from "./components/search/CategoryMenu";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: "flex",
+    flexDirection: "column",
+    minHeight: "calc(100vh - 9vh)",
+  },
+}));
 
 function App() {
-  // const [appState, setAppState] = useState({
-  //   loading: false,
-  //   repos: null,
-  // });
-
-  // useEffect(() => {
-  //   setAppState({ loading: true });
-  //   const apiUrl = `https://api.github.com/users/hacktivist123/repos`;
-  //   fetch(apiUrl)
-  //     .then((res) => res.json())
-  //     .then((repos) => {
-  //       setAppState({ loading: false, repos: repos });
-  //     });
-  // }, [setAppState]);
+  const classes = useStyles();
 
   return (
     <ThemeProvider theme={theme}>
@@ -28,7 +24,10 @@ function App() {
         <header className="App-header">
           <DenseAppBar />
         </header>
-        <Footer />
+        <div className={classes.root}>
+          <CategoryMenu />
+          <Footer />
+        </div>
       </div>
     </ThemeProvider>
   );
