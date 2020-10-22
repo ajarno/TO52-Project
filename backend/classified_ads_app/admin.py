@@ -1,9 +1,8 @@
 from django.contrib import admin
-from classified_ads_app.models import Category, Picture, Ad, UserAccount, SubCategory
+from classified_ads_app.models import Category, Picture, Ad, UserAccount
 
 # Register the usual administration panels
 admin.site.register(UserAccount)
-admin.site.register(SubCategory)
 admin.site.register(Category)
 
 

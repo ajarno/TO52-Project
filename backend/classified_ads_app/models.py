@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.db import models
+from django.db import models  # used for SQLite database
 
 
 # Define the Users for our site
@@ -32,28 +32,12 @@ class Category(models.Model):
         return self.name
 
 
-# Define the SubCategories defining the ads
-class SubCategory(models.Model):
-    # Foreign keys
-    category = models.ForeignKey('Category', on_delete=models.CASCADE, related_name='subcategories')
-
-    # Attributes
-    name = models.CharField(max_length=200)
-    slug = models.SlugField(primary_key=True)
-
-    class Meta:
-        verbose_name_plural = "subcategories"
-
-    def __str__(self):
-        return self.name
-
-
 # Define the model describing an Ad
 class Ad(models.Model):
     # Foreign keys
     author = models.ForeignKey(UserAccount, on_delete=models.CASCADE, related_name='ads')
     saved_by = models.ManyToManyField(UserAccount, db_column='SavedBy', blank=True, related_name='saved_ads')
-    category = models.ForeignKey(SubCategory, on_delete=models.CASCADE, related_name='ads')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='ads')
 
     # Attributes
     published = models.DateField(auto_now_add=True)

@@ -18,7 +18,7 @@ from django.urls import path, include
 from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
-    path('classified_ads_app/', include('classified_ads_app.urls')),
+    path('api/', include('classified_ads_app.urls')),
     path('admin/', admin.site.urls),
     path('auth/', obtain_auth_token),  # POST using username and password
 ]

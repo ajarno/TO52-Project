@@ -1,33 +1,11 @@
 from rest_framework import serializers
-from classified_ads_app.models import Category, Picture, Ad, UserAccount, SubCategory
-
-
-class SubCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SubCategory
-        fields = ('slug', 'name', 'ads')
-
-
-class SubCategoryMiniSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SubCategory
-        fields = ('slug', 'name')
-
+from classified_ads_app.models import Category, Picture, Ad, UserAccount
 
 class CategorySerializer(serializers.ModelSerializer):
-    subcategories = SubCategorySerializer(many=True)
 
     class Meta:
         model = Category
-        fields = ('slug', 'name', 'subcategories')
-
-
-class CategoryMiniSerializer(serializers.ModelSerializer):
-    subcategories = SubCategoryMiniSerializer(many=True)
-
-    class Meta:
-        model = Category
-        fields = ('slug', 'name', 'subcategories')
+        fields = ('slug', 'name')
 
 
 class PictureSerializer(serializers.ModelSerializer):
