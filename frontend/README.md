@@ -39,7 +39,7 @@ Les outils et dépendances étant installés, le lancement de l'application est 
 
 ### Lancement en local
 
-Pour lancer une version de développement du site en local, exécuter `npm run start`. 
+Pour lancer une version de développement du site en local, exécuter `npm start` ou `npm run start`. 
 L'application se lancera à l'adresse [http://localhost:3000](http://localhost:3000) dans le navigateur. La page se rechargera s'il y a des modifications.
 > Cette commande lance `react-scripts start` défini d'après le **package.json**, qui nous permet de servir notre application à des fins de développement.
 
