@@ -1,3 +1,5 @@
+import os
+from uuid import uuid4
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
@@ -7,12 +9,13 @@ from django.contrib.auth.models import (
 from django_countries.fields import CountryField
 from phonenumber_field.modelfields import PhoneNumberField
 
+
 class UserManager(BaseUserManager):
     def create_user(self,email, password =None, is_active=True,is_staff=False,is_admin=False):
         if not email:
-            raise ValueError("Vous devez renseigner votre adresse email")
+            raise ValueError("Vous devez renseigner votre adresse email. ")
         if not password:
-            raise ValueError("Vous devez renseigner le mot de passe")
+            raise ValueError("Vous devez renseigner le mot de passe. ")
         user_obj = self.model(
             email = self.normalize_email(email)
         )
@@ -40,11 +43,12 @@ class UserManager(BaseUserManager):
         )
         return user
 
+
 """
     This class is custom user class.
     Custom user class is required because we 
     need to modify default login method with username
-    by email auth
+    by email auth.
 """
 class User(AbstractBaseUser,PermissionsMixin):
     # Attributes
@@ -84,10 +88,7 @@ class User(AbstractBaseUser,PermissionsMixin):
         return self.is_admin
 
 
-
-
-
-# Definition of a method to rename the users avatar  uploaded
+# Definition of a method to rename the users avatar's  uploaded
 def user_avatar_path(instance, filename):
     # Set the path
     upload_to = 'static/images/avatars/{userid}/'.format(userid=instance.id)
@@ -96,11 +97,10 @@ def user_avatar_path(instance, filename):
     # Get the extension
     ext = filename.split('.')[-1]
     # Set the filename as random string
-    from uuid import uuid4
+  
     filename = '{}.{}'.format(uuid4().hex, ext)
 
     # Return the whole path to the file
-    import os
     return os.path.join(upload_to, filename)
     
 
@@ -126,7 +126,6 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return  self.first_name + " " + self.surname + ">"
-
 
 
 # Define the Categories available
@@ -185,11 +184,9 @@ def path_and_rename(instance, filename):
     # Get the extension
     ext = filename.split('.')[-1]
     # Set the filename as random string
-    from uuid import uuid4
     filename = '{}.{}'.format(uuid4().hex, ext)
 
     # Return the whole path to the file
-    import os
     return os.path.join(upload_to, filename)
 
 
@@ -203,8 +200,8 @@ class Picture(models.Model):
     def __str__(self):
         return self.pic.url
 
-# Define discussion model
 
+# Define Chat model
 class Chat(models.Model):
     # Foreign keys 
     sender = models.ForeignKey(User,on_delete=models.CASCADE, related_name='sender_chat')

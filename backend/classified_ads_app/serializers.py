@@ -1,11 +1,12 @@
 from rest_framework import serializers
-from .models import Chat, User, UserProfile
 from django.contrib.auth import (
-    get_user_model, authenticate
+    get_user_model
 )
-from rest_framework.authtoken.models import Token
-from classified_ads_app.models import Category, Picture, Ad, User, SubCategory
-
+from .models import (
+    Chat, UserProfile,
+    Category, Picture,
+    Ad, SubCategory
+)
 
 
 class PictureSerializer(serializers.ModelSerializer):
@@ -14,7 +15,7 @@ class PictureSerializer(serializers.ModelSerializer):
         fields = ['pic']
 
 
-# TODO: remplacer author par un UserSerializer
+# TODO: Remplacer author par un UserSerializer
 class AdSerializer(serializers.ModelSerializer):
     pictures = PictureSerializer(many=True)
     chats = serializers.StringRelatedField(many=True)
@@ -35,7 +36,7 @@ class AdMiniSerializer(serializers.ModelSerializer):
                   'published', 'pictures', 'adress_city']
 
 
-#Discussion serializer
+# Chat serializer
 class ChatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chat
@@ -44,10 +45,10 @@ class ChatSerializer(serializers.ModelSerializer):
    
 """
     This is UserSerializer class for our
-    custom user
+    custom user.
 """
 class UserSerializer(serializers.ModelSerializer):
-    #get saved ads of users
+    # Gets saved ads of users
     saved_ads = AdSerializer(many=True, read_only=True)
     class Meta:
         model = get_user_model()
@@ -62,6 +63,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model=UserProfile
         fields='__all__'
         read_only_fields = ('created_at', 'updated_at',)
+
 
 class SubCategorySerializer(serializers.ModelSerializer):
     class Meta:

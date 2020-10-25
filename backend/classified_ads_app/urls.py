@@ -1,10 +1,12 @@
-from django.contrib import admin
+from django.conf.urls import include
 from django.urls import path
 from rest_framework import routers
-from django.conf.urls import include
-from .views import UserChatViewSet,AdminChatViewSet
-from .views import UserProfileListCreateView, userProfileDetailView
-from .views import CategoryViewSet, AdViewSet, SubCategoryViewSet
+from .views import (
+ UserChatViewSet,AdminChatViewSet ,
+ UserProfileListCreateView,
+ UserProfileDetailView, CategoryViewSet,
+ AdViewSet, SubCategoryViewSet
+ )
 
 router = routers.DefaultRouter()
 
@@ -17,9 +19,8 @@ router.register('ads', AdViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    #gets all user profiles and create a new profile
-    path("all-profiles",UserProfileListCreateView.as_view(),name="all-profiles"),
-    # retrieves profile details of the currently logged in user
-    path("profile/<int:pk>",userProfileDetailView.as_view(),name="profile"),
-   
+    #Gets all user profiles and create a new profile
+    path('profiles',UserProfileListCreateView.as_view(),name="profiles"),
+    #Retrieves profile details of the currently logged in user
+    path('profile/<int:pk>',UserProfileDetailView.as_view(),name="profile"),
 ]

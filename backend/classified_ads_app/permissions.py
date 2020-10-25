@@ -1,13 +1,13 @@
 from rest_framework.permissions import BasePermission,SAFE_METHODS
 
-#restriction de la consultation du profil 
+# Restricting the consultation of the profile 
 class IsOwnerProfileOrReadOnly(BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in SAFE_METHODS:
             return True
         return obj.user==request.user
 
-#restriction de la consultation de chats 
+# Restricting access to chats 
 class IsOwnerChatOrReadOnly(BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in SAFE_METHODS:

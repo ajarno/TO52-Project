@@ -104,12 +104,13 @@ REST_FRAMEWORK = {
    
 }
 
+# JWT token settings
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES':('JWT'),
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60)
 }
 
-#restrict users list acces to only admin
+# Restrict users list acces to only admin
 DJOSER = {
     'PERMISSIONS': {
         'user_list': ['rest_framework.permissions.IsAdminUser'],
@@ -160,7 +161,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
-#email verification settings
+# Email verification settings
 EMAIL_ACTIVE_FIELD = 'is_active'
 EMAIL_SERVER = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -171,4 +172,4 @@ EMAIL_MAIL_SUBJECT = 'Confirm your email'
 EMAIL_MAIL_HTML = 'mail_body.html'
 EMAIL_MAIL_PLAIN = 'mail_body.txt'
 EMAIL_PAGE_TEMPLATE = 'confirm_template.html'
-EMAIL_PAGE_DOMAIN = 'http://mydomain.com/'
+#EMAIL_PAGE_DOMAIN = 'http://mydomain.com/'

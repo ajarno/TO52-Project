@@ -20,6 +20,6 @@ from django.conf.urls import include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('classified_ads_app.urls')),
-     path('api/auth/',include('djoser.urls')),
+    path('api/auth/',include('djoser.urls')),
     path('api/auth/',include('djoser.urls.jwt')),
 ]
