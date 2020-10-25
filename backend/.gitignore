@@ -8,4 +8,5 @@ venv/
 **/migrations/
 db.sqlite3
 static
+personal-scripts
 #git rm -r --cached . && git add . && git commit -m "fixing .gitignore"
