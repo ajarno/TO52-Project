@@ -1,13 +1,10 @@
 from rest_framework import serializers
-from .models import Chat, User, UserProfile
-from django.contrib.auth import (
-    get_user_model, authenticate
-)
 from rest_framework.authtoken.models import Token
-from classified_ads_app.models import Category, Picture, Ad, User, SubCategory
+from django.contrib.auth import get_user_model, authenticate
+from .models import Chat, User, UserProfile, Category, Picture, Ad
 
 
-
+# Picture Serializer
 class PictureSerializer(serializers.ModelSerializer):
     class Meta:
         model = Picture
@@ -35,19 +32,16 @@ class AdMiniSerializer(serializers.ModelSerializer):
                   'published', 'pictures', 'adress_city']
 
 
-#Discussion serializer
+# Discussion serializer
 class ChatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chat
         fields = ('id','sender','receiver','related_ad','created_at','content')
     
    
-"""
-    This is UserSerializer class for our
-    custom user
-"""
+# User Serializer class for our custom user
 class UserSerializer(serializers.ModelSerializer):
-    #get saved ads of users
+    # get saved ads of users
     saved_ads = AdSerializer(many=True, read_only=True)
     class Meta:
         model = get_user_model()
@@ -63,30 +57,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields='__all__'
         read_only_fields = ('created_at', 'updated_at',)
 
-class SubCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SubCategory
-        fields = ('slug', 'name', 'ads')
-
-
-class SubCategoryMiniSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SubCategory
-        fields = ('slug', 'name')
-
-
+# Category Serializer
 class CategorySerializer(serializers.ModelSerializer):
-    subcategories = SubCategorySerializer(many=True)
 
     class Meta:
         model = Category
-        fields = ('slug', 'name', 'subcategories')
-
-
-class CategoryMiniSerializer(serializers.ModelSerializer):
-    subcategories = SubCategoryMiniSerializer(many=True)
-
-    class Meta:
-        model = Category
-        fields = ('slug', 'name', 'subcategories')
-
+        fields = ('slug', 'name')

@@ -1,11 +1,9 @@
+from django.db import models # used for SQLite database
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.contrib.auth.models import PermissionsMixin
-from django.db import models
-from django.contrib.auth.models import (
-    AbstractBaseUser, BaseUserManager
-)
+from django.contrib.auth.models import PermissionsMixin, AbstractBaseUser, BaseUserManager
 from django_countries.fields import CountryField
 from phonenumber_field.modelfields import PhoneNumberField
+
 
 class UserManager(BaseUserManager):
     def create_user(self,email, password =None, is_active=True,is_staff=False,is_admin=False):
@@ -40,12 +38,9 @@ class UserManager(BaseUserManager):
         )
         return user
 
-"""
-    This class is custom user class.
-    Custom user class is required because we 
-    need to modify default login method with username
-    by email auth
-"""
+# This class is custom user class.
+# Custom user class is required because we need to modify 
+# default login method with username by email auth
 class User(AbstractBaseUser,PermissionsMixin):
     # Attributes
     email     = models.EmailField(max_length=80, unique=True)
@@ -60,7 +55,7 @@ class User(AbstractBaseUser,PermissionsMixin):
 
     objects = UserManager()
 
-   # methods
+   # Methods
     def __str__(self):
         return self.email
 
@@ -84,9 +79,6 @@ class User(AbstractBaseUser,PermissionsMixin):
         return self.is_admin
 
 
-
-
-
 # Definition of a method to rename the users avatar  uploaded
 def user_avatar_path(instance, filename):
     # Set the path
@@ -104,16 +96,12 @@ def user_avatar_path(instance, filename):
     return os.path.join(upload_to, filename)
     
 
-"""
-    This class contain extra informations
-    about user
-"""
+# This class contain extra informations about user
 class UserProfile(models.Model):
-
     user = models.OneToOneField(User,on_delete=models.CASCADE)
 
-   # Attributes
-    #upload at specific location
+    # Attributes
+    # upload at specific location
     avatar = models.ImageField(upload_to=user_avatar_path)
     validated = models.BooleanField(default=False)
     surname = models.CharField(max_length=35,blank=True)
@@ -128,7 +116,6 @@ class UserProfile(models.Model):
         return  self.first_name + " " + self.surname + ">"
 
 
-
 # Define the Categories available
 class Category(models.Model):
     name = models.CharField(max_length=200)
@@ -141,28 +128,12 @@ class Category(models.Model):
         return self.name
 
 
-# Define the SubCategories defining the ads
-class SubCategory(models.Model):
-    # Foreign keys
-    category = models.ForeignKey('Category', on_delete=models.CASCADE, related_name='subcategories')
-
-    # Attributes
-    name = models.CharField(max_length=200)
-    slug = models.SlugField(primary_key=True)
-
-    class Meta:
-        verbose_name_plural = "subcategories"
-
-    def __str__(self):
-        return self.name
-
-
 # Define the model describing an Ad
 class Ad(models.Model):
     # Foreign keys
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ads')
     saved_by = models.ManyToManyField(User, db_column='SavedBy', blank=True, related_name='saved_ads')
-    category = models.ForeignKey(SubCategory, on_delete=models.CASCADE, related_name='ads')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='ads')
 
     # Attributes
     published = models.DateField(auto_now_add=True)
@@ -193,7 +164,6 @@ def path_and_rename(instance, filename):
     return os.path.join(upload_to, filename)
 
 
-
 # TODO: Save online the pictures instead of inside the folder
 # Define the Picture model linked to an Ad
 class Picture(models.Model):
@@ -203,8 +173,8 @@ class Picture(models.Model):
     def __str__(self):
         return self.pic.url
 
-# Define discussion model
 
+# Define discussion model
 class Chat(models.Model):
     # Foreign keys 
     sender = models.ForeignKey(User,on_delete=models.CASCADE, related_name='sender_chat')

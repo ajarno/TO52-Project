@@ -1,8 +1,5 @@
 from django.contrib import admin
-from .models import (
-    Chat, User,UserProfile
-)
-from classified_ads_app.models import Category, Picture, Ad, User, SubCategory
+from .models import Chat, User, UserProfile, Category, Picture, Ad
 
 # Register your models here.
 admin.site.register(Chat)
@@ -11,7 +8,6 @@ admin.site.register(UserProfile)
 
 # Register the usual administration panels
 admin.site.register(User)
-admin.site.register(SubCategory)
 admin.site.register(Category)
 
 
