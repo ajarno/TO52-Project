@@ -1,3 +1,9 @@
 .App-header {
     height: 100%;
 }
+
+.root {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 9vh);
+}

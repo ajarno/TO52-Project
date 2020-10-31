@@ -1,0 +1,28 @@
+@import "../../styles/Theme.css";
+
+.container {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  padding: 1.5em 0;
+  color: var(--primary-color-dark);
+}
+
+.page-404 img {
+  width: 100%;
+}
+
+.img-404 {
+  background-image: url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif);
+  height: 400px;
+  background-position: center;
+}
+
+.img-404 h1 {
+  font-size: 4em;
+  margin-top: -0.2em;
+}
+
+.explanation-404 {
+  margin-top: -50px;
+}

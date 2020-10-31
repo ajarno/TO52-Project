@@ -4,10 +4,11 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
 import AddBoxIcon from "@material-ui/icons/AddBox";
-import logo from "../../logo.svg";
+import logo from "../../assets/logo.svg";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,9 +23,6 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "space-between",
     alignItems: "center",
     height: "100%",
-  },
-  button: {
-    boxShadow: "none",
   },
   appLogo: {
     height: "3rem",
@@ -41,15 +39,16 @@ export default function DenseAppBar() {
       <AppBar className={classes.appBar} position="static">
         <Toolbar variant="dense" className={classes.toolbar}>
           <div>
-            <a href="/">
+            <Link to="/">
               <img src={logo} className={classes.appLogo} alt="logo" />
-            </a>
+            </Link>
             <Button
-              className={classes.button}
               variant="contained"
               color="primary"
               startIcon={<AddBoxIcon />}
-              href="/ads/new-add"
+              component={Link}
+              to="/ads/new-add"
+              disableElevation={true}
             >
               Déposer une annonce
             </Button>
@@ -63,7 +62,8 @@ export default function DenseAppBar() {
               <IconButton
                 aria-label="sign-in"
                 color="primary"
-                href="/auth/sign-in"
+                component={Link}
+                to="/auth/sign-in"
               >
                 <AccountCircleIcon />
               </IconButton>

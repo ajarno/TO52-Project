@@ -3,12 +3,13 @@ import { makeStyles } from "@material-ui/core/styles";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import API from "../../api/API";
-import { Paper } from "@material-ui/core";
+import { Paper, Link } from "@material-ui/core";
 import compareValues from "../../shared/functions/CompareSort";
+import usePromise from "../../api/Utils";
 
 const useStyles = makeStyles((theme) => ({
   menu: {
-    backgroundColor: theme.palette.primary.transparent,
+    backgroundColor: theme.palette.primary.transparent, //rgba(0, 121, 255, 0.6)
     height: "fit-content",
     boxShadow:
       "0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12)",
@@ -82,7 +83,8 @@ export default function CategoryMenu() {
                 className={classes.tab}
                 key={category.slug}
                 label={category.name}
-                href={"/" + category.slug}
+                component={Link}
+                to={"/categories/" + category.slug}
               />
             );
           })}
