@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import API from "../../api/API";
-import { Paper, Link } from "@material-ui/core";
-import compareValues from "../../shared/functions/CompareSort";
-import usePromise from "../../api/Utils";
+import { Paper, Tab } from "@material-ui/core";
+import { TabPanel, TabContext, TabList } from "@material-ui/lab";
+import { useEffectOnlyOnce } from "../../api/Utils";
+import { fetchCategories } from "../../api/CategoriesAPI";
+import Ads from "./Ads";
 
 const useStyles = makeStyles((theme) => ({
   menu: {
@@ -24,72 +23,66 @@ const useStyles = makeStyles((theme) => ({
 export default function CategoryMenu() {
   const classes = useStyles();
 
-  const [searchState, setSearchState] = useState({
-    isLoading: true,
-    categories: [],
-    error: null,
+  const [activeTab, setActiveTab] = useState("");
+  const [categories, setCategories] = useState([]);
+
+  useEffectOnlyOnce(() => {
+    const storedCategories = JSON.parse(sessionStorage.getItem("categories"));
+    if (storedCategories) {
+      setCategories(storedCategories);
+    } else {
+      fetchCategories().then((_categories) => {
+        setCategories(_categories.data);
+        sessionStorage.setItem("categories", JSON.stringify(_categories.data));
+      });
+    }
+    initActiveTab();
   });
 
-  const [value, setValue] = React.useState(0);
-
-  useEffect(() => {
-    async function loadCategories() {
-      try {
-        const categories = await API.get("/categories/");
-        categories.data.sort(compareValues("name"));
-        console.log(categories.data);
-        setSearchState({
-          isLoading: false,
-          categories: categories.data,
-        });
-        return categories.data;
-      } catch (err) {
-        setSearchState({
-          isLoading: false,
-          error: err.message,
-        });
-        return null;
-      }
-    }
-    loadCategories().then((categories) => {
-      let index = -1;
-      if (categories) {
-        index = categories.findIndex(
-          (category) => category.slug === window.location.pathname.substring(1)
-        );
-      }
-      index < 0 ? setValue(false) : setValue(index);
-    });
-  }, []);
+  function initActiveTab() {
+    const storedCategorySelected = sessionStorage.getItem("categorySelected");
+    setActiveTab(storedCategorySelected ? storedCategorySelected : false);
+  }
 
   const handleChange = (event, newValue) => {
-    setValue(newValue);
+    setActiveTab(newValue);
+    sessionStorage.setItem("categorySelected", newValue);
   };
 
   return (
     <React.Fragment>
-      <Paper className={classes.menu} elevation={0} position="static" square>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          indicatorColor="primary"
-          textColor="primary"
-          variant="scrollable"
-          scrollButtons="auto"
-        >
-          {searchState.categories && searchState.categories.map((category) => {
+      <TabContext value={activeTab}>
+        <Paper className={classes.menu} elevation={0} position="static" square>
+          <TabList
+            selectionFollowsFocus
+            onChange={handleChange}
+            indicatorColor="primary"
+            textColor="primary"
+            variant="scrollable"
+            scrollButtons="on"
+          >
+            {categories &&
+              categories.map((category) => {
+                return (
+                  <Tab
+                    className={classes.tab}
+                    value={category.slug}
+                    key={category.slug}
+                    label={category.name}
+                  />
+                );
+              })}
+          </TabList>
+        </Paper>
+        {categories &&
+          categories.map((category) => {
             return (
-              <Tab
-                className={classes.tab}
-                key={category.slug}
-                label={category.name}
-                component={Link}
-                to={"/categories/" + category.slug}
-              />
+              <TabPanel key={category.slug} value={category.slug}>
+                <Ads category={category.slug} />
+              </TabPanel>
             );
           })}
-        </Tabs>
-      </Paper>
+      </TabContext>
     </React.Fragment>
   );
 }

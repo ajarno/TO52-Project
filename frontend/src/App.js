@@ -1,6 +1,5 @@
 import React from "react";
 import CategoryMenu from "./components/search/CategoryMenu";
-import "./App.css";
 
 function App() {
   return (
