@@ -3,6 +3,8 @@ from django.urls import path
 from django.conf.urls import include
 from rest_framework import routers
 from .views import UserChatViewSet, AdminChatViewSet, UserProfileListCreateView, UserProfileDetailView, CategoryViewSet, AdViewSet
+from django.conf import settings
+from django.conf.urls.static import static
 
 router = routers.DefaultRouter()
 
@@ -18,5 +20,4 @@ urlpatterns = [
     path("all-profiles", UserProfileListCreateView.as_view(), name="all-profiles"),
     # retrieves profile details of the currently logged in user
     path("profile/<int:pk>", UserProfileDetailView.as_view(), name="profile"),
-   
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

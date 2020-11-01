@@ -44,8 +44,8 @@ INSTALLED_APPS = [
     'django_email_verification',
     'corsheaders',
     'classified_ads_app',
-    'django_countries', # documentation : https://pypi.org/project/django-countries/
-    
+    'django_filters',
+    'django_countries', # documentation : https://pypi.org/project/django-countries/ 
 ]
 
 AUTH_USER_MODEL = 'classified_ads_app.User'
@@ -164,7 +164,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
+MEDIA_URL = 'media/'
 
 #email verification settings
 EMAIL_ACTIVE_FIELD = 'is_active'
