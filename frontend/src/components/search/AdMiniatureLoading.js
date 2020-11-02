@@ -5,8 +5,8 @@ import Skeleton from "@material-ui/lab/Skeleton";
 export default function AdMiniatureLoading() {
 
   return (
-      <Box width={210} marginRight={0.5} my={5}>
-        <Skeleton variant="rect" width={210} height={118} />
+      <Box width={220} marginRight={0.5} my={5}>
+        <Skeleton variant="rect" width={220} height={118} />
 
         <Box pt={0.5}>
           <Skeleton />

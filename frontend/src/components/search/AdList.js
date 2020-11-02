@@ -3,6 +3,7 @@ import { useEffectOnlyOnce } from "../../api/Utils";
 import { fetchAdsByCategory } from "../../api/AdsAPI";
 import AdMiniature from "./AdMiniature";
 import AdMiniatureLoading from "./AdMiniatureLoading";
+import { Grid } from "@material-ui/core";
 
 export default function Ads(props) {
   const [ads, setAds] = useState([]);
@@ -13,9 +14,9 @@ export default function Ads(props) {
   useEffectOnlyOnce(() => {
     setIsLoading(true);
     setMinimumTimeElapsed(false);
-    setTimeout(() => { 
-      setMinimumTimeElapsed(true); 
-    }, minimumTime); 
+    setTimeout(() => {
+      setMinimumTimeElapsed(true);
+    }, minimumTime);
     fetchAdsByCategory(props.category)
       .then((_ads) => {
         setAds(_ads.data);
@@ -32,9 +33,11 @@ export default function Ads(props) {
       {(!minimumTimeElapsed && ads.length === 0) || isLoading ? (
         <AdMiniatureLoading />
       ) : ads.length > 0 ? (
-        ads.map((ad) => {
-          return <AdMiniature ad={ad} key={ad.id} />;
-        })
+        <Grid container spacing={3}>
+          {ads.map((ad) => {
+            return <AdMiniature ad={ad} key={ad.id} />;
+          })}
+        </Grid>
       ) : (
         <p>
           Aucune annonce disponible pour votre recherche... <br />

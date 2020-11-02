@@ -34,12 +34,18 @@ const useStyles = makeStyles((theme) => ({
 export default function DenseAppBar() {
   const classes = useStyles();
 
+  const returnHome = (event) => {
+    sessionStorage.removeItem("categorySelected");
+    window.location.href = "/";
+    return false;
+  };
+
   return (
     <div className={classes.root}>
       <AppBar className={classes.appBar} position="static">
         <Toolbar variant="dense" className={classes.toolbar}>
           <div>
-            <Link to="/">
+            <Link onClick={returnHome} to="/">
               <img src={logo} className={classes.appLogo} alt="logo" />
             </Link>
             <Button

@@ -20,9 +20,7 @@ export default function CategoryMenu() {
             </p>
             <Button
               variant="contained"
-              // variant="outlined"
               color="secondary"
-              // color="primary"
               onClick={history.goBack}
               disableElevation={true}
             >

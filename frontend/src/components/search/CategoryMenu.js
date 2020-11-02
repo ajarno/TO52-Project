@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Paper, Tab } from "@material-ui/core";
-import { TabPanel, TabContext, TabList } from "@material-ui/lab";
+import { Paper, Tabs, Tab } from "@material-ui/core";
+import { TabPanel } from "../../shared/components/TabPanel";
 import { useEffectOnlyOnce } from "../../api/Utils";
 import { fetchCategories } from "../../api/CategoriesAPI";
-import Ads from "./Ads";
+import AdList from "./AdList";
 
 const useStyles = makeStyles((theme) => ({
   menu: {
@@ -51,9 +51,9 @@ export default function CategoryMenu() {
 
   return (
     <React.Fragment>
-      <TabContext value={activeTab}>
         <Paper className={classes.menu} elevation={0} position="static" square>
-          <TabList
+          <Tabs
+          value={activeTab}
             selectionFollowsFocus
             onChange={handleChange}
             indicatorColor="primary"
@@ -72,17 +72,16 @@ export default function CategoryMenu() {
                   />
                 );
               })}
-          </TabList>
+          </Tabs>
         </Paper>
         {categories &&
           categories.map((category) => {
             return (
-              <TabPanel key={category.slug} value={category.slug}>
-                <Ads category={category.slug} />
+              <TabPanel key={category.slug} value={activeTab} index={category.slug}>
+                <AdList category={category.slug} />
               </TabPanel>
             );
           })}
-      </TabContext>
     </React.Fragment>
   );
 }
