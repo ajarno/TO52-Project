@@ -11,7 +11,7 @@ router = routers.DefaultRouter()
 router.register('chats', UserChatViewSet)
 router.register('controlchats', AdminChatViewSet)
 router.register('categories', CategoryViewSet)
-router.register('ads', AdViewSet)
+router.register('classifiedads', AdViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

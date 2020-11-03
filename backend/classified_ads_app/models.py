@@ -132,9 +132,9 @@ class Category(models.Model):
 # Define the model describing an Ad
 class Ad(models.Model):
     # Foreign keys
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ads')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='classifiedads')
     saved_by = models.ManyToManyField(User, db_column='SavedBy', blank=True, related_name='saved_ads')
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='ads')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='classifiedads')
 
     # Attributes
     published = models.DateField(auto_now_add=True)
@@ -151,7 +151,7 @@ class Ad(models.Model):
 # Definition of a method to rename the pictures uploaded
 def path_and_rename(instance, filename):
     # Set the path
-    upload_to = 'images/ads/{adid}/'.format(adid=instance.relatedAd.id)
+    upload_to = 'images/classifiedads/{adid}/'.format(adid=instance.relatedAd.id)
 
     # Build the filename
     # Get the extension
