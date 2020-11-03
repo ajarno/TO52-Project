@@ -91,13 +91,13 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 
 class AdViewSet(viewsets.ModelViewSet):
-    serializer_class = AdMiniSerializer
+    serializer_class = AdSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Ad.objects.order_by('-published').all()
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ('category',)
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = AdSerializer(instance)
-        return Response(serializer.data)
+    # def retrieve(self, request, *args, **kwargs):
+    #     instance = self.get_object()
+    #     serializer = AdMiniSerializer(instance)
+    #     return Response(serializer.data)
