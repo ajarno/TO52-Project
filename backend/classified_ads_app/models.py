@@ -1,4 +1,4 @@
-from django.db import models # used for SQLite database
+from django.db import models  # used for SQLite database
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import PermissionsMixin, AbstractBaseUser, BaseUserManager
 from django_countries.fields import CountryField
@@ -6,62 +6,63 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 
 class UserManager(BaseUserManager):
-    def create_user(self,email, password =None, is_active=True,is_staff=False,is_admin=False):
+    def create_user(self, email, password=None, is_active=True, is_staff=False, is_admin=False):
         if not email:
             raise ValueError("Vous devez renseigner votre adresse email")
         if not password:
             raise ValueError("Vous devez renseigner le mot de passe")
         user_obj = self.model(
-            email = self.normalize_email(email)
+            email=self.normalize_email(email)
         )
         user_obj.set_password(password)
         user_obj.staff = is_staff
         user_obj.admin = is_admin
         user_obj.active = is_active
-        user_obj.save(using = self._db)
+        user_obj.save(using=self._db)
         return user_obj
-    
-    def create_staffuser(self, email,password=None):
+
+    def create_staffuser(self, email, password=None):
         user = self.create_user(
             email,
             password=password,
-            is_staff = True
+            is_staff=True
         )
         return user
-    
-    def create_superuser(self,email,password=None):
+
+    def create_superuser(self, email, password=None):
         user = self.create_user(
             email,
             password=password,
-            is_admin = True,
-            is_staff = True
+            is_admin=True,
+            is_staff=True
         )
         return user
+
 
 # This class is custom user class.
 # Custom user class is required because we need to modify 
 # default login method with username by email auth
-class User(AbstractBaseUser,PermissionsMixin):
+class User(AbstractBaseUser, PermissionsMixin):
     # Attributes
-    email     = models.EmailField(max_length=80, unique=True)
-    active    = models.BooleanField(default=True) # can login
-    staff     = models.BooleanField(default=False) # staff user is ad publisher or buyer
-    admin     = models.BooleanField(default=False) # admin user is superuser
+    email = models.EmailField(max_length=80, unique=True)
+    active = models.BooleanField(default=True)  # can login
+    staff = models.BooleanField(default=False)  # staff user is ad publisher or buyer
+    admin = models.BooleanField(default=False)  # admin user is superuser
     timestamp = models.DateTimeField(auto_now_add=True)
 
-    USERNAME_FIELD  = 'email' # login require email
+    USERNAME_FIELD = 'email'  # login require email
 
     REQUIRED_FIELDS = []
 
     objects = UserManager()
 
-   # Methods
+    # Methods
     def __str__(self):
         return self.email
 
     def get_email(self):
         return self.email
-    
+
     @property
     def is_staff(self):
         return self.staff
@@ -69,7 +70,7 @@ class User(AbstractBaseUser,PermissionsMixin):
     @property
     def is_admin(self):
         return self.admin
-    
+
     @property
     def is_active(self):
         return self.active
@@ -82,7 +83,7 @@ class User(AbstractBaseUser,PermissionsMixin):
 # Definition of a method to rename the users avatar  uploaded
 def user_avatar_path(instance, filename):
     # Set the path
-    upload_to = 'static/images/avatars/{userid}/'.format(userid=instance.id)
+    upload_to = 'images/avatars/{userid}/'.format(userid=instance.id)
 
     # Build the filename
     # Get the extension
@@ -94,26 +95,26 @@ def user_avatar_path(instance, filename):
     # Return the whole path to the file
     import os
     return os.path.join(upload_to, filename)
-    
+
 
 # This class contain extra informations about user
 class UserProfile(models.Model):
-    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     # Attributes
     # upload at specific location
     avatar = models.ImageField(upload_to=user_avatar_path)
     validated = models.BooleanField(default=False)
-    surname = models.CharField(max_length=35,blank=True)
-    first_name = models.CharField(max_length=35,blank=True)
+    surname = models.CharField(max_length=35, blank=True)
+    first_name = models.CharField(max_length=35, blank=True)
     tel = PhoneNumberField()
     adress_street = models.CharField(max_length=200, db_column='UserAdressStreet', blank=True)
     adress_postal_code = models.CharField(max_length=10, db_column='UserAdressPostalCode', blank=True)
     adress_city = models.CharField(max_length=30, db_column='UserAdressCity', blank=True)
-    adress_country = CountryField(blank_label='(select country)',default=None)
+    adress_country = CountryField(blank_label='(select country)', default=None)
 
     def __str__(self):
-        return  self.first_name + " " + self.surname + ">"
+        return self.first_name + " " + self.surname + ">"
 
 
 # Define the Categories available
@@ -131,9 +132,9 @@ class Category(models.Model):
 # Define the model describing an Ad
 class Ad(models.Model):
     # Foreign keys
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ads')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='classifiedads')
     saved_by = models.ManyToManyField(User, db_column='SavedBy', blank=True, related_name='saved_ads')
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='ads')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='classifiedads')
 
     # Attributes
     published = models.DateField(auto_now_add=True)
@@ -150,7 +151,7 @@ class Ad(models.Model):
 # Definition of a method to rename the pictures uploaded
 def path_and_rename(instance, filename):
     # Set the path
-    upload_to = 'static/images/ads/{adid}/'.format(adid=instance.relatedAd.id)
+    upload_to = 'images/classifiedads/{adid}/'.format(adid=instance.relatedAd.id)
 
     # Build the filename
     # Get the extension
@@ -177,13 +178,15 @@ class Picture(models.Model):
 # Define discussion model
 class Chat(models.Model):
     # Foreign keys 
-    sender = models.ForeignKey(User,on_delete=models.CASCADE, related_name='sender_chat')
-    receiver = models.ForeignKey(User,on_delete=models.CASCADE, related_name='receiver_chat')
-    related_ad = models.ForeignKey(Ad,on_delete=models.CASCADE, related_name='chats')
-   
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender_chat')
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiver_chat')
+    related_ad = models.ForeignKey(Ad, on_delete=models.CASCADE, related_name='chats')
+
     # Attributes
     created_at = models.DateField(auto_now_add=True)
-    content = models.TextField(max_length=1500,blank=False)
+    content = models.TextField(max_length=1500, blank=False)
 
     def __str__(self):
-        return   "  {} a envoyé  le message : {} à {}  pour l'annonce : {} ".format(self.sender.email,self.content,self.receiver.email,self.related_ad.headline)
+        return "  {} a envoyé  le message : {} à {}  pour l'annonce : {} ".format(self.sender.email, self.content,
+                                                                                  self.receiver.email,
+                                                                                  self.related_ad.headline)

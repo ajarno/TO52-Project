@@ -23,4 +23,3 @@ class AdAdmin(admin.ModelAdmin):
 
 # Add the pictures inline panel to the ad panel
 admin.site.register(Ad, AdAdmin)
-

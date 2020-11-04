@@ -1,12 +1,13 @@
-from rest_framework import viewsets,status
-from rest_framework.permissions import IsAuthenticated,IsAdminUser
+from rest_framework import viewsets, status
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.decorators import action
 from .models import Chat, User, UserProfile, Category, Ad
-from .serializers import CategorySerializer, AdMiniSerializer, AdSerializer, ChatSerializer, UserSerializer, UserProfileSerializer
-from .permissions import IsOwnerProfileOrReadOnly,IsOwnerChatOrReadOnly
-
+from .serializers import CategorySerializer, AdMiniSerializer, AdSerializer, ChatSerializer, UserSerializer, \
+    UserProfileSerializer
+from .permissions import IsOwnerProfileOrReadOnly, IsOwnerChatOrReadOnly
+from django_filters.rest_framework import DjangoFilterBackend
 
 # UserViewSet
 class UserViewSet(ListCreateAPIView):
@@ -84,15 +85,19 @@ class AdminChatViewSet(viewsets.ModelViewSet):
 
 class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
-    queryset = Category.objects.all()
+    queryset = Category.objects.order_by('name').all()
     http_method_names = ['get']
+    permission_classes = [AllowAny]
 
 
 class AdViewSet(viewsets.ModelViewSet):
-    serializer_class = AdMiniSerializer
-    queryset = Ad.objects.all()
+    serializer_class = AdSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    queryset = Ad.objects.order_by('-published').all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ('category',)
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = AdSerializer(instance)
-        return Response(serializer.data)
+    # def retrieve(self, request, *args, **kwargs):
+    #     instance = self.get_object()
+    #     serializer = AdMiniSerializer(instance)
+    #     return Response(serializer.data)
