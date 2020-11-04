@@ -8,8 +8,16 @@ import { Typography, Divider } from "@material-ui/core";
 
 const useStyles = makeStyles({
   container: {
+    display: "flex",
+    flexDirection: "row",
     margin: "1.5vw 2.5vw",
   },
+  leftContainer: {
+    
+  },
+  rightContainer: {
+
+  }
 });
 
 export default function AdDisplayer(props) {
@@ -33,9 +41,9 @@ export default function AdDisplayer(props) {
   return (
     <React.Fragment>
       <BackBar />
-      <div className={classes.container}>
-        {ad && (
-          <div>
+      {ad && (
+        <div className={classes.container}>
+          <div className={classes.leftContainer}>
             <PictureSlider pictures={ad.pictures} />
             <Typography variant="h6" gutterBottom>
               {ad.headline}
@@ -59,8 +67,9 @@ export default function AdDisplayer(props) {
               {ad.description}
             </Typography>
           </div>
-        )}
-      </div>
+          <div className={classes.rightContainer}></div>
+        </div>
+      )}
     </React.Fragment>
   );
 }

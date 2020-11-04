@@ -12,7 +12,7 @@ const useStyles = makeStyles({
     width: "50vw",
     height: "40vh",
     minWidth: "320px",
-    minHeight: "300px",
+    minHeight: "240px",
   },
   imageSrc: {
     height: "100%",
