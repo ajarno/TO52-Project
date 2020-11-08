@@ -8,7 +8,7 @@ from .models import Chat, User, UserProfile, Category, Picture, Ad
 class PictureSerializer(serializers.ModelSerializer):
     class Meta:
         model = Picture
-        fields = ['pic']
+        fields = ('pic',)
 
 
 # TODO: remplacer author par un UserSerializer
@@ -23,12 +23,16 @@ class AdSerializer(serializers.ModelSerializer):
 
 
 class AdMiniSerializer(serializers.ModelSerializer):
-    pictures = PictureSerializer(many=True)
+    first_picture = serializers.SerializerMethodField(read_only=True)
+    total_pictures = serializers.IntegerField(source="pictures.count", read_only=True)
+
+    def get_first_picture(self, obj):
+        return PictureSerializer(obj.pictures.all()[0], context={'request': self.context.get('request', None)}).data if obj.pictures.count() > 0 else None
 
     class Meta:
         model = Ad
-        fields = ['id', 'headline', 'category', 'price', 'pictures',
-                  'published', 'adress_city']
+        fields = ['id', 'headline', 'category', 'price',
+                  'published', 'adress_city', 'first_picture', 'total_pictures']
 
 
 # Discussion serializer
@@ -41,7 +45,7 @@ class ChatSerializer(serializers.ModelSerializer):
 # User Serializer class for our custom user
 class UserSerializer(serializers.ModelSerializer):
     # get saved ads of users
-    saved_ads = AdSerializer(many=True, read_only=True)
+    #  saved_ads = AdSerializer(many=True, read_only=True)
 
     class Meta:
         model = get_user_model()
@@ -60,6 +64,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 # Category Serializer
 class CategorySerializer(serializers.ModelSerializer):
+    total_ads = serializers.SerializerMethodField(read_only=True)
+
+    @staticmethod
+    def get_total_ads(obj):
+        return obj.classifiedads.count()
+
     class Meta:
         model = Category
-        fields = ('slug', 'name')
+        fields = ('slug', 'name', 'picture', 'total_ads')

@@ -9,11 +9,12 @@ from .serializers import CategorySerializer, AdMiniSerializer, AdSerializer, Cha
 from .permissions import IsOwnerProfileOrReadOnly, IsOwnerChatOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
 
+
 # UserViewSet
 class UserViewSet(ListCreateAPIView):
-    queryset=User.objects.all()
-    serializer_class=UserSerializer
-    permission_classes=[IsAuthenticated]
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
 
     @action(detail=True, methods=['post'])
     def saved_ads(self, request):
@@ -25,62 +26,64 @@ class UserViewSet(ListCreateAPIView):
         except:
             response = "Une erreur est survenue lors du traitement de l'opération"
             return Response(response, status=status.HTTP_200_OK)
-       
+
 
 # Create user profile
 class UserProfileListCreateView(ListCreateAPIView):
-    queryset=UserProfile.objects.all()
-    serializer_class=UserProfileSerializer
-    permission_classes=[IsAuthenticated]
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        user=self.request.user
+        user = self.request.user
         serializer.save(user=user)
+
 
 # Get user profile details
 class UserProfileDetailView(RetrieveUpdateDestroyAPIView):
-    queryset=UserProfile.objects.all()
-    serializer_class=UserProfileSerializer
-    permission_classes=[IsOwnerProfileOrReadOnly,IsAuthenticated]
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsOwnerProfileOrReadOnly, IsAuthenticated]
 
-        
+
 # Chat ViewSets for the users
 class UserChatViewSet(viewsets.ModelViewSet):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
-    permission_classes=[IsAuthenticated,IsOwnerChatOrReadOnly]
+    permission_classes = [IsAuthenticated, IsOwnerChatOrReadOnly]
 
     # chat sent by the user for a particular ad
-    def ad_chats_sent_byuser(self, request,pk=None):
+    def ad_chats_sent_byuser(self, request, pk=None):
         user = request.user
-        related_ad =  Ad.objects.get(id=pk)
-        chats = Chat.objects.all().filter(sender= user,related_ad=related_ad)
+        related_ad = Ad.objects.get(id=pk)
+        chats = Chat.objects.all().filter(sender=user, related_ad=related_ad)
         return chats
 
     # chat received by the user for a particular ad
-    def ad_chats_received_byuser(self, request,pk=None):
+    def ad_chats_received_byuser(self, request, pk=None):
         user = request.user
-        related_ad =  Ad.objects.get(id=pk)
-        chats = Chat.objects.all().filter(receiver= user,related_ad=related_ad)
+        related_ad = Ad.objects.get(id=pk)
+        chats = Chat.objects.all().filter(receiver=user, related_ad=related_ad)
         return chats
-    
+
     # chat received and sent by the user for a particular ad
     @action(detail=True, methods=['POST'])
-    def ad_chats_byuser(self, request,pk=None):
-        ad_chats_byuser = self.ad_chats_sent_byuser(request,pk).concat(self.ad_chats_received_byuser(request,pk))
+    def ad_chats_byuser(self, request, pk=None):
+        ad_chats_byuser = self.ad_chats_sent_byuser(request, pk).concat(self.ad_chats_received_byuser(request, pk))
         try:
-            response = {'message': 'les chats reçu et envoyé par l''utilisateur pour une annonce donnée', 'result': ad_chats_byuser}
+            response = {'message': 'les chats reçu et envoyé par l''utilisateur pour une annonce donnée',
+                        'result': ad_chats_byuser}
             return Response(response, status=status.HTTP_200_OK)
         except:
             response = "Une erreur est survenue lors du traitement de l'opération"
             return Response(response, status=status.HTTP_200_OK)
 
-        
+
 # Chat ViewSets for the admin
 class AdminChatViewSet(viewsets.ModelViewSet):
-    queryset=Chat.objects.all()
-    serializer_class=ChatSerializer
-    permission_classes=[IsAuthenticated,IsAdminUser]
+    queryset = Chat.objects.all()
+    serializer_class = ChatSerializer
+    permission_classes = [IsAuthenticated, IsAdminUser]
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -91,13 +94,13 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 
 class AdViewSet(viewsets.ModelViewSet):
-    serializer_class = AdSerializer
+    serializer_class = AdMiniSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Ad.objects.order_by('-published').all()
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ('category',)
 
-    # def retrieve(self, request, *args, **kwargs):
-    #     instance = self.get_object()
-    #     serializer = AdMiniSerializer(instance)
-    #     return Response(serializer.data)
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = AdSerializer(instance, context={"request": request})
+        return Response(serializer.data)

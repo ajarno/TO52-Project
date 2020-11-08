@@ -117,10 +117,28 @@ class UserProfile(models.Model):
         return self.first_name + " " + self.surname + ">"
 
 
+# Definition of a method to rename the pictures uploaded
+def category_path(instance, filename):
+    # Set the path
+    upload_to = 'images/categories/'
+
+    # Build the filename
+    # Get the extension
+    ext = filename.split('.')[-1]
+    # Set the filename as random string
+    from uuid import uuid4
+    filename = '{slug}.{extension}'.format(slug=instance.slug, extension=ext)
+
+    # Return the whole path to the file
+    import os
+    return os.path.join(upload_to, filename)
+
+
 # Define the Categories available
 class Category(models.Model):
     name = models.CharField(max_length=200)
     slug = models.SlugField(primary_key=True)
+    picture = models.ImageField(upload_to=category_path)
 
     class Meta:
         verbose_name_plural = "categories"

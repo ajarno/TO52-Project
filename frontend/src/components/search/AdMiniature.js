@@ -54,10 +54,10 @@ export default function AdMiniature(props) {
           <Card className={classes.root} variant="outlined">
             <CardActionArea href={`/ads/${ad.id}`}>
               <div className={classes.image}>
-                {ad.pictures.length > 0 ? (
+                {ad.total_pictures > 0 ? (
                   <CardMedia
                     className={classes.media}
-                    image={ad.pictures[0].pic}
+                    image={ad.first_picture.pic}
                     alt={"Image de l'annonce " + ad.headline}
                   />
                 ) : (
@@ -69,7 +69,7 @@ export default function AdMiniature(props) {
                 )}
                 <Typography className={classes.picnumber} gutterBottom>
                   <PhotoCameraIcon className={classes.icon} />{" "}
-                  {ad.pictures.length}
+                  {ad.total_pictures}
                 </Typography>
               </div>
               <CardContent>

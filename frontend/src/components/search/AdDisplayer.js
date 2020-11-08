@@ -4,7 +4,7 @@ import { useEffectOnlyOnce } from "../../api/Utils";
 import { fetchAdById } from "../../api/AdsAPI";
 import BackBar from "../../shared/components/BackBar";
 import PictureSlider from "../../shared/components/PictureSlider";
-import { Typography, Divider } from "@material-ui/core";
+import { Typography, Divider, Grid } from "@material-ui/core";
 
 const useStyles = makeStyles({
   container: {
@@ -12,12 +12,6 @@ const useStyles = makeStyles({
     flexDirection: "row",
     margin: "1.5vw 2.5vw",
   },
-  leftContainer: {
-    
-  },
-  rightContainer: {
-
-  }
 });
 
 export default function AdDisplayer(props) {
@@ -43,31 +37,33 @@ export default function AdDisplayer(props) {
       <BackBar />
       {ad && (
         <div className={classes.container}>
-          <div className={classes.leftContainer}>
-            <PictureSlider pictures={ad.pictures} />
-            <Typography variant="h6" gutterBottom>
-              {ad.headline}
-            </Typography>
-            <Typography variant="subtitle1" gutterBottom>
-              {ad.price}€
-            </Typography>
-            <Typography variant="caption" color="textSecondary" gutterBottom>
-              {`publiée ${new Intl.DateTimeFormat("fr-FR", {
-                weekday: "long",
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              }).format(new Date(ad.published))}`}
-            </Typography>
-            <Divider />
-            <Typography variant="subtitle2" gutterBottom>
-              Description
-            </Typography>
-            <Typography variant="body2" gutterBottom>
-              {ad.description}
-            </Typography>
-          </div>
-          <div className={classes.rightContainer}></div>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6}>
+              <PictureSlider pictures={ad.pictures} />
+              <Typography variant="h6" gutterBottom>
+                {ad.headline}
+              </Typography>
+              <Typography variant="subtitle1" gutterBottom>
+                {ad.price}€
+              </Typography>
+              <Typography variant="caption" color="textSecondary" gutterBottom>
+                {`publiée ${new Intl.DateTimeFormat("fr-FR", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                }).format(new Date(ad.published))}`}
+              </Typography>
+              <Divider />
+              <Typography variant="subtitle2" gutterBottom>
+                Description
+              </Typography>
+              <Typography variant="body2" gutterBottom>
+                {ad.description}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}></Grid>
+          </Grid>
         </div>
       )}
     </React.Fragment>
