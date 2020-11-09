@@ -4,4 +4,6 @@ const fetchAdsByCategory = (category) => API.get("/classifiedads?category=" + ca
 
 const fetchAdById = (id) => API.get("/classifiedads/" + id);
 
-export { fetchAdsByCategory, fetchAdById };
+const postAd = () => API.post("/classifiedads/");
+
+export { fetchAdsByCategory, fetchAdById, postAd };

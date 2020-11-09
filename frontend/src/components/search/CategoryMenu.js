@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Paper, Tabs, Tab } from "@material-ui/core";
+import { Paper, Tabs, Tab, Card } from "@material-ui/core";
 import { TabPanel } from "../../shared/components/TabPanel";
 import { useEffectOnlyOnce } from "../../api/Utils";
-import { fetchCategories } from "../../api/CategoriesAPI";
+import { useCategories } from "../../api/CategoriesAPI";
 import AdList from "./AdList";
 
 const useStyles = makeStyles((theme) => ({
@@ -23,65 +23,88 @@ const useStyles = makeStyles((theme) => ({
 export default function CategoryMenu() {
   const classes = useStyles();
 
+  // =========================================================
+  // =================== DECLARE CONSTANTS ===================
+  // =========================================================
+  const categories = useCategories();
+  
+  // =========================================================
+  // ============ DECLARE VARIABLES AND FUNCTIONS  ===========
+  // ============== RELATED TO THE TABS CHANGES ==============
+  // =========================================================
   const [activeTab, setActiveTab] = useState("");
-  const [categories, setCategories] = useState([]);
-
+  
   useEffectOnlyOnce(() => {
-    const storedCategories = JSON.parse(sessionStorage.getItem("categories"));
-    if (storedCategories) {
-      setCategories(storedCategories);
-    } else {
-      fetchCategories().then((_categories) => {
-        setCategories(_categories.data);
-        sessionStorage.setItem("categories", JSON.stringify(_categories.data));
-      });
+    function initActiveTab() {
+      const storedCategorySelected = sessionStorage.getItem("categorySelected");
+      setActiveTab(storedCategorySelected ? storedCategorySelected : false);
     }
     initActiveTab();
   });
-
-  function initActiveTab() {
-    const storedCategorySelected = sessionStorage.getItem("categorySelected");
-    setActiveTab(storedCategorySelected ? storedCategorySelected : false);
-  }
 
   const handleChange = (event, newValue) => {
     setActiveTab(newValue);
     sessionStorage.setItem("categorySelected", newValue);
   };
 
+  // ========================================================
+  // ======================= RENDERING ======================
+  // ========================================================
   return (
     <React.Fragment>
-        <Paper className={classes.menu} elevation={0} position="static" square>
-          <Tabs
+      <Paper className={classes.menu} elevation={0} position="static" square>
+        <Tabs
           value={activeTab}
-            selectionFollowsFocus
-            onChange={handleChange}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="scrollable"
-            scrollButtons="on"
-          >
-            {categories &&
-              categories.map((category) => {
-                return (
-                  <Tab
-                    className={classes.tab}
-                    value={category.slug}
-                    key={category.slug}
-                    label={category.name}
-                  />
-                );
-              })}
-          </Tabs>
-        </Paper>
-        {categories &&
-          categories.map((category) => {
-            return (
-              <TabPanel key={category.slug} value={activeTab} index={category.slug}>
-                <AdList category={category.slug} />
-              </TabPanel>
-            );
-          })}
+          selectionFollowsFocus
+          onChange={handleChange}
+          indicatorColor="primary"
+          textColor="primary"
+          variant="scrollable"
+          scrollButtons="on"
+        >
+          {categories &&
+            categories.map((category) => {
+              return (
+                <Tab
+                  className={classes.tab}
+                  value={category.slug}
+                  key={category.slug}
+                  label={category.name}
+                />
+              );
+            })}
+        </Tabs>
+      </Paper>
+      {activeTab === false ? (
+        <React.Fragment>
+          {categories &&
+            categories.map((category) => {
+              return (
+                <Card
+                  className={classes.tab}
+                  value={category.slug}
+                  key={category.slug}
+                  label={category.name}
+                ></Card>
+              );
+            })}
+        </React.Fragment>
+      ) : (
+        <React.Fragment>
+          {categories &&
+            categories.map((category) => {
+              return (
+                <TabPanel
+                  key={category.slug}
+                  value={activeTab}
+                  index={category.slug}
+                >
+                  <AdList category={category.slug} />
+                </TabPanel>
+              );
+            })}
+        </React.Fragment>
+      )}
     </React.Fragment>
   );
 }
