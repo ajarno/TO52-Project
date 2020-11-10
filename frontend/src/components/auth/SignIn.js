@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Redirect } from "react-router-dom";
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -13,6 +14,8 @@ import Container from '@material-ui/core/Container';
 import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
 import Copyright from '../../shared/components/Copyright'
+import { signIn } from "../../api/AuthAPI";
+
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -36,6 +39,33 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignIn() {
   const classes = useStyles();
+  const [isLoggedIn, setLoggedIn] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  
+  function doSignIn(){
+    signIn(email,password)
+      .then(result => {
+        if (result.status ===200) {
+          setLoggedIn(true);
+          console.log("Is log in")
+        } else {
+          setIsError(true); 
+          console.log("Is not log in")
+        }
+      })
+      .catch(e => {
+        setIsError(true);
+        console.log(e)
+      }
+    )
+  }
+//TODO:  Mettre Redirect dans Route
+  if (isLoggedIn) {
+    return <Redirect to="/" />;
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -58,6 +88,11 @@ export default function SignIn() {
             name="email"
             autoComplete="email"
             autoFocus
+            value={email}
+            onChange={evt => {
+              setEmail(evt.target.value);
+              console.log("change")
+            }}
           />
           <TextField
             variant="outlined"
@@ -69,6 +104,10 @@ export default function SignIn() {
             type="password"
             id="password"
             autoComplete="current-password"
+            value={password}
+            onChange={evt => {
+              setPassword(evt.target.value)
+            }}
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
@@ -80,6 +119,7 @@ export default function SignIn() {
             variant="contained"
             color="primary"
             className={classes.submit}
+            onClick={doSignIn}
           >
             Se connecter
           </Button>
@@ -96,6 +136,7 @@ export default function SignIn() {
             </Grid>
           </Grid>
         </form>
+        { isError &&<h1>The username or password provided were incorrect!</h1> }
       </div>
       <Box mt={8}>
         <Copyright />
