@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Paper, Tabs, Tab, Card } from "@material-ui/core";
+import { Paper, Tabs, Tab } from "@material-ui/core";
 import { TabPanel } from "../../shared/components/TabPanel";
 import { useEffectOnlyOnce } from "../../api/Utils";
 import { useCategories } from "../../api/CategoriesAPI";
 import AdList from "./AdList";
+import LandingPage from "../home/LandingPage";
 
 const useStyles = makeStyles((theme) => ({
   menu: {
@@ -27,13 +28,13 @@ export default function CategoryMenu() {
   // =================== DECLARE CONSTANTS ===================
   // =========================================================
   const categories = useCategories();
-  
+
   // =========================================================
   // ============ DECLARE VARIABLES AND FUNCTIONS  ===========
   // ============== RELATED TO THE TABS CHANGES ==============
   // =========================================================
   const [activeTab, setActiveTab] = useState("");
-  
+
   useEffectOnlyOnce(() => {
     function initActiveTab() {
       const storedCategorySelected = sessionStorage.getItem("categorySelected");
@@ -77,17 +78,7 @@ export default function CategoryMenu() {
       </Paper>
       {activeTab === false ? (
         <React.Fragment>
-          {categories &&
-            categories.map((category) => {
-              return (
-                <Card
-                  className={classes.tab}
-                  value={category.slug}
-                  key={category.slug}
-                  label={category.name}
-                ></Card>
-              );
-            })}
+          <LandingPage />
         </React.Fragment>
       ) : (
         <React.Fragment>

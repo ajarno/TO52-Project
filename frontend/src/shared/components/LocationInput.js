@@ -10,7 +10,7 @@ const APP_ID = process.env.ALGOLIA_APP_ID;
 const useStyles = makeStyles((theme) => ({
   error: {
     "& .ap-input": {
-      borderColor: "#DC143C",
+      borderColor: "rgb(255, 0, 0, 0.87)",
     },
   },
 }));

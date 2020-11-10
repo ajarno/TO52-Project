@@ -23,7 +23,7 @@ export default function AdDisplayer(props) {
       .then((result) => {
         let _ad = result.data;
         _ad.pictures = _ad.pictures.map((picture) => picture.pic);
-        console.log(_ad);
+        // console.log(_ad);
         setAd(_ad);
       })
       .catch((err) => {

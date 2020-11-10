@@ -20,7 +20,7 @@ export default function Ads(props) {
     fetchAdsByCategory(props.category)
       .then((_ads) => {
         setAds(_ads.data);
-        console.log(_ads.data);
+        // console.log(_ads.data);
       })
       .catch((err) => {
         console.error(err.message);
