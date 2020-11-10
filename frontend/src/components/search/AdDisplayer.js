@@ -4,6 +4,7 @@ import { useEffectOnlyOnce } from "../../api/Utils";
 import { fetchAdById } from "../../api/AdsAPI";
 import BackBar from "../../shared/components/BackBar";
 import PictureSlider from "../../shared/components/PictureSlider";
+import Map from "../../shared/components/Map";
 import { Typography, Divider, Grid } from "@material-ui/core";
 
 const useStyles = makeStyles({
@@ -62,7 +63,14 @@ export default function AdDisplayer(props) {
                 {ad.description}
               </Typography>
             </Grid>
-            <Grid item xs={12} sm={6}></Grid>
+            <Grid item xs={12} sm={6} className={classes.mapContainer}>
+              {ad.location &&
+                ad.location.city &&
+                ad.location.lat &&
+                ad.location.lg && (
+                  <Map location={ad.location} />
+                )}
+            </Grid>
           </Grid>
         </div>
       )}
