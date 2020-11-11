@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { useCategories } from "../../api/CategoriesAPI";
-import { postAd } from "../../api/AdsAPI";
+// import { postAd } from "../../api/AdsAPI";
 import BackBar from "../../shared/components/BackBar";
 import PicturesDropzone from "../../shared/components/PicturesDropzone";
 import LocationInput from "../../shared/components/LocationInput";
@@ -28,8 +28,8 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
   },
   actionsContainer: {
-    position: "-webkit-sticky",
     position: "sticky",
+    WebkitPosition: "-webkit-sticky",
     bottom: "5vh",
     float: "right",
     marginBottom: theme.spacing(2),
@@ -41,6 +41,12 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     "& .MuiStepLabel-labelContainer": {
       textAlign: "initial",
+    },
+    "& .MuiStepConnector-lineVertical": {
+      minHeight: 10,
+    },
+    "& .MuiStepContent-root": {
+      paddingTop: 12,
     },
   },
   text: {
@@ -196,6 +202,7 @@ export default function AdDisplayer(props) {
       case mapTypeToIndex.indexOf("headline"):
         return (
           <TextField
+            autoFocus
             required
             error={error[mapTypeToIndex.indexOf("headline")]}
             helperText={
@@ -317,7 +324,7 @@ export default function AdDisplayer(props) {
 
   return (
     <React.Fragment>
-      <BackBar />
+      <BackBar title="Nouvelle annonce" />
       <div className={classes.container}>
         <Stepper nonLinear activeStep={activeStep} orientation="vertical">
           {steps.map((label, index) => (
@@ -340,36 +347,34 @@ export default function AdDisplayer(props) {
             </Step>
           ))}
         </Stepper>
-        <div>
-          <div className={classes.actionsContainer}>
+        <div className={classes.actionsContainer}>
+          <Button
+            disabled={activeStep === 0}
+            onClick={handleBack}
+            className={classes.button}
+          >
+            Précédent
+          </Button>
+          {Object.keys(completed).length < steps.length - 1 ? (
             <Button
-              disabled={activeStep === 0}
-              onClick={handleBack}
+              variant="contained"
+              color="primary"
+              onClick={handleNext}
               className={classes.button}
             >
-              Précédent
+              Suivant
             </Button>
-            {Object.keys(completed).length < steps.length - 1 ? (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleNext}
-                className={classes.button}
-              >
-                Suivant
-              </Button>
-            ) : (
-              <Button
-                variant="contained"
-                color="primary"
-                disabled={!Object.keys(error).every((type) => !error[type])}
-                onClick={() => console.log("Annonce soumise")}
-                className={classes.button}
-              >
-                Soumettre l'annonce
-              </Button>
-            )}
-          </div>
+          ) : (
+            <Button
+              variant="contained"
+              color="secondary"
+              disabled={!Object.keys(error).every((type) => !error[type])}
+              onClick={() => console.log("Annonce soumise")}
+              className={classes.button}
+            >
+              Soumettre l'annonce
+            </Button>
+          )}
         </div>
       </div>
     </React.Fragment>

@@ -33,7 +33,7 @@ export default function Ads(props) {
       {(!minimumTimeElapsed && ads.length === 0) || isLoading ? (
         <AdMiniatureLoading />
       ) : ads.length > 0 ? (
-        <Grid container spacing={3}>
+        <Grid container alignItems="stretch" spacing={3}>
           {ads.map((ad) => {
             return <AdMiniature ad={ad} key={ad.id} />;
           })}

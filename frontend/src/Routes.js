@@ -11,7 +11,7 @@ export default () => {
     <BrowserRouter>
       <Switch>
         <Layout exact path='/' component={App}/>
-        <Layout exact path='/ads/new-add' component={NewAd}/>
+        <Layout exact path='/ads/new-ad' component={NewAd}/>
         <Layout path='/ads/:id' component={AdDisplayer}/>
         <Layout component={NotFound}/>
       </Switch>

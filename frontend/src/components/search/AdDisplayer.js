@@ -35,7 +35,7 @@ export default function AdDisplayer(props) {
 
   return (
     <React.Fragment>
-      <BackBar />
+      <BackBar title="Détails de l'annonce"/>
       {ad && (
         <div className={classes.container}>
           <Grid container spacing={3}>

@@ -1,6 +1,6 @@
 import API from "./API";
 import { useEffectOnlyOnce } from "./Utils";
-import { useState } from 'react';
+import { useState } from "react";
 
 const fetchCategories = () => API.get("/categories/");
 
@@ -9,13 +9,19 @@ function useCategories() {
 
   useEffectOnlyOnce(() => {
     const storedCategories = JSON.parse(sessionStorage.getItem("categories"));
-    if (storedCategories && storedCategories.length > 0) {
+    if (storedCategories) {
       setCategories(storedCategories);
     } else {
-      fetchCategories().then((_categories) => {
-        setCategories(_categories.data);
-        sessionStorage.setItem("categories", JSON.stringify(_categories.data));
-      });
+      fetchCategories().then((result) => {
+        const _categories = result.data;
+        if (_categories.length > 0) {
+          setCategories(_categories);
+          sessionStorage.setItem(
+            "categories",
+            JSON.stringify(_categories)
+          );
+        }
+      }).catch(e => {});
     }
   });
 

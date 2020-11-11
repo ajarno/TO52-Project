@@ -11,7 +11,6 @@ const useStyles = makeStyles({
   media: {
     width: "100%",
     height: "40vh",
-    minWidth: "320px",
     minHeight: "240px",
   },
   imageSrc: {

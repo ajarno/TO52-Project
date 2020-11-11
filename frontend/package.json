@@ -21,7 +21,7 @@
     "react-scripts": "^3.4.4"
   },
   "scripts": {
-    "reinstall": "rm -rf node_modules && rm package-lock.json && npm install",
+    "reinstall": "rm -rf node_modules && rm -f package-lock.json && npm install",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
