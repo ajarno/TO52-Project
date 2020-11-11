@@ -9,7 +9,7 @@ function useCategories() {
 
   useEffectOnlyOnce(() => {
     const storedCategories = JSON.parse(sessionStorage.getItem("categories"));
-    if (storedCategories) {
+    if (storedCategories && storedCategories.length > 0) {
       setCategories(storedCategories);
     } else {
       fetchCategories().then((_categories) => {
