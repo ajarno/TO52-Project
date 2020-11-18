@@ -24,4 +24,5 @@ urlpatterns = [
     path('api/', include('classified_ads_app.urls')),
     path('api/auth/', include('djoser.urls')),
     path('api/auth/', include('djoser.urls.jwt')),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

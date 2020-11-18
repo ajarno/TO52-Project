@@ -40,13 +40,14 @@ class UserManager(BaseUserManager):
 
 
 # This class is custom user class.
-# Custom user class is required because we need to modify 
+# Custom user class is required because we need to modify
 # default login method with username by email auth
 class User(AbstractBaseUser, PermissionsMixin):
     # Attributes
     email = models.EmailField(max_length=80, unique=True)
-    active = models.BooleanField(default=True)  # can login
-    staff = models.BooleanField(default=False)  # staff user is ad publisher or buyer
+    is_active = models.BooleanField(default=True)  # can login
+    # staff user is ad publisher or buyer
+    staff = models.BooleanField(default=False)
     admin = models.BooleanField(default=False)  # admin user is superuser
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -70,10 +71,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def is_admin(self):
         return self.admin
-
-    @property
-    def is_active(self):
-        return self.active
 
     @property
     def is_superuser(self):
@@ -108,9 +105,12 @@ class UserProfile(models.Model):
     surname = models.CharField(max_length=35, blank=True)
     first_name = models.CharField(max_length=35, blank=True)
     tel = PhoneNumberField()
-    adress_street = models.CharField(max_length=200, db_column='UserAdressStreet', blank=True)
-    adress_postal_code = models.CharField(max_length=10, db_column='UserAdressPostalCode', blank=True)
-    adress_city = models.CharField(max_length=30, db_column='UserAdressCity', blank=True)
+    adress_street = models.CharField(
+        max_length=200, db_column='UserAdressStreet', blank=True)
+    adress_postal_code = models.CharField(
+        max_length=10, db_column='UserAdressPostalCode', blank=True)
+    adress_city = models.CharField(
+        max_length=30, db_column='UserAdressCity', blank=True)
     adress_country = CountryField(blank_label='(select country)', default=None)
 
     def __str__(self):
@@ -132,17 +132,23 @@ class Category(models.Model):
 # Define the model describing an Ad
 class Ad(models.Model):
     # Foreign keys
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='classifiedads')
-    saved_by = models.ManyToManyField(User, db_column='SavedBy', blank=True, related_name='saved_ads')
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='classifiedads')
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='classifiedads')
+    saved_by = models.ManyToManyField(
+        User, db_column='SavedBy', blank=True, related_name='saved_ads')
+    category = models.ForeignKey(
+        Category, on_delete=models.CASCADE, related_name='classifiedads')
 
     # Attributes
     published = models.DateField(auto_now_add=True)
     headline = models.CharField(max_length=75)
     description = models.TextField(max_length=1500)
-    price = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(500000)])
-    adress_postal_code = models.CharField(max_length=10, db_column='AdAdressPostalCode', blank=True)
-    adress_city = models.CharField(max_length=30, db_column='AdAdressCity', blank=True)
+    price = models.IntegerField(default=0, validators=[
+                                MinValueValidator(0), MaxValueValidator(500000)])
+    adress_postal_code = models.CharField(
+        max_length=10, db_column='AdAdressPostalCode', blank=True)
+    adress_city = models.CharField(
+        max_length=30, db_column='AdAdressCity', blank=True)
 
     def __str__(self):
         return self.headline + " - " + self.adress_city + " - " + self.price.__str__() + "€"
@@ -151,7 +157,8 @@ class Ad(models.Model):
 # Definition of a method to rename the pictures uploaded
 def path_and_rename(instance, filename):
     # Set the path
-    upload_to = 'images/classifiedads/{adid}/'.format(adid=instance.relatedAd.id)
+    upload_to = 'images/classifiedads/{adid}/'.format(
+        adid=instance.relatedAd.id)
 
     # Build the filename
     # Get the extension
@@ -168,7 +175,8 @@ def path_and_rename(instance, filename):
 # TODO: Save online the pictures instead of inside the folder
 # Define the Picture model linked to an Ad
 class Picture(models.Model):
-    relatedAd = models.ForeignKey(Ad, on_delete=models.CASCADE, related_name='pictures')
+    relatedAd = models.ForeignKey(
+        Ad, on_delete=models.CASCADE, related_name='pictures')
     pic = models.ImageField(upload_to=path_and_rename, blank=True)
 
     def __str__(self):
@@ -177,10 +185,13 @@ class Picture(models.Model):
 
 # Define discussion model
 class Chat(models.Model):
-    # Foreign keys 
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender_chat')
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiver_chat')
-    related_ad = models.ForeignKey(Ad, on_delete=models.CASCADE, related_name='chats')
+    # Foreign keys
+    sender = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='sender_chat')
+    receiver = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='receiver_chat')
+    related_ad = models.ForeignKey(
+        Ad, on_delete=models.CASCADE, related_name='chats')
 
     # Attributes
     created_at = models.DateField(auto_now_add=True)

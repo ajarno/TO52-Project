@@ -35,7 +35,8 @@ class AdMiniSerializer(serializers.ModelSerializer):
 class ChatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chat
-        fields = ('id', 'sender', 'receiver', 'related_ad', 'created_at', 'content')
+        fields = ('id', 'sender', 'receiver',
+                  'related_ad', 'created_at', 'content')
 
 
 # User Serializer class for our custom user
