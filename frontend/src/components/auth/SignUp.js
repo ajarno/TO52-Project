@@ -1,28 +1,30 @@
-
-import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
+import React, { useState } from "react";
+import { Redirect } from "react-router-dom";
+import Avatar from "@material-ui/core/Avatar";
+import Button from "@material-ui/core/Button";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import TextField from "@material-ui/core/TextField";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
+import Link from "@material-ui/core/Link";
+import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
+import { Alert } from "@material-ui/lab";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
+import Container from "@material-ui/core/Container";
+import { signUp } from "../../api/AuthAPI";
 
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
+      {"Copyright © "}
       <Link color="inherit" href="/">
         UT'annonces
-      </Link>{' '}
+      </Link>{" "}
       {new Date().getFullYear()}
-      {'.'}
+      {"."}
     </Typography>
   );
 }
@@ -30,16 +32,16 @@ function Copyright() {
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(5),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
   },
   form: {
-    width: '100%', // Fix IE 11 issue.
+    width: "100%", // Fix IE 11 issue.
     marginTop: theme.spacing(3),
   },
   submit: {
@@ -49,6 +51,80 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignUp() {
   const classes = useStyles();
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [signUpErrorMessages, setSignUpErrorMessages] = useState("");
+  const [isFormValid, setisFormValid] = useState(false);
+  const [isEmailInvalid, setIsEmailInvalid] = useState(false);
+  const [emailInvalidMessage, setEmailInvalidMessage] = useState("");
+  const [isPasswordInvalid, setIsPasswordInvalid] = useState(false);
+  const [passwordInvalidMessage, setPasswordInvalidMessage] = useState("");
+
+  function validateForm() {
+    var pattern = new RegExp(
+      /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
+    );
+
+    var strongPasswordRegex = new RegExp(
+      "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})"
+    );
+    /*    var mediumPasswordRegex = new RegExp(
+      "^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})"
+    ); */
+    if (email === "") {
+      setIsEmailInvalid(true);
+      setisFormValid(false);
+      setEmailInvalidMessage("L'adresse email est requise.");
+    } else if (!pattern.test(email)) {
+      setIsEmailInvalid(true);
+      setisFormValid(false);
+      setEmailInvalidMessage("Veuillez saisir une adresse email valide.");
+    } else if (password === "") {
+      setIsPasswordInvalid(true);
+      setisFormValid(false);
+      setPasswordInvalidMessage("Le mot de passe est requis.");
+    } else if (!strongPasswordRegex.test(password)) {
+      setIsPasswordInvalid(true);
+      setPasswordInvalidMessage(
+        "Le mot de passe doit contenir au moin 8 caractères y compris caractères alphanumériques et numériques."
+      );
+    } else {
+      setIsEmailInvalid(false);
+      setIsPasswordInvalid(false);
+      setisFormValid(true);
+    }
+  }
+
+  function doSignUp() {
+    validateForm();
+    if (isFormValid === true) {
+      signUp(email, password)
+        .then((result) => {
+          if (result.status === 201) {
+            setIsSignUp(true);
+          } else {
+            setIsSignUp(false);
+            setIsError(true);
+            setSignUpErrorMessages(
+              "Une erreur est survenue lors de la création du compte, vérifiez si vous n'avez pas déjà un compte avec cet email ."
+            );
+          }
+        })
+        .catch((e) => {
+          setIsSignUp(false);
+          setIsError(true);
+          setSignUpErrorMessages(
+            "Une erreur est survenue lors de la création du compte, vérifiez si vous n'avez pas déjà un compte avec cet email ."
+          );
+        });
+    }
+  }
+  //TODO:  Mettre Redirect dans Route
+  if (isSignUp) {
+    return <Redirect to="/auth/activate" />;
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -62,29 +138,6 @@ export default function SignUp() {
         </Typography>
         <form className={classes.form} noValidate>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                autoComplete="fname"
-                name="firstName"
-                variant="outlined"
-                required
-                fullWidth
-                id="firstName"
-                label="Prénom"
-                autoFocus
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="lastName"
-                label="Nom"
-                name="lastName"
-                autoComplete="lname"
-              />
-            </Grid>
             <Grid item xs={12}>
               <TextField
                 variant="outlined"
@@ -94,6 +147,13 @@ export default function SignUp() {
                 label="Adresse email"
                 name="email"
                 autoComplete="email"
+                value={email}
+                error={isEmailInvalid}
+                helperText={isEmailInvalid && emailInvalidMessage}
+                onChange={(evt) => {
+                  setEmail(evt.target.value);
+                  console.log("change");
+                }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -106,8 +166,15 @@ export default function SignUp() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                error={isPasswordInvalid}
+                helperText={isPasswordInvalid && passwordInvalidMessage}
+                value={password}
+                onChange={(evt) => {
+                  setPassword(evt.target.value);
+                }}
               />
             </Grid>
+            {isError && <Alert severity="error"> {signUpErrorMessages}</Alert>}
             <Grid item xs={12}>
               <FormControlLabel
                 control={<Checkbox value="allowExtraEmails" color="primary" />}
@@ -116,11 +183,11 @@ export default function SignUp() {
             </Grid>
           </Grid>
           <Button
-            type="submit"
             fullWidth
             variant="contained"
             color="primary"
             className={classes.submit}
+            onClick={doSignUp}
           >
             S'inscrire
           </Button>

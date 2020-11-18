@@ -1,35 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
+import Avatar from "@material-ui/core/Avatar";
+import Button from "@material-ui/core/Button";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import TextField from "@material-ui/core/TextField";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
+import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
+import { Alert } from "@material-ui/lab";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import { makeStyles } from "@material-ui/core/styles";
+import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
-import Copyright from '../../shared/components/Copyright'
-import { signIn } from "../../api/AuthAPI";
-
+import Copyright from "../../shared/components/Copyright";
+import { isAuthentificated, signIn, getCurrentUser } from "../../api/AuthAPI";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(5),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
   },
   form: {
-    width: '100%', // Fix IE 11 issue.
+    width: "100%", // Fix IE 11 issue.
     marginTop: theme.spacing(1),
   },
   submit: {
@@ -41,28 +41,67 @@ export default function SignIn() {
   const classes = useStyles();
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [loginErrorMessages, setLoginErrorMessages] = useState("");
+  const [isFormValid, setisFormValid] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isEmailInvalid, setIsEmailInvalid] = useState(false);
+  const [emailInvalidMessage, setEmailInvalidMessage] = useState("");
+  const [isPasswordInvalid, setIsPasswordInvalid] = useState(false);
+  const [passwordInvalidMessage, setPasswordInvalidMessage] = useState("");
 
-  
-  function doSignIn(){
-    signIn(email,password)
-      .then(result => {
-        if (result.status ===200) {
-          setLoggedIn(true);
-          console.log("Is log in")
-        } else {
-          setIsError(true); 
-          console.log("Is not log in")
-        }
-      })
-      .catch(e => {
-        setIsError(true);
-        console.log(e)
-      }
-    )
+  function validateForm() {
+    var pattern = new RegExp(
+      /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
+    );
+    if (email === "") {
+      setIsEmailInvalid(true);
+      setisFormValid(false);
+      setEmailInvalidMessage("L'adresse email est requise.");
+    } else if (!pattern.test(email)) {
+      setIsEmailInvalid(true);
+      setisFormValid(false);
+      setEmailInvalidMessage("Veuillez saisir une adresse email valide.");
+    } else if (password === "") {
+      setIsPasswordInvalid(true);
+      setisFormValid(false);
+      setPasswordInvalidMessage("Le mot de passe est requis.");
+    } else {
+      setIsEmailInvalid(false);
+      setIsPasswordInvalid(false);
+      setisFormValid(true);
+    }
   }
-//TODO:  Mettre Redirect dans Route
+
+  function doSignIn(event) {
+    event.preventDefault();
+    validateForm();
+    if (isFormValid === true) {
+      signIn(email, password)
+        .then((result) => {
+          if (result.status === 200) {
+            if (result.data.access) {
+              localStorage.setItem("token", result.data.access);
+            }
+            setLoggedIn(true);
+          } else if (result.status === 401) {
+            setLoggedIn(false);
+            setIsError(true);
+            setLoginErrorMessages(
+              "Adresse e-mail ou mot de passe invalide. Il vous reste 3 tentatives."
+            );
+          }
+        })
+        .catch((e) => {
+          setIsError(true);
+          setLoginErrorMessages(
+            "Adresse e-mail ou mot de passe invalide. Il vous reste 3 tentatives."
+          );
+        });
+    }
+  }
+
+  //TODO:  Mettre Redirect dans Route
   if (isLoggedIn) {
     return <Redirect to="/" />;
   }
@@ -77,7 +116,7 @@ export default function SignIn() {
         <Typography component="h1" variant="h5">
           Se connecter
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -89,9 +128,11 @@ export default function SignIn() {
             autoComplete="email"
             autoFocus
             value={email}
-            onChange={evt => {
+            error={isEmailInvalid}
+            helperText={isEmailInvalid && emailInvalidMessage}
+            onChange={(evt) => {
               setEmail(evt.target.value);
-              console.log("change")
+              console.log("change");
             }}
           />
           <TextField
@@ -105,16 +146,20 @@ export default function SignIn() {
             id="password"
             autoComplete="current-password"
             value={password}
-            onChange={evt => {
-              setPassword(evt.target.value)
+            error={isPasswordInvalid}
+            helperText={isPasswordInvalid && passwordInvalidMessage}
+            onChange={(evt) => {
+              setPassword(evt.target.value);
             }}
           />
+          {isError && <Alert severity="error"> {loginErrorMessages}</Alert>}
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="se souvenir de moi"
           />
+
           <Button
-            type="submit"
+            //type="submit"
             fullWidth
             variant="contained"
             color="primary"
@@ -136,7 +181,6 @@ export default function SignIn() {
             </Grid>
           </Grid>
         </form>
-        { isError &&<h1>The username or password provided were incorrect!</h1> }
       </div>
       <Box mt={8}>
         <Copyright />
