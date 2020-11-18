@@ -27,7 +27,6 @@ export default function AdDisplayer(props) {
           appId: APP_ID,
           apiKey: API_KEY,
           countries: ["fr"],
-          type: "city",
         }}
         onChange={props.onChange}
         onSuggestions={props.onSuggestions}

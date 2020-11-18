@@ -6,6 +6,7 @@ import BackBar from "../../shared/components/BackBar";
 import PictureSlider from "../../shared/components/PictureSlider";
 import Map from "../../shared/components/Map";
 import { Typography, Divider, Grid } from "@material-ui/core";
+import UserSummary from "../user/UserSummary";
 
 const useStyles = makeStyles({
   container: {
@@ -24,7 +25,7 @@ export default function AdDisplayer(props) {
       .then((result) => {
         let _ad = result.data;
         _ad.pictures = _ad.pictures.map((picture) => picture.pic);
-        // console.log(_ad);
+        console.log(_ad);
         setAd(_ad);
       })
       .catch((err) => {
@@ -35,11 +36,11 @@ export default function AdDisplayer(props) {
 
   return (
     <React.Fragment>
-      <BackBar title="Détails de l'annonce"/>
+      <BackBar title="Détails de l'annonce" />
       {ad && (
         <div className={classes.container}>
           <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={7}>
               <PictureSlider pictures={ad.pictures} />
               <Typography variant="h6" gutterBottom>
                 {ad.headline}
@@ -63,13 +64,14 @@ export default function AdDisplayer(props) {
                 {ad.description}
               </Typography>
             </Grid>
-            <Grid item xs={12} sm={6} className={classes.mapContainer}>
+            <Grid item xs={12} sm={5}>
+              {ad.author && ad.author.profile && (
+                <UserSummary user={ad.author.profile} />
+              )}
               {ad.location &&
                 ad.location.city &&
                 ad.location.lat &&
-                ad.location.lg && (
-                  <Map location={ad.location} />
-                )}
+                ad.location.lng && <Map location={ad.location} />}
             </Grid>
           </Grid>
         </div>
