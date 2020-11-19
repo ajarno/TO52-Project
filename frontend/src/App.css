@@ -1,9 +1,13 @@
-.App-header {
-    height: 100%;
+.AppHeader {
+  height: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 .root {
-    display: flex;
-    flex-direction: column;
-    min-height: calc(100vh - 9vh);
+  display: flex;
+  flex-direction: column;
+  margin-top: 9vh;
+  min-height: calc(100vh - 9vh);
 }

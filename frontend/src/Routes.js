@@ -3,8 +3,8 @@ import { BrowserRouter, Switch } from 'react-router-dom';
 import App from './App';
 import NotFound from './components/error/NotFound';
 import Layout from './components/layout/Layout';
-import AdDisplayer from './components/search/AdDisplayer';
-import NewAd from './components/search/NewAd';
+import AdDisplayer from './components/ad/AdDisplayer';
+import NewAd from './components/ad/NewAd';
 
 export default () => {
   return (

@@ -4,7 +4,7 @@ import { Paper, Tabs, Tab } from "@material-ui/core";
 import { TabPanel } from "../../shared/components/TabPanel";
 import { useEffectOnlyOnce } from "../../api/Utils";
 import { useCategories } from "../../api/CategoriesAPI";
-import AdList from "./AdList";
+import AdList from "../ad/AdList";
 import LandingPage from "../home/LandingPage";
 
 const useStyles = makeStyles((theme) => ({

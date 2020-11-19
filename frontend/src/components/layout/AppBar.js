@@ -47,37 +47,39 @@ export default function DenseAppBar() {
 
   return (
     <div className={classes.root}>
-      <AppBar className={classes.appBar} position="static">
+      <AppBar className={classes.appBar}>
         <Toolbar variant="dense" className={classes.toolbar}>
           <div>
             <Link onClick={returnHome} to="/">
               <img src={logo} className={classes.appLogo} alt="logo" />
             </Link>
-            {width > 700 ? 
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<AddBoxIcon />}
-              component={Link}
-              to="/ads/new-ad"
-              disableElevation={true}
-            >
-              Déposer une annonce
-            </Button> : <Tooltip
-              title="Déposer une annonce"
-              aria-label="new-ad-button"
-              enterDelay={500}
-            >
-              <IconButton
-                aria-label="new-ad"
-                color="secondary"
+            {width > 700 ? (
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<AddBoxIcon />}
                 component={Link}
                 to="/ads/new-ad"
+                disableElevation={true}
               >
-                <AddBoxIcon />
-              </IconButton>
-            </Tooltip>
-            }
+                Déposer une annonce
+              </Button>
+            ) : (
+              <Tooltip
+                title="Déposer une annonce"
+                aria-label="new-ad-button"
+                enterDelay={500}
+              >
+                <IconButton
+                  aria-label="new-ad"
+                  color="secondary"
+                  component={Link}
+                  to="/ads/new-ad"
+                >
+                  <AddBoxIcon />
+                </IconButton>
+              </Tooltip>
+            )}
           </div>
           <div>
             <Tooltip
