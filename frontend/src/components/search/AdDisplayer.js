@@ -8,13 +8,20 @@ import Map from "../../shared/components/Map";
 import { Typography, Divider, Grid } from "@material-ui/core";
 import UserSummary from "../user/UserSummary";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   container: {
     display: "flex",
     flexDirection: "row",
     margin: "1.5vw 2.5vw",
   },
-});
+  spaced: {
+    paddingTop: theme.spacing(3),
+    paddingBottom: theme.spacing(3),
+  },
+  headingTitle: {
+    fontSize: "1.05rem",
+  },
+}));
 
 export default function AdDisplayer(props) {
   const classes = useStyles();
@@ -25,7 +32,7 @@ export default function AdDisplayer(props) {
       .then((result) => {
         let _ad = result.data;
         _ad.pictures = _ad.pictures.map((picture) => picture.pic);
-        console.log(_ad);
+        // console.log(_ad);
         setAd(_ad);
       })
       .catch((err) => {
@@ -42,36 +49,65 @@ export default function AdDisplayer(props) {
           <Grid container spacing={3}>
             <Grid item xs={12} sm={7}>
               <PictureSlider pictures={ad.pictures} />
-              <Typography variant="h6" gutterBottom>
-                {ad.headline}
-              </Typography>
-              <Typography variant="subtitle1" gutterBottom>
-                {ad.price}€
-              </Typography>
-              <Typography variant="caption" color="textSecondary" gutterBottom>
-                {`publiée ${new Intl.DateTimeFormat("fr-FR", {
-                  weekday: "long",
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                }).format(new Date(ad.published))}`}
-              </Typography>
+              <div className={classes.spaced}>
+                <Typography
+                  variant="h5"
+                  style={{ fontWeight: "500" }}
+                  gutterBottom
+                >
+                  {ad.headline}
+                </Typography>
+                <Typography variant="h6" color="secondary" gutterBottom>
+                  {ad.price}€
+                </Typography>
+                <Typography
+                  variant="caption"
+                  color="textSecondary"
+                  style={{ float: "right", marginRight: 16 }}
+                  gutterBottom
+                >
+                  {`publiée ${new Intl.DateTimeFormat("fr-FR", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  }).format(new Date(ad.published))}`}
+                </Typography>
+              </div>
+              <Divider variant="middle" />
+              <div className={classes.spaced}>
+                <Typography
+                  variant="h6"
+                  className={classes.headingTitle}
+                  gutterBottom
+                >
+                  Description
+                </Typography>
+                <Typography variant="body2" gutterBottom>
+                  {ad.description}
+                </Typography>
+              </div>
               <Divider />
-              <Typography variant="subtitle2" gutterBottom>
-                Description
-              </Typography>
-              <Typography variant="body2" gutterBottom>
-                {ad.description}
-              </Typography>
+              <div className={classes.spaced}>
+                <Typography
+                  variant="h6"
+                  className={classes.headingTitle}
+                  gutterBottom
+                >
+                  Localisation
+                </Typography>
+                {ad.location &&
+                  ad.location.city &&
+                  ad.location.lat &&
+                  ad.location.lng && (
+                    <Map location={ad.location} variant="rounded" />
+                  )}
+              </div>
             </Grid>
             <Grid item xs={12} sm={5}>
               {ad.author && ad.author.profile && (
-                <UserSummary user={ad.author.profile} />
+                <UserSummary user={ad.author.profile} sticky />
               )}
-              {ad.location &&
-                ad.location.city &&
-                ad.location.lat &&
-                ad.location.lng && <Map location={ad.location} />}
             </Grid>
           </Grid>
         </div>

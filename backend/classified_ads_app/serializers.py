@@ -27,11 +27,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 # User profile Serializer
 class UserProfileSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)
+    email = serializers.StringRelatedField(source="user", read_only=True)
 
     class Meta:
         model = UserProfile
-        fields = '__all__'
+        fields = ('first_name', 'surname', 'email', 'tel', 'avatar', 'adress_city', 'adress_postal_code')
         read_only_fields = ('created_at', 'updated_at',)
 
 
