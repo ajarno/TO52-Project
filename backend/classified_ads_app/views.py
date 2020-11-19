@@ -8,7 +8,23 @@ from .serializers import CategorySerializer, AdMiniSerializer, AdSerializer, Cha
     UserProfileSerializer
 from .permissions import IsOwnerProfileOrReadOnly, IsOwnerChatOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as filters
 
+
+# Define the Filters
+
+# Define the filter on the ad list
+class AdFilter(filters.FilterSet):
+    min_price = filters.NumberFilter(field_name="price", lookup_expr='gte')
+    max_price = filters.NumberFilter(field_name="price", lookup_expr='lte')
+    location = filters.CharFilter(field_name='location__city', lookup_expr='exact')
+
+    class Meta:
+        model = Ad
+        fields = ['category', 'location', 'min_price', 'max_price']
+
+
+# Define the ViewSets
 
 # UserViewSet
 class UserViewSet(ListCreateAPIView):
@@ -98,7 +114,7 @@ class AdViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Ad.objects.order_by('-published').all()
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ('category',)
+    filterset_class = AdFilter
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
