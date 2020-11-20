@@ -23,11 +23,20 @@ export default function AdDisplayer(props) {
       <AlgoliaPlaces
         defaultValue={props.location ? props.location.value : ""}
         placeholder={props.placeholder}
-        options={{
-          appId: APP_ID,
-          apiKey: API_KEY,
-          countries: ["fr"],
-        }}
+        options={
+          props.cityOnly
+            ? {
+                appId: APP_ID,
+                apiKey: API_KEY,
+                countries: ["fr"],
+                type: 'city',
+              }
+            : {
+                appId: APP_ID,
+                apiKey: API_KEY,
+                countries: ["fr"],
+              }
+        }
         onChange={props.onChange}
         onSuggestions={props.onSuggestions}
         onCursorChanged={props.onCursorChanged}

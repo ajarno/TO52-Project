@@ -309,7 +309,7 @@ export default function AdDisplayer(props) {
               location={ad.location}
               placeholder="Entrez la ville, ou le code postal, où se situe votre bien"
               onChange={({ suggestion }) => {
-                console.log(suggestion);
+                // console.log(suggestion);
                 handleAdChange(suggestion, "location");
               }}
               onClear={() => {

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { useEffectOnlyOnce } from "../../api/Utils";
-import { fetchAdsByCategory } from "../../api/AdsAPI";
+import { fetchAdsByFiltering } from "../../api/AdsAPI";
 import AdMiniature from "./AdMiniature";
 import AdMiniatureLoading from "./AdMiniatureLoading";
 import { Grid } from "@material-ui/core";
@@ -11,13 +10,13 @@ export default function Ads(props) {
   const [minimumTimeElapsed, setMinimumTimeElapsed] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffectOnlyOnce(() => {
+  React.useEffect(() => {
     setIsLoading(true);
     setMinimumTimeElapsed(false);
     setTimeout(() => {
       setMinimumTimeElapsed(true);
     }, minimumTime);
-    fetchAdsByCategory(props.category)
+    fetchAdsByFiltering(props.category, props.filters)
       .then((_ads) => {
         setAds(_ads.data);
         // console.log(_ads.data);
@@ -26,7 +25,7 @@ export default function Ads(props) {
         console.error(err.message);
       })
       .then(() => setIsLoading(false));
-  });
+  }, [props.filters]);
 
   return (
     <React.Fragment>

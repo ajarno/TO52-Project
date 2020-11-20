@@ -1,11 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Paper, Tabs, Tab } from "@material-ui/core";
-import { TabPanel } from "../../shared/components/TabPanel";
-import { useEffectOnlyOnce } from "../../api/Utils";
-import { useCategories } from "../../api/CategoriesAPI";
-import AdList from "../ad/AdList";
-import LandingPage from "../home/LandingPage";
 
 const useStyles = makeStyles((theme) => ({
   menu: {
@@ -21,50 +16,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function CategoryMenu() {
+export default function CategoryMenu(props) {
   const classes = useStyles();
 
-  // =========================================================
-  // =================== DECLARE CONSTANTS ===================
-  // =========================================================
-  const categories = useCategories();
-
-  // =========================================================
-  // ============ DECLARE VARIABLES AND FUNCTIONS  ===========
-  // ============== RELATED TO THE TABS CHANGES ==============
-  // =========================================================
-  const [activeTab, setActiveTab] = useState("");
-
-  useEffectOnlyOnce(() => {
-    function initActiveTab() {
-      const storedCategorySelected = sessionStorage.getItem("categorySelected");
-      setActiveTab(storedCategorySelected ? storedCategorySelected : false);
-    }
-    initActiveTab();
-  });
-
-  const handleChange = (event, newValue) => {
-    setActiveTab(newValue);
-    sessionStorage.setItem("categorySelected", newValue);
-  };
-
-  // ========================================================
-  // ======================= RENDERING ======================
-  // ========================================================
   return (
     <React.Fragment>
       <Paper className={classes.menu} elevation={0} position="static" square>
         <Tabs
-          value={activeTab}
+          value={props.activeTab}
           selectionFollowsFocus
-          onChange={handleChange}
+          onChange={props.handleChange}
           indicatorColor="primary"
           textColor="primary"
           variant="scrollable"
           scrollButtons="on"
         >
-          {categories &&
-            categories.map((category) => {
+          {props.categories &&
+            props.categories.map((category) => {
               return (
                 <Tab
                   className={classes.tab}
@@ -76,26 +44,6 @@ export default function CategoryMenu() {
             })}
         </Tabs>
       </Paper>
-      {activeTab === false ? (
-        <React.Fragment>
-          <LandingPage />
-        </React.Fragment>
-      ) : (
-        <React.Fragment>
-          {categories &&
-            categories.map((category) => {
-              return (
-                <TabPanel
-                  key={category.slug}
-                  value={activeTab}
-                  index={category.slug}
-                >
-                  <AdList category={category.slug} />
-                </TabPanel>
-              );
-            })}
-        </React.Fragment>
-      )}
     </React.Fragment>
   );
 }

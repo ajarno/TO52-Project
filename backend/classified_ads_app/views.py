@@ -9,6 +9,7 @@ from .serializers import CategorySerializer, AdMiniSerializer, AdSerializer, Cha
 from .permissions import IsOwnerProfileOrReadOnly, IsOwnerChatOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as filters
+from django.db.models import Q
 
 
 # Define the Filters
@@ -18,10 +19,17 @@ class AdFilter(filters.FilterSet):
     min_price = filters.NumberFilter(field_name="price", lookup_expr='gte')
     max_price = filters.NumberFilter(field_name="price", lookup_expr='lte')
     location = filters.CharFilter(field_name='location__city', lookup_expr='exact')
+    text = filters.CharFilter(method='filter_contains_text', label='Ad text contains')
 
     class Meta:
         model = Ad
-        fields = ['category', 'location', 'min_price', 'max_price']
+        fields = ['category', 'location', 'text', 'min_price', 'max_price']
+
+    @staticmethod
+    def filter_contains_text(queryset, name, value):
+        return queryset.filter(
+            Q(headline__icontains=value) | Q(description__icontains=value)
+        )
 
 
 # Define the ViewSets
