@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { fetchAdsByFiltering } from "../../api/AdsAPI";
+import useWindowDimensions from "../../shared/functions/DimensionsHook";
 import AdMiniature from "./AdMiniature";
 import AdMiniatureLoading from "./AdMiniatureLoading";
 import { Grid } from "@material-ui/core";
 
 export default function Ads(props) {
+
   const [ads, setAds] = useState([]);
   const minimumTime = 850;
   const [minimumTimeElapsed, setMinimumTimeElapsed] = useState(true);
@@ -29,12 +31,15 @@ export default function Ads(props) {
       // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.filters]);
 
+
+  const { width } = useWindowDimensions();
+
   return (
     <React.Fragment>
       {(!minimumTimeElapsed && ads.length === 0) || isLoading ? (
         <AdMiniatureLoading />
       ) : ads.length > 0 ? (
-        <Grid container alignItems="stretch" spacing={3}>
+        <Grid container alignItems="stretch" justify={width > 600 ? 'flex-start' : 'center'} spacing={3}>
           {ads.map((ad) => {
             return <AdMiniature ad={ad} key={ad.id} />;
           })}
