@@ -1,14 +1,14 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Slider, TextField, Typography } from "@material-ui/core";
-// import SearchIcon from "@material-ui/icons/Search";
+import { Grid, Slider, Typography } from "@material-ui/core";
 import AutocompleteLocation from "../../shared/components/AutocompleteLocation";
+import SearchField from "../../shared/components/SearchField";
 
 const useStyles = makeStyles((theme) => ({
   container: {
     display: "flex",
     flexDirection: "row",
-    margin: "1.5vw 2.5vw",
+    margin: "1.5vw 8.5vw",
   },
 }));
 
@@ -36,19 +36,11 @@ export default function Filters(props) {
       <div className={classes.container}>
         <Grid container alignItems="flex-end" spacing={3}>
           <Grid item xs={12} sm={5}>
-            <TextField
+            <SearchField
               id="input-search"
-              label="🔍 Que recherchez-vous ?"
               value={props.text}
-              onChange={(evt) => props.onTextChange(evt.target.value)}
-              onKeyPress={(ev) => {
-                if (ev.key === "Enter") {
-                  props.onFilter();
-                  ev.preventDefault();
-                }
-              }}
-              // variant="outlined"
-              style={{ width: "-webkit-fill-available" }}
+              onChange={props.onTextChange}
+              onValidation={props.onFilter}
             />
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -82,7 +74,7 @@ export default function Filters(props) {
                 alignItems="baseline"
                 style={{ marginBottom: -5 }}
               >
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={2}>
                   <Typography
                     id="discrete-slider"
                     variant="body2"
@@ -92,7 +84,7 @@ export default function Filters(props) {
                     Prix
                   </Typography>
                 </Grid>
-                <Grid item xs={12} sm={9} style={{ textAlign: "right" }}>
+                <Grid item xs={12} sm={10} style={{ textAlign: "right" }}>
                   <Typography
                     id="discrete-slider"
                     variant="caption"

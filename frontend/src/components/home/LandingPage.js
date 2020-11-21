@@ -7,10 +7,15 @@ import { Grid, Typography } from "@material-ui/core";
 const useStyles = makeStyles((theme) => ({
   background: {
     position: "absolute",
-    height: "40vh",
     width: "100vw",
     zIndex: -1,
-    backgroundColor: theme.palette.grey[200], //theme.palette.primary.main,
+    backgroundColor: theme.palette.grey[200],
+    [theme.breakpoints.up('sm')]: {
+      height: "40vh",
+    },
+    [theme.breakpoints.down('xs')]: {
+      height: "50vh",
+    },
   },
   title: {
     textAlign: "center",
@@ -18,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
   root: {
     width: "100%",
+    marginTop: -40,
   },
 }));
 
@@ -37,7 +43,7 @@ export default function LandingPage() {
           <Typography
             component="h1"
             variant="h4"
-            style={{ paddingBottom: "0.2em" }}
+            style={{ paddingBottom: "0.3em" }}
           >
             Les petites annonces UT'Bohémiennes
           </Typography>

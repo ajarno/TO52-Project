@@ -36,19 +36,25 @@ export default function Search() {
   // ============ DECLARE VARIABLES AND FUNCTIONS  ===========
   // ============= RELATED TO THE FILTERS CHANGES ============
   // =========================================================
-  const [priceFilter, setPriceFilter] = useState([0, 1500]);
   const [textFilter, setTextFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState({});
+  const [priceFilter, setPriceFilter] = useState([0, 1500]);
 
   const [filters, setFilters] = useState({});
 
   const updateFiltering = (
     _filters = {
-      location: locationFilter,
       text: textFilter,
+      location: locationFilter,
       price: priceFilter,
     }
   ) => {
+    const keys = Object.keys(_filters);
+    if (keys.length < 3) {
+      if (!keys.includes("text")) _filters["text"] = textFilter;
+      if (!keys.includes("location")) _filters["location"] = locationFilter;
+      if (!keys.includes("price")) _filters["price"] = priceFilter;
+    }
     setFilters(_filters);
   };
 

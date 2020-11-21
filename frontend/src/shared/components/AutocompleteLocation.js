@@ -9,8 +9,13 @@ const APP_ID = process.env.ALGOLIA_APP_ID;
 
 const useStyles = makeStyles((theme) => ({
   error: {
-    "& .ap-input": {
+    "& input": {
       borderColor: "rgb(255, 0, 0, 0.87)",
+    },
+  },
+  ok: {
+    "& input:focus": {
+      border: "2px solid rgb(0, 0, 0, 0.87)",
     },
   },
 }));
