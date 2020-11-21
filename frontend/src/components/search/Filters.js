@@ -1,8 +1,8 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Slider, TextField, Typography } from "@material-ui/core";
-import SearchIcon from "@material-ui/icons/Search";
-import LocationInput from "../../shared/components/LocationInput";
+// import SearchIcon from "@material-ui/icons/Search";
+import AutocompleteLocation from "../../shared/components/AutocompleteLocation";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -15,10 +15,26 @@ const useStyles = makeStyles((theme) => ({
 export default function Filters(props) {
   const classes = useStyles();
 
+  function getDomTextAndPriceValues() {
+    // For some unknown reason (because of the Algolia search?)
+    // props.text and props.price here are at their default value
+    // so we need to get them by another means
+    const text = document.getElementById("input-search").value;
+    const priceStringFormat = document
+      .getElementById("price-range")
+      .getElementsByTagName("input")[0]
+      .value.split(",");
+    const price = [
+      parseInt(priceStringFormat[0]),
+      parseInt(priceStringFormat[1]),
+    ];
+    return { text, price };
+  }
+  
   return (
     <React.Fragment>
       <div className={classes.container}>
-        <Grid container spacing={3}>
+        <Grid container alignItems="flex-end" spacing={3}>
           <Grid item xs={12} sm={5}>
             <TextField
               id="input-search"
@@ -35,39 +51,70 @@ export default function Filters(props) {
               style={{ width: "-webkit-fill-available" }}
             />
           </Grid>
-          <Grid item xs={7} sm={4}>
-            <LocationInput
-              location={props.location}
+          <Grid item xs={12} sm={4}>
+            <AutocompleteLocation
               placeholder="Où, dans quelle ville ?"
-              onChange={({ suggestion }) => {
-                props.onLocationChange({ ...suggestion });
+              type="city"
+              countries={["fr"]}
+              onChange={(location) => {
+                props.onLocationChange(location);
+                const { text, price } = getDomTextAndPriceValues();
                 props.onFilter({
-                  location: { ...suggestion },
-                  text: props.text,
-                  price: props.price,
+                  text: text,
+                  location: location,
+                  price: price,
                 });
               }}
               onClear={() => {
-                props.onLocationChange({});
-                props.onFilter();
+                const { text, price } = getDomTextAndPriceValues();
+                props.onLocationChange();
+                props.onFilter({
+                  text: text,
+                  price: price,
+                });
               }}
-              cityOnly
             />
           </Grid>
           {props.price && (
-            <Grid item xs={5} sm={3}>
-              <Typography id="discrete-slider" gutterBottom>
-                Prix
-              </Typography>
+            <Grid item xs={12} sm={3} style={{ paddingBottom: 0 }}>
+              <Grid
+                container
+                alignItems="baseline"
+                style={{ marginBottom: -5 }}
+              >
+                <Grid item xs={12} sm={3}>
+                  <Typography
+                    id="discrete-slider"
+                    variant="body2"
+                    color="textSecondary"
+                    gutterBottom
+                  >
+                    Prix
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={9} style={{ textAlign: "right" }}>
+                  <Typography
+                    id="discrete-slider"
+                    variant="caption"
+                    color="textSecondary"
+                    gutterBottom
+                  >
+                    min : {props.price[0]}€ - max : {props.price[1] + "€"}
+                    {props.price[1] >= 1500 ? "+" : ""}
+                  </Typography>
+                </Grid>
+              </Grid>
               <Slider
+                color="secondary"
+                id="price-range"
                 min={0}
                 max={1500}
-                step={props.price[1] > 1000 ? 500 : 50}
+                step={props.price[1] > 1000 ? 100 : 50}
                 value={props.price}
                 onChange={(evt, value) => {
                   props.onPriceChange(value);
                 }}
-                onChangeCommitted={props.onFilter}
+                onChangeCommitted={() => props.onFilter()}
                 aria-labelledby="discrete-slider"
                 valueLabelDisplay="auto"
                 marks

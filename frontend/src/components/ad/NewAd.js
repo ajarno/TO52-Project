@@ -4,7 +4,7 @@ import { useCategories } from "../../api/CategoriesAPI";
 // import { postAd } from "../../api/AdsAPI";
 import BackBar from "../../shared/components/BackBar";
 import PicturesDropzone from "../../shared/components/PicturesDropzone";
-import LocationInput from "../../shared/components/LocationInput";
+import AutcompleteLocation from "../../shared/components/AutocompleteLocation";
 import clsx from "clsx";
 import {
   TextField,
@@ -304,13 +304,13 @@ export default function AdDisplayer(props) {
       case mapTypeToIndex.indexOf("location"):
         return (
           <React.Fragment>
-            <LocationInput
+            <AutcompleteLocation
               error={error[mapTypeToIndex.indexOf("location")]}
               location={ad.location}
-              placeholder="Entrez la ville, ou le code postal, où se situe votre bien"
-              onChange={({ suggestion }) => {
-                // console.log(suggestion);
-                handleAdChange(suggestion, "location");
+              placeholder="Entrez le lieu où se situe votre bien"
+              countries={['fr']}
+              onChange={(location) => {
+                handleAdChange(location, "location");
               }}
               onClear={() => {
                 handleAdChange({}, "location");

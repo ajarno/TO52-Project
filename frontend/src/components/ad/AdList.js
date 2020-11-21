@@ -25,6 +25,8 @@ export default function Ads(props) {
         console.error(err.message);
       })
       .then(() => setIsLoading(false));
+      
+      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.filters]);
 
   return (

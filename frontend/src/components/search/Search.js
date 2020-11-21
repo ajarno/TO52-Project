@@ -43,9 +43,13 @@ export default function Search() {
   const [filters, setFilters] = useState({});
 
   const updateFiltering = (
-    filters = { location: locationFilter, text: textFilter, price: priceFilter }
+    _filters = {
+      location: locationFilter,
+      text: textFilter,
+      price: priceFilter,
+    }
   ) => {
-    setFilters(filters);
+    setFilters(_filters);
   };
 
   // ========================================================
