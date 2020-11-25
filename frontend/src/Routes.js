@@ -14,9 +14,9 @@ export default () => {
       <Switch>
         <Layout exact path="/" component={App} />
         <Layout path="/ads/:id" component={AdDisplayer} />
-        <Layout path="/auth/sign-in" component={SignIn} />
-        <Layout path="/auth/sign-up" component={SignUp} />
-        <Layout path="/auth/activate" component={Activate} />
+        <Layout exact path="/auth/sign-in" component={SignIn} />
+        <Layout exact path="/auth/sign-up" component={SignUp} />
+        <Layout exact path="/auth/activate" component={Activate} />
         <Layout component={NotFound} />
       </Switch>
     </BrowserRouter>

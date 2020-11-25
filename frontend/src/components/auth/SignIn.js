@@ -14,8 +14,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
-import Copyright from "../../shared/components/Copyright";
-import { isAuthentificated, signIn, getCurrentUser } from "../../api/AuthAPI";
+import { signIn } from "../../api/AuthAPI";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -42,7 +41,6 @@ export default function SignIn() {
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isError, setIsError] = useState(false);
   const [loginErrorMessages, setLoginErrorMessages] = useState("");
-  const [isFormValid, setisFormValid] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isEmailInvalid, setIsEmailInvalid] = useState(false);
@@ -50,33 +48,25 @@ export default function SignIn() {
   const [isPasswordInvalid, setIsPasswordInvalid] = useState(false);
   const [passwordInvalidMessage, setPasswordInvalidMessage] = useState("");
 
-  function validateForm() {
+  function doSignIn(event) {
+    event.preventDefault();
+    //Validation section
     var pattern = new RegExp(
       /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
     );
     if (email === "") {
       setIsEmailInvalid(true);
-      setisFormValid(false);
       setEmailInvalidMessage("L'adresse email est requise.");
     } else if (!pattern.test(email)) {
       setIsEmailInvalid(true);
-      setisFormValid(false);
       setEmailInvalidMessage("Veuillez saisir une adresse email valide.");
     } else if (password === "") {
       setIsPasswordInvalid(true);
-      setisFormValid(false);
       setPasswordInvalidMessage("Le mot de passe est requis.");
     } else {
       setIsEmailInvalid(false);
       setIsPasswordInvalid(false);
-      setisFormValid(true);
-    }
-  }
-
-  function doSignIn(event) {
-    event.preventDefault();
-    validateForm();
-    if (isFormValid === true) {
+      //if validation process completed signIn
       signIn(email, password)
         .then((result) => {
           if (result.status === 200) {
@@ -101,7 +91,6 @@ export default function SignIn() {
     }
   }
 
-  //TODO:  Mettre Redirect dans Route
   if (isLoggedIn) {
     return <Redirect to="/" />;
   }
@@ -132,7 +121,6 @@ export default function SignIn() {
             helperText={isEmailInvalid && emailInvalidMessage}
             onChange={(evt) => {
               setEmail(evt.target.value);
-              console.log("change");
             }}
           />
           <TextField
@@ -182,9 +170,7 @@ export default function SignIn() {
           </Grid>
         </form>
       </div>
-      <Box mt={8}>
-        <Copyright />
-      </Box>
+      <Box mt={8}></Box>
     </Container>
   );
 }

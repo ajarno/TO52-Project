@@ -8,26 +8,12 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
 import { Alert } from "@material-ui/lab";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { signUp } from "../../api/AuthAPI";
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="/">
-        UT'annonces
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -56,13 +42,14 @@ export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [signUpErrorMessages, setSignUpErrorMessages] = useState("");
-  const [isFormValid, setisFormValid] = useState(false);
   const [isEmailInvalid, setIsEmailInvalid] = useState(false);
   const [emailInvalidMessage, setEmailInvalidMessage] = useState("");
   const [isPasswordInvalid, setIsPasswordInvalid] = useState(false);
   const [passwordInvalidMessage, setPasswordInvalidMessage] = useState("");
 
-  function validateForm() {
+  function doSignUp(event) {
+    event.preventDefault();
+    //Validation section
     var pattern = new RegExp(
       /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
     );
@@ -75,15 +62,12 @@ export default function SignUp() {
     ); */
     if (email === "") {
       setIsEmailInvalid(true);
-      setisFormValid(false);
       setEmailInvalidMessage("L'adresse email est requise.");
     } else if (!pattern.test(email)) {
       setIsEmailInvalid(true);
-      setisFormValid(false);
       setEmailInvalidMessage("Veuillez saisir une adresse email valide.");
     } else if (password === "") {
       setIsPasswordInvalid(true);
-      setisFormValid(false);
       setPasswordInvalidMessage("Le mot de passe est requis.");
     } else if (!strongPasswordRegex.test(password)) {
       setIsPasswordInvalid(true);
@@ -93,17 +77,12 @@ export default function SignUp() {
     } else {
       setIsEmailInvalid(false);
       setIsPasswordInvalid(false);
-      setisFormValid(true);
-    }
-  }
-
-  function doSignUp() {
-    validateForm();
-    if (isFormValid === true) {
+      //if validation process completed signUp
       signUp(email, password)
         .then((result) => {
           if (result.status === 201) {
             setIsSignUp(true);
+            setIsError(false);
           } else {
             setIsSignUp(false);
             setIsError(true);
@@ -121,6 +100,7 @@ export default function SignUp() {
         });
     }
   }
+
   //TODO:  Mettre Redirect dans Route
   if (isSignUp) {
     return <Redirect to="/auth/activate" />;
@@ -142,6 +122,7 @@ export default function SignUp() {
               <TextField
                 variant="outlined"
                 required
+                type="email"
                 fullWidth
                 id="email"
                 label="Adresse email"
@@ -200,9 +181,6 @@ export default function SignUp() {
           </Grid>
         </form>
       </div>
-      <Box mt={5}>
-        <Copyright />
-      </Box>
     </Container>
   );
 }

@@ -18,7 +18,6 @@ from django.urls import path
 from django.conf.urls import include
 from django.conf import settings
 from django.conf.urls.static import static
-import rest_framework_jwt.views
 
 
 urlpatterns = [

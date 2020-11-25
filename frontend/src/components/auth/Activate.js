@@ -21,13 +21,13 @@ export default function Activate() {
       <CssBaseline />
       <div className={classes.paper}>
         <Typography component="h1" variant="h5">
-          Ton compte a été crée
+          Votre compte a été crée
         </Typography>
         <p>
-          Bienvenue Gédéon sur UT'Annonce, tu pourras publier tes annonces après
-          avoir confirmer ton compte.
+          Bienvenue sur UT'Annonce! vous pourriez publier votre annonces après
+          avoir confirmer votre compte.
         </p>
-        <p>Tu cliqueras sur le lien que nous t'avons envoyé par e-mail</p>
+        <p>Vous cliquerez sur le lien que nous vosu avons envoyé par e-mail</p>
       </div>
     </Container>
   );

@@ -11,6 +11,7 @@
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.20.0",
     "react": "^16.13.1",
+    "react-avatar-editor": "^11.0.13",
     "react-dom": "^16.13.1",
     "react-material-ui-carousel": "^2.1.1",
     "react-material-ui-form-validator": "^2.1.1",
