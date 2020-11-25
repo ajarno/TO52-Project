@@ -11,29 +11,14 @@ from .serializers import CategorySerializer, AdMiniSerializer, AdSerializer, Cha
 from .permissions import IsOwnerProfileOrReadOnly, IsOwnerChatOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
 
-# UserViewSet
-
 
 class UserViewSet(ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
-    @action(detail=True, methods=['post'])
-    def saved_ads(self, request):
-        try:
-            user = request.user
-            saved_ads = user.saved_ads
-            response = {'message': 'Les annonces sauvegardées',
-                        'result': saved_ads}
-            return Response(response, status=status.HTTP_200_OK)
-        except:
-            response = "Une erreur est survenue lors du traitement de l'opération"
-            return Response(response, status=status.HTTP_200_OK)
 
 # Create user profile
-
-
 class UserProfileListCreateView(ListCreateAPIView):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
@@ -43,9 +28,8 @@ class UserProfileListCreateView(ListCreateAPIView):
         user = self.request.user
         serializer.save(user=user)
 
+
 # Get user profile details
-
-
 class UserProfileDetailView(RetrieveUpdateDestroyAPIView):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
@@ -79,7 +63,7 @@ class UserChatViewSet(viewsets.ModelViewSet):
             self.ad_chats_received_byuser(request, pk))
         try:
             response = {
-                'message': 'les chats reçu et envoyé par l''utilisateur pour une annonce donnée', 'result': ad_chats_byuser}
+                'messages': 'Les messages reçus et envoyés par l''utilisateur pour une annonce donnée', 'result': ad_chats_byuser}
             return Response(response, status=status.HTTP_200_OK)
         except:
             response = "Une erreur est survenue lors du traitement de l'opération"

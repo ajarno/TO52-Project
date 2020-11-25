@@ -62,13 +62,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
-# CORS_ALLOWED_ORIGINS = [
-# "https://example.com",
-# "https://sub.example.com",
-# "http://localhost:3000",
-# ]
-CORS_ORIGIN_WHITELIST = [
+CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000'
 ]
@@ -126,11 +120,6 @@ DJOSER = {
         'user_list': ['rest_framework.permissions.IsAdminUser'],
 
     },
-    # 'LOGIN_FIELD': 'email',
-    # 'USER_CREATE_PASSWORD_RETYPE': True,
-    # 'USERNAME_CHANGED_EMAIL_CONFIRMATION': True,
-    # 'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
-    # 'SEND_CONFIRMATION_EMAIL': True,
     'PASSWORD_RESET_CONFIRM_URL': '/password/reset/confirm/{uid}/{token}',
     'USERNAME_RESET_CONFIRM_URL': '/username/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': 'api/auth/users/activation/{uid}/{token}',
@@ -187,4 +176,3 @@ EMAIL_HOST_PASSWORD = 'tzrupgsttjlapdbr'
 # mYC00lP4ssw0rd# os.environ['password_key'] suggested
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_PAGE_DOMAIN = 'http://localhost:5000/'
-#MAILER_EMAIL_BACKEND = EMAIL_BACKEND

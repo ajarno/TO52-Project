@@ -10,24 +10,15 @@ class UserManager(BaseUserManager):
         if not email:
             raise ValueError("Vous devez renseigner votre adresse email")
         if not password:
-            raise ValueError("Vous devez renseigner le mot de passe")
+            raise ValueError("Vous devez renseigner votre mot de passe")
         user_obj = self.model(
             email=self.normalize_email(email)
         )
         user_obj.set_password(password)
-        user_obj.staff = is_staff
         user_obj.admin = is_admin
         user_obj.active = is_active
         user_obj.save(using=self._db)
         return user_obj
-
-    def create_staffuser(self, email, password=None):
-        user = self.create_user(
-            email,
-            password=password,
-            is_staff=True
-        )
-        return user
 
     def create_superuser(self, email, password=None):
         user = self.create_user(
@@ -46,8 +37,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     # Attributes
     email = models.EmailField(max_length=80, unique=True)
     is_active = models.BooleanField(default=True)  # can login
-    # staff user is ad publisher or buyer
-    staff = models.BooleanField(default=False)
     admin = models.BooleanField(default=False)  # admin user is superuser
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -63,10 +52,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_email(self):
         return self.email
-
-    @property
-    def is_staff(self):
-        return self.staff
 
     @property
     def is_admin(self):

@@ -18,11 +18,14 @@ from django.urls import path
 from django.conf.urls import include
 from django.conf import settings
 from django.conf.urls.static import static
+import rest_framework_jwt.views
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('classified_ads_app.urls')),
     path('api/auth/', include('djoser.urls')),
     path('api/auth/', include('djoser.urls.jwt')),
-
+    #TODO: cusom token creation link
+    #path('api/auth/sign-in/', rest_framework_jwt.views.obtain_jwt_token),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
