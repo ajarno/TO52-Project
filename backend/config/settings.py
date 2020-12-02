@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 ]
 
 AUTH_USER_MODEL = 'classified_ads_app.User'
+AUTH_PROFILE_MODULE = 'classified_ads_app.UserProfile'
 
 
 MIDDLEWARE = [
@@ -122,7 +123,7 @@ DJOSER = {
     },
     'PASSWORD_RESET_CONFIRM_URL': '/password/reset/confirm/{uid}/{token}',
     'USERNAME_RESET_CONFIRM_URL': '/username/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': 'api/auth/users/activation/{uid}/{token}',
+    'ACTIVATION_URL': 'api/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
 
 }

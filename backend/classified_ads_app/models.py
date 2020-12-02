@@ -1,3 +1,5 @@
+import os
+from uuid import uuid4
 from django.db import models  # used for SQLite database
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import PermissionsMixin, AbstractBaseUser, BaseUserManager
@@ -71,32 +73,32 @@ def user_avatar_path(instance, filename):
     # Get the extension
     ext = filename.split('.')[-1]
     # Set the filename as random string
-    from uuid import uuid4
     filename = '{}.{}'.format(uuid4().hex, ext)
 
     # Return the whole path to the file
-    import os
     return os.path.join(upload_to, filename)
 
 
 # This class contain extra informations about user
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="profile")
 
     # Attributes
     # upload at specific location
-    avatar = models.ImageField(upload_to=user_avatar_path)
-    validated = models.BooleanField(default=False)
+    avatar = models.ImageField(upload_to=user_avatar_path, blank=True)
     surname = models.CharField(max_length=35, blank=True)
     first_name = models.CharField(max_length=35, blank=True)
-    tel = PhoneNumberField()
-    adress_street = models.CharField(
-        max_length=200, db_column='UserAdressStreet', blank=True)
-    adress_postal_code = models.CharField(
-        max_length=10, db_column='UserAdressPostalCode', blank=True)
-    adress_city = models.CharField(
-        max_length=30, db_column='UserAdressCity', blank=True)
-    adress_country = CountryField(blank_label='(select country)', default=None)
+    birth_day = models.DateField(auto_now_add=True, blank=True)
+    tel = models.CharField(max_length=10, blank=True)
+    address_street = models.CharField(
+        max_length=200, db_column='UserAddressStreet', blank=True)
+    address_postal_code = models.CharField(
+        max_length=10, db_column='UserAddressPostalCode', blank=True)
+    address_city = models.CharField(
+        max_length=30, db_column='UserAddressCity', blank=True)
+    address_country = models.CharField(
+        max_length=20, blank=True, default="France")
 
     def __str__(self):
         return self.first_name + " " + self.surname + ">"
@@ -149,11 +151,9 @@ def path_and_rename(instance, filename):
     # Get the extension
     ext = filename.split('.')[-1]
     # Set the filename as random string
-    from uuid import uuid4
     filename = '{}.{}'.format(uuid4().hex, ext)
 
     # Return the whole path to the file
-    import os
     return os.path.join(upload_to, filename)
 
 

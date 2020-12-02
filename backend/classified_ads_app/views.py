@@ -1,3 +1,5 @@
+from django.http import JsonResponse, HttpResponse
+from django.shortcuts import redirect
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
@@ -10,6 +12,7 @@ from .serializers import CategorySerializer, AdMiniSerializer, AdSerializer, Cha
     UserProfileSerializer
 from .permissions import IsOwnerProfileOrReadOnly, IsOwnerChatOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics
 
 
 class UserViewSet(ListCreateAPIView):
@@ -18,22 +21,42 @@ class UserViewSet(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
 
-# Create user profile
-class UserProfileListCreateView(ListCreateAPIView):
+# Get user profile details
+class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
-    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ('user',)
+    # http_method_names = ['get', 'post', 'put']
+    permission_classes = [IsAuthenticated, IsOwnerProfileOrReadOnly]
 
     def perform_create(self, serializer):
-        user = self.request.user
-        serializer.save(user=user)
+        serializer.save(user=self.request.user)
 
 
-# Get user profile details
-class UserProfileDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = UserProfile.objects.all()
-    serializer_class = UserProfileSerializer
-    permission_classes = [IsOwnerProfileOrReadOnly, IsAuthenticated]
+class CurrentUserProfilView(RetrieveUpdateDestroyAPIView):
+    def get(self, request):
+        profile = UserProfile.objects.filter(
+            user_id=self.request.user.id).values()
+        if len(profile) == 0:
+            status = 204
+            data = ""
+        else:
+            status = 200
+            data = list(profile)[0]
+        return Response({'profile': data}, status)
+
+
+class UserActivationView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, uid, token):
+        protocol = 'https://' if request.is_secure() else 'http://'
+        web_url = protocol + request.get_host()
+        post_url = web_url + "/api/auth/users/activation/"
+        post_data = {'uid': uid, 'token': token}
+        requests.post(post_url, data=post_data)
+        return redirect('http://localhost:3000/auth/confirm-activation')
 
 
 # Chat ViewSets for the users
@@ -57,7 +80,7 @@ class UserChatViewSet(viewsets.ModelViewSet):
         return chats
 
     # chat received and sent by the user for a particular ad
-    @action(detail=True, methods=['POST'])
+    @ action(detail=True, methods=['POST'])
     def ad_chats_byuser(self, request, pk=None):
         ad_chats_byuser = self.ad_chats_sent_byuser(request, pk).concat(
             self.ad_chats_received_byuser(request, pk))
