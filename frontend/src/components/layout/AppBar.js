@@ -53,7 +53,8 @@ export default function DenseAppBar() {
               color="primary"
               startIcon={<AddBoxIcon />}
               component={Link}
-              to="/ads/new-add"
+              //to="/ads/new-add"
+              to="/account"
               disableElevation={true}
             >
               Déposer une annonce

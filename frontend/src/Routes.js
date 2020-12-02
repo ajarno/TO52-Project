@@ -7,6 +7,8 @@ import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
 import AdDisplayer from "./components/search/AdDisplayer";
 import Activate from "./components/auth/Activate";
+import ConfirmActivation from "./components/auth/ConfirmActivation";
+import Account from "./components/account/index";
 
 export default () => {
   return (
@@ -17,6 +19,12 @@ export default () => {
         <Layout exact path="/auth/sign-in" component={SignIn} />
         <Layout exact path="/auth/sign-up" component={SignUp} />
         <Layout exact path="/auth/activate" component={Activate} />
+        <Layout
+          exact
+          path="/auth/confirm-activation"
+          component={ConfirmActivation}
+        />
+        <Layout exact path="/account" component={Account} />
         <Layout component={NotFound} />
       </Switch>
     </BrowserRouter>

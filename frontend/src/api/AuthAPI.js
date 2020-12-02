@@ -3,7 +3,9 @@ import API from "./API";
 const tokenHeaders = {
   headers: {
     "Content-type": "application/json",
-    "Authorization: Bearer ": "" + localStorage.getItem("token"),
+    Authorization: sessionStorage.getItem("token")
+      ? "JWT " + sessionStorage.getItem("token")
+      : null,
   },
 };
 
@@ -13,18 +15,18 @@ const signIn = (email, password) =>
 const signUp = (email, password) =>
   API.post("auth/users/", { email, password });
 
-const getUsers = () => API.get("auth/users/", tokenHeaders);
+const fetchUsers = () => API.get("auth/users/");
 
-const getCurrentUser = () => API.get("auth/users/me/", tokenHeaders);
+const fetchCurrentUser = () => API.get("auth/users/me/");
 
 const verifyToken = (body) => API.post("auth/jwt/verify/", body);
 
-const logout = localStorage.removeItem("token");
+const logout = sessionStorage.removeItem("token");
 
 function isAuthentificated() {
   return new Promise((resolve, reject) => {
-    if (localStorage.getItem("token")) {
-      const body = { token: localStorage.getItem("token") };
+    if (sessionStorage.getItem("token")) {
+      const body = { token: sessionStorage.getItem("token") };
       console.log(body);
       verifyToken(body)
         .then((result) => {
@@ -40,13 +42,18 @@ function isAuthentificated() {
     }
   });
 }
+const verify = (uid, token) => {
+  const body = JSON.stringify({ uid, token });
+  API.post("auth/users/activation/", body);
+};
 
 export {
-  getUsers,
+  fetchUsers,
   signIn,
   signUp,
   logout,
   isAuthentificated,
-  getCurrentUser,
+  fetchCurrentUser,
   tokenHeaders,
+  verify,
 };

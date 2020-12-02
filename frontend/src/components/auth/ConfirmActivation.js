@@ -1,10 +1,12 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   Box,
-  Container,
+  Button,
   makeStyles,
-  Typography,
+  Container,
   CssBaseline,
+  Typography,
 } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
@@ -16,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Activate() {
+export default function ConfirmActivation() {
   const classes = useStyles();
 
   return (
@@ -25,15 +27,19 @@ export default function Activate() {
       <div className={classes.paper}>
         <Box p={2}>
           <Typography component="h1" variant="h5">
-            Votre compte a été crée
+            Votre compte a été confirmé
           </Typography>
         </Box>
         <Typography variant="body">
-          Un email de confirmation vous a été envoyé.
-        </Typography>
-        <Typography variant="body" align="center">
-          Cliquez sur le lien compris dans celui-ci pour valider votre adresse
-          mail.
+          Connecter vous à votre espace en cliquant ici
+          <Button
+            size="small"
+            color="primary"
+            component={Link}
+            to="/auth/sign-in"
+          >
+            Se connecter
+          </Button>
         </Typography>
       </div>
     </Container>
