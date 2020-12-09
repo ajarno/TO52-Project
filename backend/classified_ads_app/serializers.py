@@ -41,7 +41,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('profile',)
+        fields = ('id', 'profile',)
 
 
 # TODO: remplacer author par un UserSerializer

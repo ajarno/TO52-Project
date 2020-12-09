@@ -10,6 +10,7 @@ import {
 import { Link } from "react-router-dom";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import logo from "../../assets/logo.svg";
 import useWindowDimensions from "../../shared/functions/DimensionsHook";
 
@@ -82,6 +83,20 @@ export default function DenseAppBar() {
             )}
           </div>
           <div>
+            <Tooltip
+              title="Gérer mes annonces"
+              aria-label="ads-management button"
+              enterDelay={500}
+            >
+              <IconButton
+                aria-label="ads-management"
+                color="primary"
+                component={Link}
+                to="/ads/my-ads"
+              >
+                <LocalOfferIcon />
+              </IconButton>
+            </Tooltip>
             <Tooltip
               title="Se connecter"
               aria-label="sign-in button"

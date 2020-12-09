@@ -17,8 +17,14 @@ const fetchAdsByFiltering = (category, filters) => {
   return API.get("/classifiedads".concat(query));
 };
 
+const fetchAdsByUser = (userId) => {
+  let query = `/?userId=${userId}`;
+  // console.log(query);
+  return API.get("/classifiedads".concat(query));
+};
+
 const fetchAdById = (id) => API.get("/classifiedads/" + id);
 
 const postAd = () => API.post("/classifiedads/");
 
-export { fetchAdsByFiltering, fetchAdById, postAd };
+export { fetchAdsByFiltering, fetchAdsByUser, fetchAdById, postAd };

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { TabPanel } from "../../shared/components/TabPanel";
 import { useEffectOnlyOnce } from "../../api/Utils";
 import { useCategories } from "../../api/CategoriesAPI";
-import AdList from "../ad/AdList";
+import AdList from "../ad-display/AdList";
 import LandingPage from "../home/LandingPage";
 import CategoryMenu from "./CategoryMenu";
 import Filters from "./Filters";

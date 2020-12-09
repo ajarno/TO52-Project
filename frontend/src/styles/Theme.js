@@ -13,7 +13,13 @@ const theme = createMuiTheme({
       light: "#ffa43f",
       dark: "#e57800",
       transparent: "rgba(255, 134, 0, 0.5)",
+      veryTransparent: "rgba(255, 134, 0, 0.1)",
       contrastText: "#fff",
+    },
+    danger: {
+      main: "#f44336",
+      light: "#e57373",
+      dark: "#d32f2f",
     },
   },
   breakpoints: {

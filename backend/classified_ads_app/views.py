@@ -19,6 +19,7 @@ class AdFilter(filters.FilterSet):
     min_price = filters.NumberFilter(field_name="price", lookup_expr='gte')
     max_price = filters.NumberFilter(field_name="price", lookup_expr='lte')
     location = filters.CharFilter(field_name='location__city', lookup_expr='exact')
+    userId = filters.CharFilter(field_name='author__id', lookup_expr='exact')
     text = filters.CharFilter(method='filter_contains_text', label='Ad text contains')
 
     class Meta:
