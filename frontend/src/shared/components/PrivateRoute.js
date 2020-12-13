@@ -9,8 +9,10 @@ function PrivateRoute({ component: Component, ...rest }) {
   useEffectOnlyOnce(() => {
     isAuthentificated().then((result) => {
       if (result) {
+        console.log("is log yes", result);
         setIsAuth(true);
       } else {
+        console.log("is log non", result);
         setIsAuth(false);
       }
     });

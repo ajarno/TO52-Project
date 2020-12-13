@@ -33,7 +33,8 @@ export default () => {
           path="/auth/new-password/:uid/:token/"
           component={ResetPasswordConfirm}
         />
-        <PrivateRoute path="/account" component={Account} />
+        <Layout exact path="/account" component={Account} />
+        {/*  <PrivateRoute path="/account" component={Account} /> */}
         <Layout component={NotFound} />
       </Switch>
     </BrowserRouter>
