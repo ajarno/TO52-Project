@@ -3,8 +3,6 @@ from uuid import uuid4
 from django.db import models  # used for SQLite database
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import PermissionsMixin, AbstractBaseUser, BaseUserManager
-from django_countries.fields import CountryField
-from phonenumber_field.modelfields import PhoneNumberField
 
 
 class UserManager(BaseUserManager):
@@ -89,7 +87,7 @@ class UserProfile(models.Model):
     avatar = models.ImageField(upload_to=user_avatar_path, blank=True)
     surname = models.CharField(max_length=35, blank=True)
     first_name = models.CharField(max_length=35, blank=True)
-    birth_day = models.DateField(auto_now_add=True, blank=True)
+    birth_day = models.DateField(blank=True)
     tel = models.CharField(max_length=10, blank=True)
     address_street = models.CharField(
         max_length=200, db_column='UserAddressStreet', blank=True)

@@ -33,9 +33,7 @@ const Account = () => {
         </Grid>
         <Grid container spacing={3}>
           <Grid item lg={2} md={2} xs={12}>
-            <Box alignItems="center">
-              <Profile />
-            </Box>
+            <Profile />
           </Grid>
           <Grid item lg={6} md={6} xs={12}>
             <ProfileDetails />

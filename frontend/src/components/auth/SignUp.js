@@ -1,18 +1,27 @@
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import Link from "@material-ui/core/Link";
-import Grid from "@material-ui/core/Grid";
+import { makeStyles } from "@material-ui/core/styles";
+import {
+  Avatar,
+  TextField,
+  CssBaseline,
+  Button,
+  FormControlLabel,
+  FormControl,
+  InputLabel,
+  InputAdornment,
+  IconButton,
+  FormHelperText,
+  Checkbox,
+  Link,
+  Grid,
+  Typography,
+  Container,
+  OutlinedInput,
+} from "@material-ui/core/";
 import { Alert } from "@material-ui/lab";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
+import { Visibility, VisibilityOff } from "@material-ui/icons/";
 import { signUp } from "../../api/AuthAPI";
 
 const useStyles = makeStyles((theme) => ({
@@ -33,6 +42,10 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  helperText: {
+    marginLeft: theme.spacing(2),
+    color: "red",
+  },
 }));
 
 export default function SignUp() {
@@ -46,6 +59,16 @@ export default function SignUp() {
   const [emailInvalidMessage, setEmailInvalidMessage] = useState("");
   const [isPasswordInvalid, setIsPasswordInvalid] = useState(false);
   const [passwordInvalidMessage, setPasswordInvalidMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+    setPassword(password);
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
 
   function doSignUp(event) {
     event.preventDefault();
@@ -138,22 +161,40 @@ export default function SignUp() {
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                name="password"
-                label="Mot de passe"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                error={isPasswordInvalid}
-                helperText={isPasswordInvalid && passwordInvalidMessage}
-                value={password}
-                onChange={(evt) => {
-                  setPassword(evt.target.value);
-                }}
-              />
+              <FormControl variant="outlined" fullWidth>
+                <InputLabel htmlFor="password">Mot de passe</InputLabel>
+                <OutlinedInput
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  name="password"
+                  error={isPasswordInvalid}
+                  onChange={(evt) => {
+                    setPassword(evt.target.value);
+                  }}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  labelWidth={100}
+                />
+              </FormControl>
+              {isPasswordInvalid && (
+                <FormHelperText
+                  className={classes.helperText}
+                  id="component-error-text"
+                >
+                  {passwordInvalidMessage}
+                </FormHelperText>
+              )}
             </Grid>
             {isError && <Alert severity="error"> {signUpErrorMessages}</Alert>}
             <Grid item xs={12}>

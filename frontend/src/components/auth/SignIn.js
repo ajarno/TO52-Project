@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Redirect } from "react-router-dom";
 import { Alert } from "@material-ui/lab";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import {
@@ -15,7 +14,14 @@ import {
   Button,
   Avatar,
   FormControlLabel,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  InputAdornment,
+  IconButton,
+  FormHelperText,
 } from "@material-ui/core/";
+import { Visibility, VisibilityOff } from "@material-ui/icons/";
 import { signIn } from "../../api/AuthAPI";
 import { fetchUserProfile } from "../../api/UserProfileAPI";
 
@@ -37,6 +43,10 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  helperText: {
+    marginLeft: theme.spacing(2),
+    color: "red",
+  },
 }));
 
 export default function SignIn() {
@@ -50,6 +60,16 @@ export default function SignIn() {
   const [emailInvalidMessage, setEmailInvalidMessage] = useState("");
   const [isPasswordInvalid, setIsPasswordInvalid] = useState(false);
   const [passwordInvalidMessage, setPasswordInvalidMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+    setPassword(password);
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
 
   function doSignIn(event) {
     event.preventDefault();
@@ -100,9 +120,9 @@ export default function SignIn() {
       .then((result) => {
         if (result.status === 200) {
           console.log("resultat", result);
-          page = <Redirect to="/" />;
+          page = window.location.href = "/";
         } else if (result.status === 204) {
-          page = <Redirect to="/account" />;
+          page = window.location.href = "/account";
         }
       })
       .catch((e) => {});
@@ -120,45 +140,71 @@ export default function SignIn() {
           Se connecter
         </Typography>
         <form className={classes.form}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Adresse email"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            value={email}
-            error={isEmailInvalid}
-            helperText={isEmailInvalid && emailInvalidMessage}
-            onChange={(evt) => {
-              setEmail(evt.target.value);
-            }}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Mot de passe"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            value={password}
-            error={isPasswordInvalid}
-            helperText={isPasswordInvalid && passwordInvalidMessage}
-            onChange={(evt) => {
-              setPassword(evt.target.value);
-            }}
-          />
-          {isError && <Alert severity="error"> {loginErrorMessages}</Alert>}
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="se souvenir de moi"
-          />
+          <Grid container spacing={3}>
+            <Grid item lg={12} md={12} xs={12}>
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Adresse email"
+                name="email"
+                autoComplete="email"
+                autoFocus
+                value={email}
+                error={isEmailInvalid}
+                helperText={isEmailInvalid && emailInvalidMessage}
+                onChange={(evt) => {
+                  setEmail(evt.target.value);
+                }}
+              />
+            </Grid>
+            <Grid item lg={12} md={12} xs={12}>
+              <FormControl variant="outlined" fullWidth>
+                <InputLabel htmlFor="password">Mot de passe</InputLabel>
+                <OutlinedInput
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  name="password"
+                  error={isPasswordInvalid}
+                  onChange={(evt) => {
+                    setPassword(evt.target.value);
+                  }}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  labelWidth={100}
+                />
+              </FormControl>
+              {isPasswordInvalid && (
+                <FormHelperText
+                  className={classes.helperText}
+                  id="component-error-text"
+                >
+                  {passwordInvalidMessage}
+                </FormHelperText>
+              )}
+            </Grid>
+            {isError && <Alert severity="error"> {loginErrorMessages}</Alert>}
+
+            <Grid item lg={6} md={6} xs={12}>
+              <FormControlLabel
+                control={<Checkbox value="remember" color="primary" />}
+                label="se souvenir de moi"
+              />
+            </Grid>
+          </Grid>
 
           <Button
             //type="submit"
@@ -172,7 +218,7 @@ export default function SignIn() {
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href="/auth/forgot-password" variant="body2">
+              <Link href="/auth/lost-password" variant="body2">
                 Mot de passe oublié
               </Link>
             </Grid>

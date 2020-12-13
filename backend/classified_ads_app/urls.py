@@ -4,7 +4,7 @@ from django.conf.urls import include
 from rest_framework import routers
 from .views import UserChatViewSet, AdminChatViewSet, CategoryViewSet, \
     AdViewSet, UserProfileViewSet, UserActivationView,\
-    CurrentUserProfilView
+    CurrentUserProfilView, ResetPasswordConfirmationView
 
 router = routers.DefaultRouter()
 
@@ -19,4 +19,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('activate/<str:uid>/<str:token>/', UserActivationView.as_view()),
     path('profile/me/', CurrentUserProfilView.as_view()),
+    path('password/reset/confirm/<str:uid>/<str:token>/',
+         ResetPasswordConfirmationView.as_view()),
 ]

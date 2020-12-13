@@ -1,5 +1,7 @@
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import redirect
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
@@ -11,8 +13,6 @@ from .models import Chat, User, UserProfile, Category, Ad
 from .serializers import CategorySerializer, AdMiniSerializer, AdSerializer, ChatSerializer, UserSerializer, \
     UserProfileSerializer
 from .permissions import IsOwnerProfileOrReadOnly, IsOwnerChatOrReadOnly
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import generics
 
 
 class UserViewSet(ListCreateAPIView):
@@ -57,6 +57,18 @@ class UserActivationView(APIView):
         post_data = {'uid': uid, 'token': token}
         requests.post(post_url, data=post_data)
         return redirect('http://localhost:3000/auth/confirm-activation')
+
+
+class ResetPasswordConfirmationView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, uid, token):
+        protocol = 'https://' if request.is_secure() else 'http://'
+        web_url = protocol + request.get_host()
+        post_url = web_url + "/api/auth/users/activation/"
+        post_data = {'uid': uid, 'token': token}
+        requests.post(post_url, data=post_data)
+        return redirect('http://localhost:3000/auth/new-password/',  {'uid': uid, 'token': token})
 
 
 # Chat ViewSets for the users

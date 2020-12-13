@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model, authenticate
 from .models import Chat, User, UserProfile, Category, Picture, Ad
+from drf_extra_fields.fields import Base64ImageField
 
 
 # Picture Serializer
@@ -42,6 +43,7 @@ class ChatSerializer(serializers.ModelSerializer):
 # User profile Serializer
 class UserProfileSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(read_only=True)
+    avatar = Base64ImageField()
 
     class Meta:
         model = UserProfile

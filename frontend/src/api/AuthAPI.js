@@ -1,13 +1,27 @@
 import API from "./API";
 
-const tokenHeaders = {
-  headers: {
-    "Content-type": "application/json",
-    Authorization: sessionStorage.getItem("token")
-      ? "JWT " + sessionStorage.getItem("token")
-      : null,
-  },
-};
+function authHeader() {
+  if (sessionStorage.getItem("token")) {
+    return {
+      Authorization: "JWT " + sessionStorage.getItem("token"),
+      accept: "application/json",
+    };
+  } else {
+    return {};
+  }
+}
+
+function authHeaderForm() {
+  if (sessionStorage.getItem("token")) {
+    return {
+      Authorization: "JWT " + sessionStorage.getItem("token"),
+      accept: "application/json",
+      "content-type": "multipart/form-data",
+    };
+  } else {
+    return {};
+  }
+}
 
 const signIn = (email, password) =>
   API.post("auth/jwt/create/", { email, password });
@@ -17,12 +31,14 @@ const signUp = (email, password) =>
 
 const fetchUsers = () => API.get("auth/users/");
 
-const fetchCurrentUser = () => API.get("auth/users/me/");
+const fetchCurrentUser = () => API.get("auth/users/me/", authHeader);
 
 const verifyToken = (body) => API.post("auth/jwt/verify/", body);
 
-const logout = sessionStorage.removeItem("token");
-
+function logout() {
+  sessionStorage.removeItem("token");
+  window.location.href = "/auth/sign-in";
+}
 function isAuthentificated() {
   return new Promise((resolve, reject) => {
     if (sessionStorage.getItem("token")) {
@@ -47,6 +63,37 @@ const verify = (uid, token) => {
   API.post("auth/users/activation/", body);
 };
 
+const updatePassword = (new_password, re_new_password, current_password) =>
+  API.post(
+    "auth/users/set_password/",
+    {
+      new_password,
+      re_new_password,
+      current_password,
+    },
+    { headers: authHeader() }
+  );
+
+const resetPassword = (email) =>
+  API.post(
+    "auth/users/reset_password/",
+    {
+      email,
+    },
+    { headers: authHeader() }
+  );
+
+const resetPasswordConfirm = (uid, token, new_password) =>
+  API.post(
+    "auth/users/reset_password_confirm/",
+    {
+      uid,
+      token,
+      new_password,
+    },
+    { headers: authHeader() }
+  );
+
 export {
   fetchUsers,
   signIn,
@@ -54,6 +101,10 @@ export {
   logout,
   isAuthentificated,
   fetchCurrentUser,
-  tokenHeaders,
+  authHeader,
   verify,
+  updatePassword,
+  resetPassword,
+  resetPasswordConfirm,
+  authHeaderForm,
 };

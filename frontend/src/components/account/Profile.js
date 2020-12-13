@@ -1,7 +1,4 @@
 import React, { useState } from "react";
-import Badge from "@material-ui/core/Badge";
-import Avatar from "@material-ui/core/Avatar";
-import IconButton from "@material-ui/core/IconButton";
 import PhotoCamera from "@material-ui/icons/PhotoCamera";
 import AvatarChooser from "./AvatarChooser";
 import {
@@ -10,6 +7,9 @@ import {
   CardContent,
   Typography,
   Box,
+  Badge,
+  Avatar,
+  IconButton,
 } from "@material-ui/core/";
 
 const useStyles = makeStyles((theme) => ({
@@ -39,49 +39,54 @@ export default function Profile() {
   };
   const handleChange = (profile) => {
     setUserProfilePic(profile);
+    sessionStorage.setItem("avatar-post", profile.url);
   };
 
   return (
     <div>
-      <Card className={classes.root}>
-        <CardContent>
-          <Box alignItems="center" display="flex" flexDirection="column">
-            <Badge
-              overlap="circle"
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "right",
-              }}
-              badgeContent={
-                <IconButton
-                  color="primary"
-                  aria-label="upload picture"
-                  component="span"
-                  onClick={handleClickOpen}
-                >
-                  <PhotoCamera />
-                </IconButton>
-              }
-            >
-              <Avatar
-                alt="Travis Howard"
-                src={
-                  userProfilePic === " "
-                    ? "/static/images/avatar/2.jpg" //changer l'image par défaut
-                    : userProfilePic
+      <Box alignItems="center" display="flex" flexDirection="column">
+        <Card className={classes.root}>
+          <CardContent>
+            <Box alignItems="center" display="flex" flexDirection="column">
+              <Badge
+                overlap="circle"
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "right",
+                }}
+                badgeContent={
+                  <IconButton
+                    color="primary"
+                    aria-label="upload picture"
+                    component="span"
+                    onClick={handleClickOpen}
+                  >
+                    <PhotoCamera />
+                  </IconButton>
                 }
-                className={classes.large}
+              >
+                <Avatar
+                  alt="Travis Howard"
+                  src={
+                    userProfilePic.url === " "
+                      ? sessionStorage.getItem("picture")
+                        ? sessionStorage.getItem("picture").url
+                        : "/static/images/avatar/2.jpg" //changer l'image par défaut
+                      : userProfilePic.url
+                  }
+                  className={classes.large}
+                />
+              </Badge>
+              <AvatarChooser
+                open={isOpen}
+                handleClickOpen={handleClickOpen}
+                handleClose={handleClose}
+                onChange={handleChange}
               />
-            </Badge>
-            <AvatarChooser
-              open={isOpen}
-              handleClickOpen={handleClickOpen}
-              handleClose={handleClose}
-              onChange={handleChange}
-            />
-          </Box>
-        </CardContent>
-      </Card>
+            </Box>
+          </CardContent>
+        </Card>
+      </Box>
       <Box p={2}>
         <Typography variant="body2" align="center">
           Avec une photo, vous avez de quoi personnaliser votre profil et

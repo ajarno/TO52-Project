@@ -25,7 +25,7 @@ export default function Activate() {
       <div className={classes.paper}>
         <Box p={2}>
           <Typography component="h1" variant="h5">
-            Votre compte a été crée
+            Votre compte a été créé
           </Typography>
         </Box>
         <Typography variant="body">

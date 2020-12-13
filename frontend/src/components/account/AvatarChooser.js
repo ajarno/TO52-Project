@@ -98,6 +98,10 @@ class AvatarChooser extends Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
+      image: {
+        url: "",
+        file: "",
+      },
       userProfilePic: "",
       editor: null,
       scaleValue: 1,
@@ -108,7 +112,7 @@ class AvatarChooser extends Component {
 
   componentDidUpdate() {
     if (this.props.onChange) {
-      this.props.onChange(this.state.userProfilePic);
+      this.props.onChange(this.state.image);
     }
   }
 
@@ -118,7 +122,8 @@ class AvatarChooser extends Component {
     const { editor } = this.state;
     if (editor !== null) {
       const url = editor.getImageScaledToCanvas().toDataURL();
-      this.setState({ userProfilePic: url });
+      let imageSrc = { url: url, file: editor.getImageScaledToCanvas().toBlob };
+      this.setState({ image: imageSrc });
     }
     this.props.handleClose();
   };

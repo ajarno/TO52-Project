@@ -11,10 +11,10 @@
 
 from pathlib import Path
 from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -74,6 +74,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
+        # 'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -85,6 +86,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
@@ -121,11 +123,16 @@ DJOSER = {
         'user_list': ['rest_framework.permissions.IsAdminUser'],
 
     },
-    'PASSWORD_RESET_CONFIRM_URL': '/password/reset/confirm/{uid}/{token}',
+    'LOGOUT_ON_PASSWORD_CHANGE': True,
+    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
+    'PASSWORD_RESET_CONFIRM_URL': 'api/password/reset/confirm/{uid}/{token}',
     'USERNAME_RESET_CONFIRM_URL': '/username/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': 'api/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
-
+    'EMAIL': {
+        'activation': 'classified_ads_app.email.ActivationEmail',
+        'password_reset': 'classified_ads_app.email.PasswordResetEmail',
+    }
 }
 
 # Password validation
@@ -166,7 +173,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 MEDIA_URL = 'media/'
-
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # email verification settings
 EMAIL_HOST = 'smtp.gmail.com'

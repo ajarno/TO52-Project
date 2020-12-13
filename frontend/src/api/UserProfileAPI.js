@@ -1,110 +1,45 @@
 import API from "./API";
+import { authHeader, authHeaderForm } from "./AuthAPI";
 
 const fetchUserProfileById = (id) => API.get("/profil/" + id);
 
-function createUserProfile(
-  user,
-  //avatar,
-  surname,
-  first_name,
-  birthday,
-  tel,
-  address_street,
-  address_postal_code,
-  address_city,
-  address_country
-) {
-  console.log("user id", user);
-  return API.post("/profiles/", {
-    // avatar,
-    surname,
-    first_name,
-    birthday,
-    tel,
-    address_street,
-    address_postal_code,
-    address_city,
-    address_country,
+function createUserProfile(formData) {
+  return API.post("/profiles/", formData, { headers: authHeaderForm() });
+}
+
+function updateUserProfile(id, formData) {
+  return API.put("/profiles/" + id + "/", formData, {
+    headers: authHeaderForm(),
   });
 }
 
-function updateUserProfile(
-  id,
-  user,
-  //avatar,
-  surname,
-  first_name,
-  birthday,
-  tel,
-  address_street,
-  address_postal_code,
-  address_city,
-  address_country
-) {
-  return API.put("/profiles/" + id + "/", {
-    // avatar,
-    surname,
-    first_name,
-    birthday,
-    tel,
-    address_street,
-    address_postal_code,
-    address_city,
-    address_country,
+function createOrUpdateProfile(formData) {
+  return new Promise((resolve, reject) => {
+    fetchUserProfile()
+      .then((result) => {
+        if (result.status === 200) {
+          updateUserProfile(result.data.profile.id, formData).then((result) => {
+            if (result.status === 201) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          });
+        } else if (result.status === 204) {
+          createUserProfile(formData).then((result) => {
+            if (result.status === 201) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          });
+        }
+      })
+      .catch((e) => {});
   });
 }
-
-function createOrUpdateProfile(
-  user,
-  //avatar,
-  surname,
-  first_name,
-  birthday,
-  tel,
-  address_street,
-  address_postal_code,
-  address_city,
-  address_country
-) {
-  fetchUserProfile()
-    .then((result) => {
-      if (result.status === 200) {
-        console.log("resultat", result);
-        console.log("resultat data", result.data);
-        console.log("resultat profil", result.data.profile);
-        console.log("resultat profil", result.data.profile.id);
-        updateUserProfile(
-          result.data.profile.id,
-          user,
-          //avatar,
-          surname,
-          first_name,
-          birthday,
-          tel,
-          address_street,
-          address_postal_code,
-          address_city,
-          address_country
-        );
-      } else if (result.status === 204) {
-        createUserProfile(
-          user,
-          //avatar,
-          surname,
-          first_name,
-          birthday,
-          tel,
-          address_street,
-          address_postal_code,
-          address_city,
-          address_country
-        );
-      }
-    })
-    .catch((e) => {});
-}
-
-const fetchUserProfile = () => API.get("profile/me/");
+const fetchUserProfile = () =>
+  API.get("profile/me/", { headers: authHeader() });
 export {
   fetchUserProfileById,
   fetchUserProfile,

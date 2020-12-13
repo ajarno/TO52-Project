@@ -8,6 +8,8 @@ import SignUp from "./components/auth/SignUp";
 import AdDisplayer from "./components/search/AdDisplayer";
 import Activate from "./components/auth/Activate";
 import ConfirmActivation from "./components/auth/ConfirmActivation";
+import ResetPassword from "./components/auth/ResetPassword";
+import ResetPasswordConfirm from "./components/auth/ResetPasswordConfirm";
 import Account from "./components/account/index";
 
 export default () => {
@@ -23,6 +25,12 @@ export default () => {
           exact
           path="/auth/confirm-activation"
           component={ConfirmActivation}
+        />
+        <Layout exact path="/auth/lost-password" component={ResetPassword} />
+        <Layout
+          exact
+          path="/auth/new-password/:uid/:token/"
+          component={ResetPasswordConfirm}
         />
         <Layout exact path="/account" component={Account} />
         <Layout component={NotFound} />

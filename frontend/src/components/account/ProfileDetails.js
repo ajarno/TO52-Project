@@ -1,23 +1,33 @@
-import React, { useState } from "react";
+import React, { Component } from "react";
+import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
-import Typography from "@material-ui/core/Typography";
 import {
   Button,
+  Typography,
   Card,
   CardContent,
   Divider,
   Grid,
   TextField,
-  makeStyles,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  InputAdornment,
+  IconButton,
+  Snackbar,
+  CardActions,
 } from "@material-ui/core";
 import InputMask from "react-input-mask";
-import CardActions from "@material-ui/core/CardActions";
+import CloseIcon from "@material-ui/icons/Close";
+import { Visibility, VisibilityOff } from "@material-ui/icons/";
 import {
   createOrUpdateProfile,
   fetchUserProfile,
 } from "../../api/UserProfileAPI";
+import { updatePassword } from "../../api/AuthAPI";
+import { logout } from "../../api/AuthAPI";
 
-const useStyles = makeStyles((theme) => ({
+const styles = (theme) => ({
   root: {},
   divider: {
     background: theme.primary,
@@ -34,239 +44,408 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(3),
     marginTop: theme.spacing(3),
   },
-}));
+});
 
-export default function ProfileDetails() {
-  const classes = useStyles();
-  const [values, setValues] = useState({
-    /*surname: "",
-    first_name: "",
-    //email: "demo@devias.io",
-    brith_day: "",
-    tel: "",
-    address_street: "",
-    address_postal_code: "",
-    address_city: "",
-    address_country: "France",*/
-    setValue,
-  });
-  function setValue() {
+class ProfileDetails extends Component {
+  constructor(props, context) {
+    super(props, context);
+    this.state = {
+      profile: {
+        avatar: "",
+        surname: "",
+        first_name: "",
+        birth_day: "",
+        tel: "",
+        address_street: "",
+        address_postal_code: "",
+        address_city: "",
+        address_country: "France",
+      },
+      isLoading: true,
+      current_password: "",
+      new_password: "",
+      show_current_password: false,
+      show_new_password: false,
+      notification_open: false,
+      notification_message: "",
+    };
+  }
+
+  componentDidMount() {
+    console.log("mounting");
+    this.fetchProfile();
+  }
+
+  fetchProfile() {
     fetchUserProfile()
       .then((result) => {
         if (result.status === 200) {
-          console.log("resultat", result);
-          const data = result.data.profile;
-          const profile = {};
-          profile["surname"] = data.surname;
-          profile["first_name"] = data.first_name;
-          profile["brith_day"] = data.surname;
-          profile["tel"] = data.tel;
-          profile["address_street"] = data.address_street;
-          profile["address_postal_code"] = data.address_postal_code;
-          profile["address_city"] = data.address_city;
-          profile["address_country"] = data.address_country;
-          //return result.data.profile;
+          this.setState({
+            profile: result.data.profile,
+            isLoading: false,
+            current_password: "",
+            new_password: "",
+          });
+          sessionStorage.setItem("avatar-get", result.data.profile.avatar);
         } else if (result.status === 204) {
-          return "";
+          return {};
         }
       })
-      .catch((e) => {});
+      .catch((error) => this.setState({ isLoading: false }));
   }
-  const handleChange = (event) => {
-    setValues({
-      ...values,
-      [event.target.name]: event.target.value,
+  showNotification = () => {
+    this.setState({
+      notification_open: true,
     });
   };
 
-  function updateInfos(event) {
-    console.log("i'm here");
-    console.log(values);
-    createOrUpdateProfile(
-      values.surname,
-      //values.first_name,
-      values.brith_day,
-      values.tel,
-      values.address_street,
-      //values.address_postal_code,
-      values.address_city,
-      values.address_country
+  closeNotifcation = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    this.setState({
+      notification_open: false,
+    });
+  };
+  handleClickShowPassword = () => {
+    this.setState({
+      show_new_password: !this.state.show_new_password,
+      new_password: this.state.new_password,
+    });
+  };
+  handleClickShowCurPassword = () => {
+    this.setState({
+      show_current_password: !this.state.show_current_password,
+      current_password: this.state.current_password,
+    });
+  };
+
+  handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  handleChange = (e) => {
+    let value = e.target.value;
+    let name = e.target.name;
+    this.setState(
+      (prevState) => {
+        return {
+          profile: {
+            ...prevState.profile,
+            [name]: value,
+          },
+        };
+      },
+      () => console.log("change imput", this.state.profile)
+    );
+  };
+
+  setPassword = (event) => {
+    updatePassword(
+      this.state.new_password,
+      this.state.new_password,
+      this.state.current_password
+    )
+      .then((result) => {
+        if (result.status === 204) {
+          this.setState({
+            notification_message:
+              " Votre mot de passe a été modifié avec succès!",
+          });
+          this.showNotification();
+          logout();
+        } else {
+          return {};
+        }
+      })
+      .catch((error) => this.setState({ isLoading: false }));
+  };
+
+  updateInfos = (event) => {
+    event.preventDefault();
+    let formData = new FormData();
+    formData.append("avatar", sessionStorage.getItem("avatar"));
+    console.log("avatar", sessionStorage.getItem("avatar"), "image.png");
+    formData.append("surname", this.state.profile.surname);
+    formData.append("first_name", this.state.profile.first_name);
+    formData.append("birth_day", this.state.profile.birth_day);
+    formData.append("tel", this.state.profile.tel);
+    formData.append("address_street", this.state.profile.address_street);
+    formData.append(
+      "address_postal_code",
+      this.state.profile.address_postal_code
+    );
+    formData.append("address_city", this.state.profile.address_city);
+    formData.append("address_country", this.state.profile.address_country);
+    console.log("form data", formData);
+    createOrUpdateProfile(formData).then((result) => {
+      if (result) {
+        this.setState({
+          notification_message: "Votre profil été créé avec succès",
+        });
+        window.location.reload();
+      } else {
+        this.setState({
+          notification_message:
+            "Une erreur est survenue lors de la création  de votre profil",
+        });
+      }
+    });
+  };
+
+  render() {
+    const { classes } = this.props;
+    return (
+      <div>
+        <form className={classes.form} id="infos">
+          <div className={classes.compte}>
+            <Typography variant="h6">Informations de compte</Typography>
+            <Divider className={classes.divider} />
+          </div>
+          <Card>
+            <CardContent>
+              <Grid container spacing={3}>
+                <Grid item md={6} xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Prénom"
+                    name="first_name"
+                    onChange={this.handleChange}
+                    required
+                    value={this.state.profile.first_name}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item md={6} xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Nom"
+                    name="surname"
+                    onChange={this.handleChange}
+                    required
+                    value={this.state.profile.surname}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item md={6} xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Date de naissance"
+                    onChange={this.handleChange}
+                    type="date"
+                    variant="outlined"
+                    name="birth_day"
+                    value={this.state.profile.birth_day}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                  />
+                </Grid>
+                <Grid item md={6} xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Téléphone"
+                    name="tel"
+                    onChange={this.handleChange}
+                    variant="outlined"
+                    value={this.state.profile.tel}
+                  >
+                    <InputMask mask="(0)999 999 99 99" maskChar=" " />
+                  </TextField>
+                </Grid>
+              </Grid>
+            </CardContent>
+            <Divider />
+          </Card>
+          <div className={classes.adresse}>
+            <Typography variant="h6">Adresse</Typography>
+            <Divider className={classes.divider} />
+          </div>
+          <Card>
+            <Divider />
+            <CardContent>
+              <Grid container spacing={3}>
+                <Grid item md={6} xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Adresse"
+                    name="address_street"
+                    onChange={this.handleChange}
+                    value={this.state.profile.address_street}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item md={6} xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Code postal"
+                    name="address_postal_code"
+                    onChange={this.handleChange}
+                    value={this.state.profile.address_postal_code}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item md={6} xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Ville"
+                    name="address_city"
+                    onChange={this.handleChange}
+                    value={this.state.profile.address_city}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item md={6} xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Pays"
+                    name="address_country"
+                    defaultValue="France"
+                    onChange={this.handleChange}
+                    value={this.state.profile.address_country}
+                    variant="outlined"
+                  />
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
+          <Divider />
+          <Button
+            //type="submit"
+            variant="contained"
+            color="primary"
+            className={(classes.submit, classes.button)}
+            onClick={this.updateInfos}
+          >
+            Enregister les modifications
+          </Button>
+        </form>
+        <form id="change_pass_form" className={classes.form}>
+          <div className={classes.adresse}>
+            <Typography variant="h6">Mot de passe</Typography>
+            <Divider className={classes.divider} />
+          </div>
+          <Card>
+            <Divider />
+            <CardContent>
+              <Grid container spacing={3}>
+                <Grid item md={6} xs={12}>
+                  <FormControl variant="outlined" fullWidth>
+                    <InputLabel htmlFor="new_password">
+                      Nouveau mot de passe
+                    </InputLabel>
+                    <OutlinedInput
+                      id="new_password"
+                      type={this.state.show_new_password ? "text" : "password"}
+                      value={this.state.new_password}
+                      name="new_password"
+                      onChange={(event) => {
+                        event.preventDefault();
+                        this.setState({ new_password: event.target.value });
+                      }}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={this.handleClickShowPassword}
+                            onMouseDown={this.handleMouseDownPassword}
+                            edge="end"
+                          >
+                            {this.state.show_new_password ? (
+                              <Visibility />
+                            ) : (
+                              <VisibilityOff />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                      labelWidth={170}
+                    />
+                  </FormControl>
+                </Grid>
+                <Grid item md={6} xs={12}>
+                  <FormControl variant="outlined" fullWidth>
+                    <InputLabel htmlFor="current_password">
+                      Mot de passe actuel
+                    </InputLabel>
+                    <OutlinedInput
+                      id="current_password"
+                      type={
+                        this.state.show_current_password ? "text" : "password"
+                      }
+                      value={this.state.current_password}
+                      name="current_password"
+                      onChange={(event) => {
+                        event.preventDefault();
+                        this.setState({ current_password: event.target.value });
+                      }}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={this.handleClickShowCurPassword}
+                            onMouseDown={this.handleMouseDownPassword}
+                            edge="end"
+                          >
+                            {this.state.show_current_password ? (
+                              <Visibility />
+                            ) : (
+                              <VisibilityOff />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                      labelWidth={170}
+                    />
+                  </FormControl>
+                </Grid>
+              </Grid>
+            </CardContent>
+            <CardActions>
+              <Button
+                variant="contained"
+                color="primary"
+                className={(classes.submit, classes.cardAction)}
+                onClick={this.setPassword}
+              >
+                Modifier mon mot de passe
+              </Button>
+            </CardActions>
+          </Card>
+        </form>
+        <Snackbar
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+          open={this.state.notification_open}
+          autoHideDuration={6000}
+          message="Note archived"
+          action={
+            <React.Fragment>
+              <Button
+                color="secondary"
+                size="small"
+                onClick={this.closeNotifcation}
+              >
+                UNDO
+              </Button>
+              <IconButton
+                size="small"
+                aria-label="close"
+                color="inherit"
+                onClick={this.closeNotifcation}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </React.Fragment>
+          }
+        />
+      </div>
     );
   }
-
-  return (
-    <div>
-      <form className={classes.form} id="infos" enctype="multipart/form-data">
-        <div className={classes.compte}>
-          <Typography variant="h6">Informations de compte</Typography>
-          <Divider className={classes.divider} />
-        </div>
-        <Card>
-          <CardContent>
-            <Grid container spacing={3}>
-              <Grid item md={6} xs={12}>
-                <TextField
-                  fullWidth
-                  label="Prénom"
-                  name="first_name"
-                  onChange={handleChange}
-                  required
-                  value={values.first_name}
-                  variant="outlined"
-                />
-              </Grid>
-              <Grid item md={6} xs={12}>
-                <TextField
-                  fullWidth
-                  label="Nom"
-                  name="surname"
-                  onChange={handleChange}
-                  required
-                  value={values.surname}
-                  variant="outlined"
-                />
-              </Grid>
-              <Grid item md={6} xs={12}>
-                <TextField
-                  fullWidth
-                  label="Date de naissance"
-                  type="brith_day"
-                  onChange={handleChange}
-                  defaultValue="2000-05-24"
-                  variant="outlined"
-                  value={values.brith_day}
-                />
-              </Grid>
-              <Grid item md={6} xs={12}>
-                <TextField
-                  fullWidth
-                  label="Télétel"
-                  name="tel"
-                  onChange={handleChange}
-                  variant="outlined"
-                  value={values.tel}
-                >
-                  <InputMask mask="(0)999 999 99 99" maskChar=" " />
-                </TextField>
-              </Grid>
-            </Grid>
-          </CardContent>
-          <Divider />
-        </Card>
-        <div className={classes.adresse}>
-          <Typography variant="h6">Adresse</Typography>
-          <Divider className={classes.divider} />
-        </div>
-        <Card>
-          <Divider />
-          <CardContent>
-            <Grid container spacing={3}>
-              <Grid item md={6} xs={12}>
-                <TextField
-                  fullWidth
-                  label="Adresse"
-                  name="address_street"
-                  onChange={handleChange}
-                  value={values.address_street}
-                  variant="outlined"
-                />
-              </Grid>
-              <Grid item md={6} xs={12}>
-                <TextField
-                  fullWidth
-                  label="Code postal"
-                  name="address_postal_code"
-                  onChange={handleChange}
-                  value={values.address_postal_code}
-                  variant="outlined"
-                />
-              </Grid>
-              <Grid item md={6} xs={12}>
-                <TextField
-                  fullWidth
-                  label="Ville"
-                  name="address_city"
-                  onChange={handleChange}
-                  value={values.address_city}
-                  variant="outlined"
-                />
-              </Grid>
-              <Grid item md={6} xs={12}>
-                <TextField
-                  fullWidth
-                  label="Pays"
-                  name="address_country"
-                  defaultValue="France"
-                  onChange={handleChange}
-                  value={values.address_country}
-                  variant="outlined"
-                />
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
-        <Divider />
-        <Button
-          //type="submit"
-          variant="contained"
-          color="primary"
-          className={(classes.submit, classes.button)}
-          onClick={updateInfos}
-        >
-          Enregister les modifications
-        </Button>
-      </form>
-      <form className={classes.form}>
-        <div className={classes.adresse}>
-          <Typography variant="h6">Mot de passe</Typography>
-          <Divider className={classes.divider} />
-        </div>
-        <Card>
-          <Divider />
-          <CardContent>
-            <Grid container spacing={3}>
-              <Grid item md={6} xs={12}>
-                <TextField
-                  fullWidth
-                  helperText="Please specify the first name"
-                  label="Nouveau mot de passe"
-                  name="first_name"
-                  onChange={handleChange}
-                  required
-                  value={values.first_name}
-                  variant="outlined"
-                />
-              </Grid>
-              <Grid item md={6} xs={12}>
-                <TextField
-                  fullWidth
-                  label="Mot de passe actuel"
-                  name="lastName"
-                  onChange={handleChange}
-                  required
-                  value={values.lastName}
-                  variant="outlined"
-                />
-              </Grid>
-            </Grid>
-          </CardContent>
-          <CardActions>
-            <Button
-              //type="submit"
-
-              variant="contained"
-              color="primary"
-              className={(classes.submit, classes.cardAction)}
-            >
-              Modifier mon mot de passe
-            </Button>
-          </CardActions>
-        </Card>
-      </form>
-    </div>
-  );
 }
-
 ProfileDetails.propTypes = {
-  className: PropTypes.string,
+  classes: PropTypes.object.isRequired,
 };
+export default withStyles(styles)(ProfileDetails);
