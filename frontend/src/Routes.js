@@ -11,6 +11,7 @@ import ConfirmActivation from "./components/auth/ConfirmActivation";
 import ResetPassword from "./components/auth/ResetPassword";
 import ResetPasswordConfirm from "./components/auth/ResetPasswordConfirm";
 import Account from "./components/account/index";
+import PrivateRoute from "./shared/components/PrivateRoute";
 
 export default () => {
   return (
@@ -32,7 +33,7 @@ export default () => {
           path="/auth/new-password/:uid/:token/"
           component={ResetPasswordConfirm}
         />
-        <Layout exact path="/account" component={Account} />
+        <PrivateRoute path="/account" component={Account} />
         <Layout component={NotFound} />
       </Switch>
     </BrowserRouter>
