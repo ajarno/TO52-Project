@@ -1,5 +1,8 @@
 import API from "./API";
 
+// -----------------------------------------------------------------
+//                        GET REQUESTS
+// -----------------------------------------------------------------
 const fetchAdsByFiltering = (category, filters) => {
   let query = "/?";
   if (category) query = query.concat(`category=${category}`);
@@ -25,6 +28,35 @@ const fetchAdsByUser = (userId) => {
 
 const fetchAdById = (id) => API.get("/classifiedads/" + id);
 
+// -----------------------------------------------------------------
+//                        POST REQUESTS
+// -----------------------------------------------------------------
 const postAd = () => API.post("/classifiedads/");
+const postPictureAd = (picture) => API.post("/pictures/", picture);
+const postLocationAd = (loc) => API.post("/locations/", loc);
 
-export { fetchAdsByFiltering, fetchAdsByUser, fetchAdById, postAd };
+// -----------------------------------------------------------------
+//                        PUT REQUESTS
+// -----------------------------------------------------------------
+const putAd = (ad) => API.patch(`/classifiedads/${ad.id}/`, ad);
+
+// -----------------------------------------------------------------
+//                       DELETE REQUESTS
+// -----------------------------------------------------------------
+const deleteAd = (id) => API.delete("/classifiedads/" + id);
+const deletePictureAd = (id) => API.delete("/pictures/" + id);
+
+// -----------------------------------------------------------------
+//                           EXPORTS
+// -----------------------------------------------------------------
+export {
+  fetchAdsByFiltering,
+  fetchAdsByUser,
+  fetchAdById,
+  postAd,
+  postPictureAd,
+  postLocationAd,
+  putAd,
+  deleteAd,
+  deletePictureAd,
+};

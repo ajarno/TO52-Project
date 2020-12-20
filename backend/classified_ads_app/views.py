@@ -3,9 +3,9 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny, I
 from rest_framework.response import Response
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.decorators import action
-from .models import Chat, User, UserProfile, Category, Ad
+from .models import Chat, User, UserProfile, Category, Ad, Picture, Location
 from .serializers import CategorySerializer, AdMiniSerializer, AdSerializer, ChatSerializer, UserSerializer, \
-    UserProfileSerializer
+    UserProfileSerializer, PictureSerializer, LocationSerializer
 from .permissions import IsOwnerProfileOrReadOnly, IsOwnerChatOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as filters
@@ -120,7 +120,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 class AdViewSet(viewsets.ModelViewSet):
     serializer_class = AdMiniSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    # permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Ad.objects.order_by('-published').all()
     filter_backends = [DjangoFilterBackend]
     filterset_class = AdFilter
@@ -129,3 +129,20 @@ class AdViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         serializer = AdSerializer(instance, context={"request": request})
         return Response(serializer.data)
+
+    def put(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+
+class PicturesViewSet(viewsets.ModelViewSet):
+    queryset = Picture.objects.all()
+    serializer_class = PictureSerializer
+    # permission_classes = [IsAuthenticated]
+    http_method_names = ['post', 'delete']
+
+
+class LocationViewSet(viewsets.ModelViewSet):
+    queryset = Location.objects.all()
+    serializer_class = LocationSerializer
+    # permission_classes = [IsAuthenticated]
+    http_method_names = ['get', 'post']

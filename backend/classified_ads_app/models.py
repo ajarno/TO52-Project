@@ -200,7 +200,7 @@ def path_and_rename(instance, filename):
 # TODO: Save online the pictures instead of inside the folder
 # Define the Picture model linked to an Ad
 class Picture(models.Model):
-    relatedAd = models.ForeignKey(Ad, on_delete=models.CASCADE, related_name='pictures')
+    relatedAd = models.ForeignKey(Ad, on_delete=models.SET_NULL, related_name='pictures', null=True)
     pic = models.ImageField(upload_to=path_and_rename, blank=True)
 
     def __str__(self):

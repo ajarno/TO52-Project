@@ -37,7 +37,7 @@ export default function AdDisplayer(props) {
       })
       .catch((err) => {
         console.error(err.message);
-        window.location.href = "/not-found";
+        // window.location.href = "/not-found";
       });
   });
 

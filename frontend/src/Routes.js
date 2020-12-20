@@ -6,6 +6,7 @@ import Layout from './components/layout/Layout';
 import AdDisplayer from './components/ad-display/AdDisplayer';
 import NewAd from './components/ad-managment/NewAd';
 import AdListManagment from './components/ad-managment/AdListManagment';
+import AdEditable from './components/ad-managment/AdEditable';
 
 export default () => {
   return (
@@ -14,7 +15,8 @@ export default () => {
         <Layout exact path='/' component={App}/>
         <Layout exact path='/ads/new-ad' component={NewAd}/>
         <Layout exact path='/ads/my-ads' component={AdListManagment}/>
-        <Layout path='/ads/:id' component={AdDisplayer}/>
+        <Layout exact path='/ads/edit/:id' component={AdEditable}/>
+        <Layout exact path='/ads/:id' component={AdDisplayer}/>
         <Layout component={NotFound}/>
       </Switch>
     </BrowserRouter>

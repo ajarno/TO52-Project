@@ -160,13 +160,19 @@ export default function AdDisplayer(props) {
   const validate = (ad) => {
     switch (mapTypeToIndex[activeStep]) {
       case "headline":
-        return setTypeError(ad.headline.trim().length < 5);
+        return setTypeError(
+          !document.getElementById("ad-title").validity.valid
+        );
       case "category":
         return setTypeError(ad.category === "");
       case "description":
-        return setTypeError(ad.description.trim().length < 5);
+        return setTypeError(
+          !document.getElementById("ad-description").validity.valid
+        );
       case "price":
-        return setTypeError(ad.price === "");
+        return setTypeError(
+          !document.getElementById("ad-price").validity.valid
+        );
       case "location":
         return setTypeError(Object.keys(ad.location).length === 0);
 
@@ -204,6 +210,7 @@ export default function AdDisplayer(props) {
           <TextField
             autoFocus
             required
+            inputProps={{ minLength: 5 }}
             error={error[mapTypeToIndex.indexOf("headline")]}
             helperText={
               error[mapTypeToIndex.indexOf("headline")]
@@ -222,7 +229,12 @@ export default function AdDisplayer(props) {
       case mapTypeToIndex.indexOf("category"):
         return (
           <TextField
+            id="ad-category"
+            required
+            select
             value={ad.category}
+            label="Catégorie"
+            variant="outlined"
             error={error[mapTypeToIndex.indexOf("category")]}
             helperText={
               error[mapTypeToIndex.indexOf("category")]
@@ -232,11 +244,7 @@ export default function AdDisplayer(props) {
             onChange={(evt) => {
               handleAdChange(evt, "category");
             }}
-            id="select-category"
             className={classes.text}
-            select
-            label="Catégorie"
-            variant="outlined"
           >
             {categories &&
               categories.map((category) => (
@@ -249,9 +257,10 @@ export default function AdDisplayer(props) {
       case mapTypeToIndex.indexOf("description"):
         return (
           <TextField
-            className={classes.text}
+            id="ad-description"
             required
-            id="description-textfield"
+            inputProps={{ minLength: 5 }}
+            className={classes.text}
             label="Description"
             variant="outlined"
             value={ad.description}
@@ -273,18 +282,19 @@ export default function AdDisplayer(props) {
             variant="outlined"
             error={error[mapTypeToIndex.indexOf("price")]}
           >
-            <InputLabel htmlFor="price-input">Prix</InputLabel>
+            <InputLabel htmlFor="ad-price">Prix</InputLabel>
             <OutlinedInput
-              id="price-input"
-              value={ad.price}
-              onChange={(evt) => handleAdChange(evt, "price")}
-              onKeyPress={(ev) => catchReturn(ev, "price")}
-              endAdornment={<InputAdornment position="end">€</InputAdornment>}
+              id="ad-price"
               type="number"
+              required
               inputProps={{
                 "aria-label": "weight",
                 min: 0,
               }}
+              value={ad.price}
+              onChange={(evt) => handleAdChange(evt, "price")}
+              onKeyPress={(ev) => catchReturn(ev, "price")}
+              endAdornment={<InputAdornment position="end">€</InputAdornment>}
               labelWidth={30}
             />
             {error[mapTypeToIndex.indexOf("price")] && (
@@ -305,10 +315,11 @@ export default function AdDisplayer(props) {
         return (
           <React.Fragment>
             <AutcompleteLocation
-              error={error[mapTypeToIndex.indexOf("location")]}
               location={ad.location}
+              countries={["fr"]}
               placeholder="Entrez le lieu où se situe votre bien"
-              countries={['fr']}
+              required
+              error={error[mapTypeToIndex.indexOf("location")]}
               onChange={(location) => {
                 handleAdChange(location, "location");
               }}

@@ -1,4 +1,5 @@
 import React from "react";
+import { deleteAd } from "../../api/AdsAPI";
 import { makeStyles } from "@material-ui/core/styles";
 import noPicture from "../../assets/no-picture.png";
 import {
@@ -19,6 +20,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { Link } from "react-router-dom";
 import truncate from "../../shared/functions/TruncatePipe";
+import ConfirmModal from "../../shared/components/ConfirmModal";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -42,6 +44,7 @@ const useStyles = makeStyles((theme) => ({
     position: "relative",
   },
   img: {
+    backgroundColor: theme.palette.grey[100],
     height: "100%",
     backgroundPosition: "center",
     backgroundSize: "cover",
@@ -75,6 +78,7 @@ export default function AdEditableMiniature(props) {
     day: "numeric",
   };
 
+  // -------------------- MENU --------------------
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
 
@@ -88,6 +92,23 @@ export default function AdEditableMiniature(props) {
     }
 
     setOpen(false);
+  };
+
+  // -------------------- MODAL -------------------
+  const [openModal, setOpenModal] = React.useState(false);
+
+  const handleModalOpen = (event) => {
+    setOpenModal(true);
+  };
+
+  const handleModalClose = (event) => {
+    setOpenModal(false);
+  };
+
+  const handleModalConfirm = (event) => {
+    setOpenModal(false);
+    deleteAd(ad.id);
+    window.location.reload();
   };
 
   return (
@@ -105,7 +126,7 @@ export default function AdEditableMiniature(props) {
               ) : (
                 <div
                   className={classes.img}
-                  src={noPicture}
+                  style={{ backgroundImage: noPicture }}
                   alt={"Indisponible"}
                 ></div>
               )}
@@ -118,7 +139,7 @@ export default function AdEditableMiniature(props) {
             <Grid item xs container direction="column" spacing={2}>
               <Grid item xs>
                 <Typography gutterBottom variant="subtitle1">
-                  { truncate(ad.headline, 50) }
+                  {truncate(ad.headline, 50)}
                 </Typography>
                 <Typography variant="caption" color="textSecondary">
                   {`publiée ${new Intl.DateTimeFormat(
@@ -165,21 +186,17 @@ export default function AdEditableMiniature(props) {
                   >
                     <Paper>
                       <ClickAwayListener onClickAway={handleClose}>
-                        <MenuList
-                          autoFocusItem={open}
-                          id="menu-list-grow"
-                        >
+                        <MenuList autoFocusItem={open} id="menu-list-grow">
                           <MenuItem component={Link} to={`/ads/${ad.id}`}>
                             <EyeIcon className={classes.menuItemIcon} />
                             Consulter
                           </MenuItem>
-                          <MenuItem component={Link} to="#edit">
+                          <MenuItem component={Link} to={`/ads/edit/${ad.id}`}>
                             <EditIcon className={classes.menuItemIcon} />
                             Editer
                           </MenuItem>
                           <MenuItem
-                            component={Link}
-                            to="#delete"
+                            onClick={handleModalOpen}
                             className={classes.secondary}
                           >
                             <DeleteIcon className={classes.menuItemIcon} />
@@ -195,6 +212,14 @@ export default function AdEditableMiniature(props) {
           </Grid>
         </Grid>
       </Paper>
+      <ConfirmModal
+        open={openModal}
+        handleClose={handleModalClose}
+        onCancel={handleModalClose}
+        onConfirm={handleModalConfirm}
+        title="Êtes-vous sûr de vouloir retirer cette annonce ?"
+        warning="Attention, cette action est définitive."
+      />
     </React.Fragment>
   );
 }

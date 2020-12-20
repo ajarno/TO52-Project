@@ -46,17 +46,14 @@ export default function AdListManagment(props) {
             {ads.length} annonce(s) en ligne
           </Typography>
         </div>
-        {ads.length > 0 ? (
+        {ads.length > 0 &&
           ads.map((ad) => {
             return (
               <Grid item key={ad.id}>
                 <AdEditableMiniature ad={ad} />
               </Grid>
             );
-          })
-        ) : (
-          <p>Bybye</p>
-        )}
+          })}
       </Grid>
     </React.Fragment>
   );

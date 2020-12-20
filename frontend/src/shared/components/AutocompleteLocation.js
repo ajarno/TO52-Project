@@ -57,6 +57,8 @@ export default function AutcompleteLocation(props) {
   return (
     <div className={props.error === true ? classes.error : classes.ok}>
       <input
+        id="location-autocomplete"
+        required={props.required ? true : false}
         defaultValue={props.location ? props.location.value : ""}
         placeholder={props.placeholder}
         ref={algoliaPlacesRef}
