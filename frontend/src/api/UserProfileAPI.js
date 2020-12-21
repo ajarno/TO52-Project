@@ -19,7 +19,7 @@ function createOrUpdateProfile(formData) {
       .then((result) => {
         if (result.status === 200) {
           updateUserProfile(result.data.profile.id, formData).then((result) => {
-            if (result.status === 201) {
+            if (result.status === 200) {
               resolve(true);
             } else {
               resolve(false);

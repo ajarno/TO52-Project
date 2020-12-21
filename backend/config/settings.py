@@ -132,6 +132,7 @@ DJOSER = {
     'EMAIL': {
         'activation': 'classified_ads_app.email.ActivationEmail',
         'password_reset': 'classified_ads_app.email.PasswordResetEmail',
+        # 'password_changed_confirmation': 'classified_ads_app.email.PasswordChangedConfirmationEmail',
     }
 }
 
@@ -172,7 +173,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # email verification settings

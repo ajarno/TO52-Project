@@ -68,11 +68,9 @@ export default function Profile() {
                 <Avatar
                   alt="Travis Howard"
                   src={
-                    userProfilePic.url === " "
-                      ? sessionStorage.getItem("picture")
-                        ? sessionStorage.getItem("picture").url
-                        : "/static/images/avatar/2.jpg" //changer l'image par défaut
-                      : userProfilePic.url
+                    sessionStorage.getItem("avatar-post") == ""
+                      ? sessionStorage.getItem("avatar-get")
+                      : sessionStorage.getItem("avatar-post")
                   }
                   className={classes.large}
                 />

@@ -25,6 +25,7 @@ import { Visibility, VisibilityOff } from "@material-ui/icons/";
 import { signIn } from "../../api/AuthAPI";
 import { fetchUserProfile } from "../../api/UserProfileAPI";
 
+//styles
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(5),
@@ -49,6 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+//SignIn component
 export default function SignIn() {
   const classes = useStyles();
   const [isLoggedIn, setLoggedIn] = useState(false);
@@ -74,16 +76,10 @@ export default function SignIn() {
   function doSignIn(event) {
     event.preventDefault();
     //Validation section
-    var pattern = new RegExp(
-      /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
-    );
-    if (email === "") {
+    if (!document.getElementById("email").validity.valid) {
       setIsEmailInvalid(true);
       setEmailInvalidMessage("L'adresse email est requise.");
-    } else if (!pattern.test(email)) {
-      setIsEmailInvalid(true);
-      setEmailInvalidMessage("Veuillez saisir une adresse email valide.");
-    } else if (password === "") {
+    } else if (!document.getElementById("password").validity.valid) {
       setIsPasswordInvalid(true);
       setPasswordInvalidMessage("Le mot de passe est requis.");
     } else {
@@ -152,6 +148,7 @@ export default function SignIn() {
                 name="email"
                 autoComplete="email"
                 autoFocus
+                type="email"
                 value={email}
                 error={isEmailInvalid}
                 helperText={isEmailInvalid && emailInvalidMessage}

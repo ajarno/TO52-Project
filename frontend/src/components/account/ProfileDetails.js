@@ -18,7 +18,7 @@ import {
   CardActions,
 } from "@material-ui/core";
 import InputMask from "react-input-mask";
-import CloseIcon from "@material-ui/icons/Close";
+import MuiAlert from "@material-ui/lab/Alert";
 import { Visibility, VisibilityOff } from "@material-ui/icons/";
 import {
   createOrUpdateProfile,
@@ -26,6 +26,10 @@ import {
 } from "../../api/UserProfileAPI";
 import { updatePassword } from "../../api/AuthAPI";
 import { logout } from "../../api/AuthAPI";
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const styles = (theme) => ({
   root: {},
@@ -68,6 +72,9 @@ class ProfileDetails extends Component {
       show_new_password: false,
       notification_open: false,
       notification_message: "",
+      errorNot: false,
+      error: {},
+      changePasswordError: true,
     };
   }
 
@@ -86,7 +93,6 @@ class ProfileDetails extends Component {
             current_password: "",
             new_password: "",
           });
-          sessionStorage.setItem("avatar-get", result.data.profile.avatar);
         } else if (result.status === 204) {
           return {};
         }
@@ -138,6 +144,8 @@ class ProfileDetails extends Component {
       },
       () => console.log("change imput", this.state.profile)
     );
+    console.log("name", name);
+    this.validate(name);
   };
 
   setPassword = (event) => {
@@ -149,22 +157,41 @@ class ProfileDetails extends Component {
       .then((result) => {
         if (result.status === 204) {
           this.setState({
+            notification_open: true,
             notification_message:
               " Votre mot de passe a été modifié avec succès!",
           });
+
           this.showNotification();
           logout();
         } else {
+          this.setState({
+            notification_open: true,
+            errorNot: true,
+            notification_message:
+              " Une erreur est survenue lors de la modification de votre mot de passse!",
+          });
           return {};
         }
       })
       .catch((error) => this.setState({ isLoading: false }));
   };
 
+  handleChangePassword = (event) => {
+    var strongPasswordRegex = new RegExp(
+      "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})"
+    );
+    this.setState({
+      new_password: event.target.value,
+      changePasswordError: strongPasswordRegex.test(this.state.new_password),
+    });
+    console.log("change", this.state.changePasswordError);
+  };
+
   updateInfos = (event) => {
     event.preventDefault();
     let formData = new FormData();
-    formData.append("avatar", sessionStorage.getItem("avatar"));
+    formData.append("avatar", sessionStorage.getItem("avatar-post"));
     console.log("avatar", sessionStorage.getItem("avatar"), "image.png");
     formData.append("surname", this.state.profile.surname);
     formData.append("first_name", this.state.profile.first_name);
@@ -181,17 +208,50 @@ class ProfileDetails extends Component {
     createOrUpdateProfile(formData).then((result) => {
       if (result) {
         this.setState({
-          notification_message: "Votre profil été créé avec succès",
+          notification_message: "Votre profil a été mis à jour avec succès",
         });
-        window.location.reload();
       } else {
         this.setState({
+          errorNot: true,
           notification_message:
             "Une erreur est survenue lors de la création  de votre profil",
         });
       }
+      //window.location.reload(false);
+      this.setState({
+        notification_open: true,
+      });
     });
   };
+  //Validation
+
+  validate = (type) => {
+    let err = {};
+    switch (type) {
+      case "first_name":
+        err = !document.getElementById("first_name").validity.valid;
+        break;
+      case "surname":
+        err = !document.getElementById("surname").validity.valid;
+        break;
+      case "birth_day":
+        err = !document.getElementById("birth_day").validity.valid;
+        break;
+      case "tel":
+        err = !document.getElementById("tel").validity.valid;
+        break;
+      default:
+        err = this.state.errors;
+    }
+    return this.setTypeError(type, err);
+  };
+
+  setTypeError(type, boolean) {
+    let newError = { ...this.state.error };
+    newError[type] = boolean;
+    this.state.error = newError;
+    return newError;
+  }
 
   render() {
     const { classes } = this.props;
@@ -208,12 +268,20 @@ class ProfileDetails extends Component {
                 <Grid item md={6} xs={12}>
                   <TextField
                     fullWidth
+                    id="first_name"
                     label="Prénom"
                     name="first_name"
                     onChange={this.handleChange}
                     required
                     value={this.state.profile.first_name}
                     variant="outlined"
+                    inputProps={{ minLength: 2 }}
+                    error={this.state.error["first_name"]}
+                    helperText={
+                      this.state.error["first_name"]
+                        ? "Le prénom est requis"
+                        : ""
+                    }
                   />
                 </Grid>
                 <Grid item md={6} xs={12}>
@@ -221,14 +289,23 @@ class ProfileDetails extends Component {
                     fullWidth
                     label="Nom"
                     name="surname"
+                    id="surname"
                     onChange={this.handleChange}
                     required
                     value={this.state.profile.surname}
                     variant="outlined"
+                    inputProps={{ minLength: 5 }}
+                    error={this.state.error["surname"]}
+                    helperText={
+                      this.state.error["surname"]
+                        ? "Le nom de famille est requis"
+                        : ""
+                    }
                   />
                 </Grid>
                 <Grid item md={6} xs={12}>
                   <TextField
+                    id="birth_day"
                     fullWidth
                     label="Date de naissance"
                     onChange={this.handleChange}
@@ -239,16 +316,31 @@ class ProfileDetails extends Component {
                     InputLabelProps={{
                       shrink: true,
                     }}
+                    error={this.state.error["birth_day"]}
+                    helperText={
+                      this.state.error["birth_day"]
+                        ? "La date de naissance est requis"
+                        : ""
+                    }
                   />
                 </Grid>
                 <Grid item md={6} xs={12}>
                   <TextField
+                    id="tel"
                     fullWidth
                     label="Téléphone"
                     name="tel"
+                    type="text"
                     onChange={this.handleChange}
                     variant="outlined"
                     value={this.state.profile.tel}
+                    inputProps={{ minLength: 10, maxLenght: 10 }}
+                    error={this.state.error["tel"]}
+                    helperText={
+                      this.state.error["tel"]
+                        ? "Ce champ est requis et doit être au max 10 caractères"
+                        : ""
+                    }
                   >
                     <InputMask mask="(0)999 999 99 99" maskChar=" " />
                   </TextField>
@@ -330,7 +422,16 @@ class ProfileDetails extends Component {
             <CardContent>
               <Grid container spacing={3}>
                 <Grid item md={6} xs={12}>
-                  <FormControl variant="outlined" fullWidth>
+                  <FormControl
+                    variant="outlined"
+                    fullWidth
+                    error={!this.state.changePasswordError}
+                    helperText={
+                      !this.state.changePasswordError
+                        ? "Le prénom est requis"
+                        : ""
+                    }
+                  >
                     <InputLabel htmlFor="new_password">
                       Nouveau mot de passe
                     </InputLabel>
@@ -339,10 +440,7 @@ class ProfileDetails extends Component {
                       type={this.state.show_new_password ? "text" : "password"}
                       value={this.state.new_password}
                       name="new_password"
-                      onChange={(event) => {
-                        event.preventDefault();
-                        this.setState({ new_password: event.target.value });
-                      }}
+                      onChange={this.handleChangePassword}
                       endAdornment={
                         <InputAdornment position="end">
                           <IconButton
@@ -414,33 +512,21 @@ class ProfileDetails extends Component {
           </Card>
         </form>
         <Snackbar
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "left",
-          }}
           open={this.state.notification_open}
           autoHideDuration={6000}
-          message="Note archived"
-          action={
-            <React.Fragment>
-              <Button
-                color="secondary"
-                size="small"
-                onClick={this.closeNotifcation}
-              >
-                UNDO
-              </Button>
-              <IconButton
-                size="small"
-                aria-label="close"
-                color="inherit"
-                onClick={this.closeNotifcation}
-              >
-                <CloseIcon fontSize="small" />
-              </IconButton>
-            </React.Fragment>
-          }
-        />
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          open={this.state.notification_open}
+        >
+          <Alert
+            onClose={this.closeNotifcation}
+            severity={this.state.errorNot ? "error" : "success"}
+          >
+            {this.state.notification_message}
+          </Alert>
+        </Snackbar>
       </div>
     );
   }

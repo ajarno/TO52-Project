@@ -269,7 +269,7 @@ class AvatarChooser extends Component {
                 <Grid item xs={12}>
                   <Avatar
                     alt="Travis Howard"
-                    src="/static/images/avatar/2.jpg"
+                    src={sessionStorage.getItem("avatar-get")}
                     className={classes.large}
                   />
                 </Grid>

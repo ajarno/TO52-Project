@@ -84,7 +84,7 @@ class UserProfile(models.Model):
 
     # Attributes
     # upload at specific location
-    avatar = models.ImageField(upload_to=user_avatar_path, blank=True)
+    avatar = models.FileField(upload_to=user_avatar_path, blank=True)
     surname = models.CharField(max_length=35, blank=True)
     first_name = models.CharField(max_length=35, blank=True)
     birth_day = models.DateField(blank=True)

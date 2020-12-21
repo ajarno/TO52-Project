@@ -23,7 +23,7 @@ import AddBoxIcon from "@material-ui/icons/AddBox";
 import logo from "../../assets/logo.svg";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import { logout, isAuthentificated } from "../../api/AuthAPI";
-
+import { fetchUserProfile } from "../../api/UserProfileAPI";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -82,6 +82,8 @@ export default function DenseAppBar() {
   const [open, setOpen] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
   const anchorRef = React.useRef(null);
+  const [firstName, setFirstName] = useState("");
+  const [avatar, setAvatar] = useState("");
 
   // return focus to the button when we transitioned from !open -> open
   const prevOpen = React.useRef(open);
@@ -95,6 +97,15 @@ export default function DenseAppBar() {
         setIsAuth(true);
       })
       .catch((error) => setIsAuth(false));
+    fetchUserProfile().then((result) => {
+      if (result.status === 200) {
+        setAvatar("http://127.0.0.1:8000/media/" + result.data.profile.avatar);
+        setFirstName(result.data.profile.first_name);
+        console.log("firstName", isAuth);
+      } else if (result.status === 204) {
+        return {};
+      }
+    });
   }, [open]);
 
   const handleToggle = () => {
@@ -166,16 +177,13 @@ export default function DenseAppBar() {
                       }}
                       variant="dot"
                     >
-                      <Avatar
-                        alt="Remy Sharp"
-                        src="/static/images/avatar/1.jpg"
-                      />
+                      <Avatar alt="Remy Sharp" src={avatar} />
                     </StyledBadge>
                   )}
                   {!isAuth && (
                     <Avatar
                       alt="Remy Sharp"
-                      src="/static/images/avatar/1.jpg"
+                      src={"/static/images/avatar/1.jpg"}
                     />
                   )}
                 </IconButton>
@@ -219,7 +227,7 @@ export default function DenseAppBar() {
                           component={Link}
                           to="/account"
                         >
-                          Bonjour
+                          Bonjour {firstName}
                         </MenuItem>
                         <MenuItem
                           onClick={handleClose}

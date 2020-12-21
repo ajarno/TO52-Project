@@ -27,7 +27,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     serializer_class = UserProfileSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ('user',)
-    # http_method_names = ['get', 'post', 'put']
+    http_method_names = ['get', 'post', 'put']
     permission_classes = [IsAuthenticated, IsOwnerProfileOrReadOnly]
 
     def perform_create(self, serializer):
@@ -36,6 +36,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
 class CurrentUserProfilView(RetrieveUpdateDestroyAPIView):
     def get(self, request):
+
         profile = UserProfile.objects.filter(
             user_id=self.request.user.id).values()
         if len(profile) == 0:

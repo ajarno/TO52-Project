@@ -83,13 +83,10 @@ export default function SignUp() {
     /*    var mediumPasswordRegex = new RegExp(
       "^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})"
     ); */
-    if (email === "") {
+    if (!document.getElementById("email").validity.valid) {
       setIsEmailInvalid(true);
       setEmailInvalidMessage("L'adresse email est requise.");
-    } else if (!pattern.test(email)) {
-      setIsEmailInvalid(true);
-      setEmailInvalidMessage("Veuillez saisir une adresse email valide.");
-    } else if (password === "") {
+    } else if (!document.getElementById("password").validity.valid) {
       setIsPasswordInvalid(true);
       setPasswordInvalidMessage("Le mot de passe est requis.");
     } else if (!strongPasswordRegex.test(password)) {
@@ -124,7 +121,6 @@ export default function SignUp() {
     }
   }
 
-  //TODO:  Mettre Redirect dans Route
   if (isSignUp) {
     return <Redirect to="/auth/activate" />;
   }
