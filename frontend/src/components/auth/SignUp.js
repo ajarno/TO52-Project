@@ -73,16 +73,9 @@ export default function SignUp() {
   function doSignUp(event) {
     event.preventDefault();
     //Validation section
-    var pattern = new RegExp(
-      /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
-    );
-
     var strongPasswordRegex = new RegExp(
       "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})"
     );
-    /*    var mediumPasswordRegex = new RegExp(
-      "^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})"
-    ); */
     if (!document.getElementById("email").validity.valid) {
       setIsEmailInvalid(true);
       setEmailInvalidMessage("L'adresse email est requise.");
@@ -92,7 +85,7 @@ export default function SignUp() {
     } else if (!strongPasswordRegex.test(password)) {
       setIsPasswordInvalid(true);
       setPasswordInvalidMessage(
-        "Le mot de passe doit contenir au moin 8 caractères y compris caractères alphanumériques et numériques."
+        "Le mot de passe doit contenir au moins 8 caractères y compris caractères alphanumériques, numériques et spéciaux (&$...)."
       );
     } else {
       setIsEmailInvalid(false);

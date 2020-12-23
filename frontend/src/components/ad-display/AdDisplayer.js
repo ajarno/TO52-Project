@@ -6,7 +6,7 @@ import BackBar from "../../shared/components/BackBar";
 import PictureSlider from "../../shared/components/PictureSlider";
 import Map from "../../shared/components/Map";
 import { Typography, Divider, Grid } from "@material-ui/core";
-import UserSummary from "../user/UserSummary";
+import UserSummary from "./UserSummary";
 
 const useStyles = makeStyles((theme) => ({
   container: {

@@ -216,14 +216,11 @@ export default function DenseAppBar() {
                       }}
                       variant="dot"
                     >
-                      <Avatar alt="Remy Sharp" src={avatar} />
+                      <Avatar alt="Avatar" src={avatar} />
                     </StyledBadge>
                   )}
                   {!isAuth && (
-                    <Avatar
-                      alt="Remy Sharp"
-                      src={"/static/images/avatar/1.jpg"}
-                    />
+                    <AccountCircleIcon />
                   )}
                 </IconButton>
               </Tooltip>
@@ -261,13 +258,13 @@ export default function DenseAppBar() {
                         id="menu-list-grow"
                         onKeyDown={handleListKeyDown}
                       >
-                        <MenuItem
+                        {/* <MenuItem
                           onClick={handleClose}
                           component={Link}
                           to="/account"
                         >
                           Bonjour {firstName}
-                        </MenuItem>
+                        </MenuItem> */}
                         <MenuItem
                           onClick={handleClose}
                           component={Link}

@@ -68,7 +68,7 @@ export default function Profile() {
                 <Avatar
                   alt="Travis Howard"
                   src={
-                    sessionStorage.getItem("avatar-post") == ""
+                    sessionStorage.getItem("avatar-post") === ""
                       ? sessionStorage.getItem("avatar-get")
                       : sessionStorage.getItem("avatar-post")
                   }

@@ -249,7 +249,9 @@ class ProfileDetails extends Component {
   setTypeError(type, boolean) {
     let newError = { ...this.state.error };
     newError[type] = boolean;
-    this.state.error = newError;
+    this.setState({
+      error: newError,
+    });
     return newError;
   }
 
@@ -518,7 +520,6 @@ class ProfileDetails extends Component {
             vertical: "top",
             horizontal: "right",
           }}
-          open={this.state.notification_open}
         >
           <Alert
             onClose={this.closeNotifcation}

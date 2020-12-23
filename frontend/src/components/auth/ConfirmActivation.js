@@ -48,16 +48,17 @@ export default function ConfirmActivation() {
               </Typography>
             </Box>
             <Typography variant="body" align="center">
-              Connecter vous à votre espace en cliquant ici
+              Connectez-vous à votre espace en cliquant sur le bouton ci-dessous
+            </Typography>
               <Button
                 size="small"
-                color="primary"
+                color="secondary"
+                variant="outlined"
                 component={Link}
                 to="/auth/sign-in"
               >
                 Se connecter
               </Button>
-            </Typography>
           </Grid>
           <Grid item lg={6} md={12} xs={12}>
             <img
