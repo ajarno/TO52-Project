@@ -1,10 +1,10 @@
 import React from "react";
-import CategoryMenu from "./components/search/CategoryMenu";
+import Search from "./components/search/Search";
 
 function App() {
   return (
     <React.Fragment>
-      <CategoryMenu />
+      <Search />
     </React.Fragment>
   );
 }

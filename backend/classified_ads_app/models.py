@@ -77,10 +77,9 @@ def user_avatar_path(instance, filename):
     return os.path.join(upload_to, filename)
 
 
-# This class contain extra informations about user
+# This class contain extra information about user
 class UserProfile(models.Model):
-    user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name="profile")
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
 
     # Attributes
     # upload at specific location
@@ -99,13 +98,31 @@ class UserProfile(models.Model):
         max_length=20, blank=True, default="France")
 
     def __str__(self):
-        return self.first_name + " " + self.surname + ">"
+        return self.first_name + " " + self.surname
+
+
+# Definition of a method to rename the pictures uploaded
+def category_path(instance, filename):
+    # Set the path
+    upload_to = 'images/categories/'
+
+    # Build the filename
+    # Get the extension
+    ext = filename.split('.')[-1]
+    # Set the filename as random string
+    from uuid import uuid4
+    filename = '{slug}.{extension}'.format(slug=instance.slug, extension=ext)
+
+    # Return the whole path to the file
+    import os
+    return os.path.join(upload_to, filename)
 
 
 # Define the Categories available
 class Category(models.Model):
     name = models.CharField(max_length=200)
     slug = models.SlugField(primary_key=True)
+    picture = models.ImageField(upload_to=category_path)
 
     class Meta:
         verbose_name_plural = "categories"
@@ -114,29 +131,37 @@ class Category(models.Model):
         return self.name
 
 
+# Define location for an ad or user
+class Location(models.Model):
+    country = models.CharField(max_length=50)
+    countryCode = models.CharField(max_length=2, blank=True)
+    region = models.CharField(max_length=75, blank=True)
+    county = models.CharField(max_length=75, blank=True)
+    postalCode = models.CharField(max_length=10)
+    city = models.CharField(max_length=50)
+    street = models.CharField(max_length=200, blank=True)
+    lat = models.DecimalField(max_digits=9, decimal_places=6)
+    lng = models.DecimalField(max_digits=9, decimal_places=6)
+
+    def __str__(self):
+        return self.street + ", " + self.postalCode + " " + self.city + ", " + self.country
+
+
 # Define the model describing an Ad
 class Ad(models.Model):
     # Foreign keys
-    author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='classifiedads')
-    saved_by = models.ManyToManyField(
-        User, db_column='SavedBy', blank=True, related_name='saved_ads')
-    category = models.ForeignKey(
-        Category, on_delete=models.CASCADE, related_name='classifiedads')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='classifiedads')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='classifiedads')
+    location = models.ForeignKey(Location, related_name="ad", on_delete=models.CASCADE)
 
     # Attributes
     published = models.DateField(auto_now_add=True)
     headline = models.CharField(max_length=75)
     description = models.TextField(max_length=1500)
-    price = models.IntegerField(default=0, validators=[
-                                MinValueValidator(0), MaxValueValidator(500000)])
-    adress_postal_code = models.CharField(
-        max_length=10, db_column='AdAdressPostalCode', blank=True)
-    adress_city = models.CharField(
-        max_length=30, db_column='AdAdressCity', blank=True)
+    price = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(500000)])
 
     def __str__(self):
-        return self.headline + " - " + self.adress_city + " - " + self.price.__str__() + "€"
+        return self.headline + " - " + self.price.__str__() + "€"
 
 
 # Definition of a method to rename the pictures uploaded
@@ -158,8 +183,7 @@ def path_and_rename(instance, filename):
 # TODO: Save online the pictures instead of inside the folder
 # Define the Picture model linked to an Ad
 class Picture(models.Model):
-    relatedAd = models.ForeignKey(
-        Ad, on_delete=models.CASCADE, related_name='pictures')
+    relatedAd = models.ForeignKey(Ad, on_delete=models.SET_NULL, related_name='pictures', null=True)
     pic = models.ImageField(upload_to=path_and_rename, blank=True)
 
     def __str__(self):

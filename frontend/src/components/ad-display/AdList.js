@@ -1,39 +1,45 @@
 import React, { useState } from "react";
-import { useEffectOnlyOnce } from "../../api/Utils";
-import { fetchAdsByCategory } from "../../api/AdsAPI";
+import { fetchAdsByFiltering } from "../../api/AdsAPI";
+import useWindowDimensions from "../../shared/functions/DimensionsHook";
 import AdMiniature from "./AdMiniature";
 import AdMiniatureLoading from "./AdMiniatureLoading";
 import { Grid } from "@material-ui/core";
 
 export default function Ads(props) {
+
   const [ads, setAds] = useState([]);
   const minimumTime = 850;
   const [minimumTimeElapsed, setMinimumTimeElapsed] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffectOnlyOnce(() => {
+  React.useEffect(() => {
     setIsLoading(true);
     setMinimumTimeElapsed(false);
     setTimeout(() => {
       setMinimumTimeElapsed(true);
     }, minimumTime);
-    fetchAdsByCategory(props.category)
+    fetchAdsByFiltering(props.category, props.filters)
       .then((_ads) => {
         setAds(_ads.data);
-        console.log(_ads.data);
+        // console.log(_ads.data);
       })
       .catch((err) => {
         console.error(err.message);
       })
       .then(() => setIsLoading(false));
-  });
+      
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.filters]);
+
+
+  const { width } = useWindowDimensions();
 
   return (
     <React.Fragment>
       {(!minimumTimeElapsed && ads.length === 0) || isLoading ? (
         <AdMiniatureLoading />
       ) : ads.length > 0 ? (
-        <Grid container spacing={3}>
+        <Grid container alignItems="stretch" justify={width > 600 ? 'flex-start' : 'center'} spacing={3}>
           {ads.map((ad) => {
             return <AdMiniature ad={ad} key={ad.id} />;
           })}

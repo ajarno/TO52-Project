@@ -6,12 +6,12 @@ import noPicture from "../../assets/no-picture.png";
 
 const useStyles = makeStyles({
   carouselContainer: {
-    width: "fit-content",
+    maxWidth: "100%",
+    boxShadow: "0px 1px 1px -1px rgba(0,0,0,0.2), 0px 0px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)",
   },
   media: {
-    width: "50vw",
+    width: "100%",
     height: "40vh",
-    minWidth: "320px",
     minHeight: "240px",
   },
   imageSrc: {
