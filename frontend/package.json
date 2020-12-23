@@ -9,14 +9,19 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "algolia-places-react": "^1.6.0",
+    "leaflet": "^1.7.1",
+    "material-ui-dropzone": "^3.5.0",
     "axios": "^0.21.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-leaflet": "^3.0.2",
     "react-material-ui-carousel": "^2.1.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.4"
   },
   "scripts": {
+    "reinstall": "rm -rf node_modules && rm -f package-lock.json && npm install",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -36,5 +41,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/leaflet": "^1.5.19"
   }
 }

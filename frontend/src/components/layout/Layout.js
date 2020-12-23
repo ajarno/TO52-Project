@@ -4,6 +4,7 @@ import DenseAppBar from "./AppBar";
 import Footer from "./Footer";
 import { ThemeProvider } from "@material-ui/core/styles";
 import theme from "../../styles/Theme";
+import "../../styles/Theme.css";
 import "../../App.css";
 
 const Layout = ({ component: Component, ...rest }) => {
@@ -14,7 +15,7 @@ const Layout = ({ component: Component, ...rest }) => {
         <div>
           <ThemeProvider theme={theme}>
             <div className="App">
-              <header className="App-header">
+              <header className="AppHeader">
                 <DenseAppBar />
               </header>
               <div className="root">

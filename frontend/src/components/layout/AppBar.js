@@ -1,14 +1,18 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Button from "@material-ui/core/Button";
-import AddBoxIcon from "@material-ui/icons/AddBox";
-import logo from "../../assets/logo.svg";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
+import {
+  AppBar,
+  Toolbar,
+  Button,
+  IconButton,
+  Tooltip,
+} from "@material-ui/core";
 import { Link } from "react-router-dom";
+import AddBoxIcon from "@material-ui/icons/AddBox";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import LocalOfferIcon from '@material-ui/icons/LocalOffer';
+import logo from "../../assets/logo.svg";
+import useWindowDimensions from "../../shared/functions/DimensionsHook";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -40,26 +44,59 @@ export default function DenseAppBar() {
     return false;
   };
 
+  const { width } = useWindowDimensions();
+
   return (
     <div className={classes.root}>
-      <AppBar className={classes.appBar} position="static">
+      <AppBar className={classes.appBar}>
         <Toolbar variant="dense" className={classes.toolbar}>
           <div>
             <Link onClick={returnHome} to="/">
               <img src={logo} className={classes.appLogo} alt="logo" />
             </Link>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<AddBoxIcon />}
-              component={Link}
-              to="/ads/new-add"
-              disableElevation={true}
-            >
-              Déposer une annonce
-            </Button>
+            {width > 700 ? (
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<AddBoxIcon />}
+                component={Link}
+                to="/ads/new-ad"
+                disableElevation={true}
+              >
+                Déposer une annonce
+              </Button>
+            ) : (
+              <Tooltip
+                title="Déposer une annonce"
+                aria-label="new-ad-button"
+                enterDelay={500}
+              >
+                <IconButton
+                  aria-label="new-ad"
+                  color="secondary"
+                  component={Link}
+                  to="/ads/new-ad"
+                >
+                  <AddBoxIcon />
+                </IconButton>
+              </Tooltip>
+            )}
           </div>
           <div>
+            <Tooltip
+              title="Gérer mes annonces"
+              aria-label="ads-management button"
+              enterDelay={500}
+            >
+              <IconButton
+                aria-label="ads-management"
+                color="primary"
+                component={Link}
+                to="/ads/my-ads"
+              >
+                <LocalOfferIcon />
+              </IconButton>
+            </Tooltip>
             <Tooltip
               title="Se connecter"
               aria-label="sign-in button"

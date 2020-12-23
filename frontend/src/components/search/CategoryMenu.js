@@ -1,10 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Paper, Tabs, Tab } from "@material-ui/core";
-import { TabPanel } from "../../shared/components/TabPanel";
-import { useEffectOnlyOnce } from "../../api/Utils";
-import { fetchCategories } from "../../api/CategoriesAPI";
-import AdList from "./AdList";
 
 const useStyles = makeStyles((theme) => ({
   menu: {
@@ -12,76 +8,49 @@ const useStyles = makeStyles((theme) => ({
     height: "fit-content",
     boxShadow:
       "0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12)",
+    "& .MuiTabs-root": {
+      minHeight: "fit-content",
+    },
   },
   tab: {
+    minHeight: 40,
+    "& .MuiTab-wrapper": {
+      fontSize: "9pt",
+    },
     "&:hover": {
       color: theme.palette.primary.main,
     },
   },
 }));
 
-export default function CategoryMenu() {
+export default function CategoryMenu(props) {
   const classes = useStyles();
-
-  const [activeTab, setActiveTab] = useState("");
-  const [categories, setCategories] = useState([]);
-
-  useEffectOnlyOnce(() => {
-    const storedCategories = JSON.parse(sessionStorage.getItem("categories"));
-    if (storedCategories) {
-      setCategories(storedCategories);
-    } else {
-      fetchCategories().then((_categories) => {
-        setCategories(_categories.data);
-        sessionStorage.setItem("categories", JSON.stringify(_categories.data));
-      });
-    }
-    initActiveTab();
-  });
-
-  function initActiveTab() {
-    const storedCategorySelected = sessionStorage.getItem("categorySelected");
-    setActiveTab(storedCategorySelected ? storedCategorySelected : false);
-  }
-
-  const handleChange = (event, newValue) => {
-    setActiveTab(newValue);
-    sessionStorage.setItem("categorySelected", newValue);
-  };
 
   return (
     <React.Fragment>
-        <Paper className={classes.menu} elevation={0} position="static" square>
-          <Tabs
-          value={activeTab}
-            selectionFollowsFocus
-            onChange={handleChange}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="scrollable"
-            scrollButtons="on"
-          >
-            {categories &&
-              categories.map((category) => {
-                return (
-                  <Tab
-                    className={classes.tab}
-                    value={category.slug}
-                    key={category.slug}
-                    label={category.name}
-                  />
-                );
-              })}
-          </Tabs>
-        </Paper>
-        {categories &&
-          categories.map((category) => {
-            return (
-              <TabPanel key={category.slug} value={activeTab} index={category.slug}>
-                <AdList category={category.slug} />
-              </TabPanel>
-            );
-          })}
+      <Paper className={classes.menu} elevation={0} position="static" square>
+        <Tabs
+          value={props.activeTab}
+          selectionFollowsFocus
+          onChange={props.handleChange}
+          indicatorColor="primary"
+          textColor="primary"
+          variant="scrollable"
+          scrollButtons="on"
+        >
+          {props.categories &&
+            props.categories.map((category) => {
+              return (
+                <Tab
+                  className={classes.tab}
+                  value={category.slug}
+                  key={category.slug}
+                  label={category.name}
+                />
+              );
+            })}
+        </Tabs>
+      </Paper>
     </React.Fragment>
   );
 }

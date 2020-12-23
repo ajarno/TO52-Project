@@ -3,7 +3,7 @@ from django.urls import path
 from django.conf.urls import include
 from rest_framework import routers
 from .views import UserChatViewSet, AdminChatViewSet, UserProfileListCreateView, UserProfileDetailView, CategoryViewSet, \
-    AdViewSet
+    AdViewSet, LocationViewSet, PicturesViewSet
 
 router = routers.DefaultRouter()
 
@@ -12,6 +12,8 @@ router.register('chats', UserChatViewSet)
 router.register('controlchats', AdminChatViewSet)
 router.register('categories', CategoryViewSet)
 router.register('classifiedads', AdViewSet)
+router.register('locations', LocationViewSet)
+router.register('pictures', PicturesViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
