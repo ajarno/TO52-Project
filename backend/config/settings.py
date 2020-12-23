@@ -11,10 +11,10 @@
 
 from pathlib import Path
 from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -45,10 +45,11 @@ INSTALLED_APPS = [
     'corsheaders',
     'classified_ads_app',
     'django_filters',
-    'django_countries', # documentation : https://pypi.org/project/django-countries/ 
+    'django_countries',  # documentation : https://pypi.org/project/django-countries/
 ]
 
 AUTH_USER_MODEL = 'classified_ads_app.User'
+AUTH_PROFILE_MODULE = 'classified_ads_app.UserProfile'
 
 
 MIDDLEWARE = [
@@ -63,9 +64,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    # "https://example.com",
-    # "https://sub.example.com",
-    "http://localhost:3000",
+    'http://localhost:3000',
+    'http://127.0.0.1:3000'
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -74,6 +74,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
+        # 'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -85,6 +86,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
@@ -101,30 +103,37 @@ DATABASES = {
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
-        #'rest_framework.permissions.IsAdminUser',
-        # 'rest_framework.permissions.IsAuthenticated',
+        # 'rest_framework.permissions.IsAdminUser',
+        'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # 'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-   
+
 }
 
 SIMPLE_JWT = {
-    'AUTH_HEADER_TYPES':('JWT'),
+    'AUTH_HEADER_TYPES': ('JWT'),
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60)
 }
 
-#restrict users list acces to only admin
+# restrict users list acces to only admin
 DJOSER = {
     'PERMISSIONS': {
         'user_list': ['rest_framework.permissions.IsAdminUser'],
-        
+
     },
-    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
-    'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': '#/activate/{uid}/{token}',
-    'SEND_ACTIVATION_EMAIL': False,
+    'LOGOUT_ON_PASSWORD_CHANGE': True,
+    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
+    'PASSWORD_RESET_CONFIRM_URL': 'api/password/reset/confirm/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': '/username/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': 'api/activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
+    'EMAIL': {
+        'activation': 'classified_ads_app.email.ActivationEmail',
+        'password_reset': 'classified_ads_app.email.PasswordResetEmail',
+        # 'password_changed_confirmation': 'classified_ads_app.email.PasswordChangedConfirmationEmail',
+    }
 }
 
 # Password validation
@@ -164,17 +173,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-#email verification settings
-EMAIL_ACTIVE_FIELD = 'is_active'
-EMAIL_SERVER = 'smtp.gmail.com'
+# email verification settings
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_ADDRESS = 'anaisgedeonto52@gmail.com'
-EMAIL_FROM_ADDRESS = 'noreply@aliasaddress.com'
-EMAIL_PASSWORD = 'mYC00lP4ssw0rd' # os.environ['password_key'] suggested
-EMAIL_MAIL_SUBJECT = 'Confirm your email'
-EMAIL_MAIL_HTML = 'mail_body.html'
-EMAIL_MAIL_PLAIN = 'mail_body.txt'
-EMAIL_PAGE_TEMPLATE = 'confirm_template.html'
-EMAIL_PAGE_DOMAIN = 'http://mydomain.com/'
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'anaisgedeonto52@gmail.com'
+EMAIL_HOST_PASSWORD = 'tzrupgsttjlapdbr'
+# mYC00lP4ssw0rd# os.environ['password_key'] suggested
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_PAGE_DOMAIN = 'http://localhost:5000/'

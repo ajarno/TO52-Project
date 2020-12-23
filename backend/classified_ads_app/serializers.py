@@ -43,6 +43,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 # User profile Serializer
 class UserProfileSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField(read_only=True)
+    avatar = Base64ImageField()
     email = serializers.StringRelatedField(source="user", read_only=True)
 
     class Meta:
@@ -51,6 +53,17 @@ class UserProfileSerializer(serializers.ModelSerializer):
         read_only_fields = ('created_at', 'updated_at',)
 
 
+# User Serializer class for our custom user
+class UserSerializer(serializers.ModelSerializer):
+    # get saved ads of users
+    profile = UserProfileSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = get_user_model()
+        fields = ('id', 'email', 'password', 'profile')
+
+        
+        
 # User details Serializer
 class UserDetailsSerializer(serializers.ModelSerializer):
     profile = UserProfileSerializer(many=False)
@@ -60,7 +73,6 @@ class UserDetailsSerializer(serializers.ModelSerializer):
         fields = ('id', 'profile',)
 
 
-# TODO: remplacer author par un UserSerializer
 class AdSerializer(serializers.ModelSerializer):
     pictures = PictureMiniSerializer(many=True)
     location = LocationMiniSerializer(many=False)

@@ -1,0 +1,28 @@
+{% load i18n %}
+
+{% block subject %}
+{% blocktrans %}Activation de votre compte{{ site_name }}{% endblocktrans %}
+{% endblock subject %}
+
+{% block text_body %}
+{% blocktrans %}Ce courriel vous a été envoyé par un automate, merci de ne pas y répondre.{% endblocktrans %}
+
+{% trans "Pour confirmer votre inscription sur notre site, veuillez cliquer sur le lien ou le copier-coller dans votre navigateur." %}
+{{ protocol }}://{{ domain }}/{{ url|safe }}
+
+{% trans "Après avoir confirmé votre enregistrement, vous pourrez accéder à votre compte." %}
+{% trans "Merci d'utiliser UT'Annonces!" %}
+{% blocktrans %}L'équipe UT'Annonces{% endblocktrans %}
+{% endblock text_body %}
+
+{% block html_body %}
+<p>{% blocktrans %}Ce courriel vous a été envoyé par un automate, merci de ne pas y répondre.{% endblocktrans %}</p>
+
+<p>{% trans "Pour confirmer votre inscription sur notre site, veuillez cliquer sur le lien ou le copier-coller dans votre navigateur." %}</p>
+<p><a href="{{ protocol }}://{{ domain }}/{{ url|safe }}">{{ protocol }}://{{ domain }}/{{ url|safe }}</a></p>
+
+<p>{% trans "Après avoir confirmé votre enregistrement, vous pourrez accéder à votre compte." %}</p>
+<p>{% trans "Merci d'utiliser UT'Annonces!" %}</p>
+<p>{% blocktrans %}L'équipe UT'Annonces{% endblocktrans %}</p>
+
+{% endblock html_body %}
