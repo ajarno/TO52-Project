@@ -92,9 +92,9 @@ export default function UserSummary(props) {
                   component="span"
                   style={{ marginLeft: "0.3em" }}
                 >
-                  {props.user.adress_postal_code +
+                  {props.user.address_postal_code +
                     ", " +
-                    props.user.adress_city}
+                    props.user.address_city}
                 </Typography>
               </div>
             </CardContent>

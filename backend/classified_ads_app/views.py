@@ -155,7 +155,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 class AdViewSet(viewsets.ModelViewSet):
     serializer_class = AdMiniSerializer
-    # permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Ad.objects.order_by('-published').all()
     filter_backends = [DjangoFilterBackend]
     filterset_class = AdFilter

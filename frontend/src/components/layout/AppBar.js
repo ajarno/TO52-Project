@@ -10,7 +10,6 @@ import {
   IconButton,
   Tooltip,
   MenuItem,
-  ButtonGroup,
   ClickAwayListener,
   Grow,
   Avatar,
@@ -21,12 +20,10 @@ import {
 } from "@material-ui/core";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import LocalOfferIcon from '@material-ui/icons/LocalOffer';
+import LocalOfferIcon from "@material-ui/icons/LocalOffer";
 import logo from "../../assets/logo.svg";
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import { logout, isAuthentificated } from "../../api/AuthAPI";
 import { fetchUserProfile } from "../../api/UserProfileAPI";
-
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,6 +46,12 @@ const useStyles = makeStyles((theme) => ({
   },
   menu: {
     float: theme.left,
+  },
+  smallAvatar: {
+    height: 27,
+    width: 27,
+    color: theme.palette.primary.contrastText,
+    backgroundColor: theme.palette.primary.main,
   },
 }));
 
@@ -86,30 +89,32 @@ export default function DenseAppBar() {
   const [open, setOpen] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
   const anchorRef = React.useRef(null);
-  const [firstName, setFirstName] = useState("");
   const [avatar, setAvatar] = useState("");
 
   // return focus to the button when we transitioned from !open -> open
   const prevOpen = React.useRef(open);
+  
   useEffectOnlyOnce(() => {
+
     if (prevOpen.current === true && open === false) {
       anchorRef.current.focus();
     }
+
     prevOpen.current = open;
     isAuthentificated()
       .then((result) => {
         setIsAuth(true);
+        fetchUserProfile().then((result) => {
+          if (result.status === 200) {
+            setAvatar(
+              "http://127.0.0.1:8000/media/" + result.data.profile.avatar
+            );
+          } else if (result.status === 204) {
+            return;
+          }
+        });
       })
       .catch((error) => setIsAuth(false));
-    fetchUserProfile().then((result) => {
-      if (result.status === 200) {
-        setAvatar("http://127.0.0.1:8000/media/" + result.data.profile.avatar);
-        setFirstName(result.data.profile.first_name);
-        console.log("firstName", isAuth);
-      } else if (result.status === 204) {
-        return {};
-      }
-    });
   }, [open]);
 
   const handleToggle = () => {
@@ -175,27 +180,52 @@ export default function DenseAppBar() {
             )}
           </div>
           <div>
+            {isAuth ? (
+              <React.Fragment>
+                <Tooltip
+                  title="Gérer mes annonces"
+                  aria-label="ads-management button"
+                  enterDelay={500}
+                >
+                  <IconButton
+                    aria-label="ads-management"
+                    color="primary"
+                    component={Link}
+                    to="/ads/my-ads"
+                  >
+                    <LocalOfferIcon />
+                  </IconButton>
+                </Tooltip>
 
-            <Tooltip
-              title="Gérer mes annonces"
-              aria-label="ads-management button"
-              enterDelay={500}
-            >
-              <IconButton
-                aria-label="ads-management"
-                color="primary"
-                component={Link}
-                to="/ads/my-ads"
-              >
-                <LocalOfferIcon />
-              </IconButton>
-            </Tooltip>
-
-              <ButtonGroup
-                  variant="text"
-                  color="primary"
-                  aria-label="menu button"
-                   >
+                <Tooltip
+                  title="Gérer mon compte"
+                  aria-label="account button"
+                  enterDelay={500}
+                >
+                  <IconButton
+                    ref={anchorRef}
+                    onClick={handleToggle}
+                    aria-label="account"
+                    color="primary"
+                  >
+                    <StyledBadge
+                      overlap="circle"
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "right",
+                      }}
+                      variant="dot"
+                    >
+                      <Avatar
+                        alt="Avatar"
+                        src={avatar}
+                        className={classes.smallAvatar}
+                      />
+                    </StyledBadge>
+                  </IconButton>
+                </Tooltip>
+              </React.Fragment>
+            ) : (
               <Tooltip
                 title="Se connecter"
                 aria-label="sign-in button"
@@ -205,36 +235,12 @@ export default function DenseAppBar() {
                   aria-label="sign-in"
                   color="primary"
                   component={Link}
-                  to={isAuth ? "#" : "/auth/sign-in"}
+                  to={"/auth/sign-in"}
                 >
-                  {isAuth && (
-                    <StyledBadge
-                      overlap="circle"
-                      anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: "right",
-                      }}
-                      variant="dot"
-                    >
-                      <Avatar alt="Avatar" src={avatar} />
-                    </StyledBadge>
-                  )}
-                  {!isAuth && (
-                    <AccountCircleIcon />
-                  )}
+                  <AccountCircleIcon />
                 </IconButton>
               </Tooltip>
-              {isAuth && (
-                <IconButton
-                  ref={anchorRef}
-                  color="primary"
-                  size="small"
-                  onClick={handleToggle}
-                >
-                  <ArrowDropDownIcon />
-                </IconButton>
-              )}
-            </ButtonGroup>
+            )}
 
             <Popper
               open={open}
@@ -258,21 +264,14 @@ export default function DenseAppBar() {
                         id="menu-list-grow"
                         onKeyDown={handleListKeyDown}
                       >
-                        {/* <MenuItem
-                          onClick={handleClose}
-                          component={Link}
-                          to="/account"
-                        >
-                          Bonjour {firstName}
-                        </MenuItem> */}
                         <MenuItem
                           onClick={handleClose}
                           component={Link}
                           to="/account"
                         >
-                          Profil
+                          Mon profil
                         </MenuItem>
-                        <MenuItem onClick={logout}>Déconnexion</MenuItem>
+                        <MenuItem onClick={logout}>Me déconnecter</MenuItem>
                       </MenuList>
                     </ClickAwayListener>
                   </Paper>

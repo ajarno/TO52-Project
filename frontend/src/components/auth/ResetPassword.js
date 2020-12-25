@@ -45,7 +45,7 @@ export default function ResetPassword() {
         }
       })
       .catch((e) => {
-        console.log(e);
+        // console.log(e);
       });
   };
 

@@ -24,18 +24,15 @@ const Account = () => {
   return (
     <div className={classes.root}>
       <div>
-        <Grid container spacing={2}>
-          <Box alignItems="center">
-            <Typography component="h1" variant="h6" spacing={5}>
-              Profil
-            </Typography>
-          </Box>
-        </Grid>
-        <Grid container spacing={3}>
-          <Grid item lg={2} md={2} xs={12}>
+        <Grid
+          container
+          direction="row"
+          justify="space-evenly"
+        >
+          <Grid item lg={3} md={3} xs={12}>
             <Profile />
           </Grid>
-          <Grid item lg={6} md={6} xs={12}>
+          <Grid item lg={7} md={6} xs={12}>
             <ProfileDetails />
           </Grid>
         </Grid>

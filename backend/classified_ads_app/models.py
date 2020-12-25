@@ -37,6 +37,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # Attributes
     email = models.EmailField(max_length=80, unique=True)
     is_active = models.BooleanField(default=True)  # can login
+    is_staff = models.BooleanField(default=False)
     admin = models.BooleanField(default=False)  # admin user is superuser
     timestamp = models.DateTimeField(auto_now_add=True)
 

@@ -44,7 +44,6 @@ const styles = (theme) => ({
     marginBottom: theme.spacing(3),
   },
   button: {
-    marginLeft: theme.spacing(1),
     marginBottom: theme.spacing(3),
     marginTop: theme.spacing(3),
   },
@@ -63,7 +62,7 @@ class ProfileDetails extends Component {
         address_street: "",
         address_postal_code: "",
         address_city: "",
-        address_country: "France",
+        address_country: "",
       },
       isLoading: true,
       current_password: "",
@@ -79,7 +78,6 @@ class ProfileDetails extends Component {
   }
 
   componentDidMount() {
-    console.log("mounting");
     this.fetchProfile();
   }
 
@@ -97,8 +95,11 @@ class ProfileDetails extends Component {
           return {};
         }
       })
-      .catch((error) => this.setState({ isLoading: false }));
+      .catch((error) => {
+        this.setState({ isLoading: false });
+      });
   }
+
   showNotification = () => {
     this.setState({
       notification_open: true,
@@ -113,12 +114,14 @@ class ProfileDetails extends Component {
       notification_open: false,
     });
   };
+
   handleClickShowPassword = () => {
     this.setState({
       show_new_password: !this.state.show_new_password,
       new_password: this.state.new_password,
     });
   };
+
   handleClickShowCurPassword = () => {
     this.setState({
       show_current_password: !this.state.show_current_password,
@@ -133,18 +136,14 @@ class ProfileDetails extends Component {
   handleChange = (e) => {
     let value = e.target.value;
     let name = e.target.name;
-    this.setState(
-      (prevState) => {
-        return {
-          profile: {
-            ...prevState.profile,
-            [name]: value,
-          },
-        };
-      },
-      () => console.log("change imput", this.state.profile)
-    );
-    console.log("name", name);
+    this.setState((prevState) => {
+      return {
+        profile: {
+          ...prevState.profile,
+          [name]: value,
+        },
+      };
+    });
     this.validate(name);
   };
 
@@ -185,14 +184,13 @@ class ProfileDetails extends Component {
       new_password: event.target.value,
       changePasswordError: strongPasswordRegex.test(this.state.new_password),
     });
-    console.log("change", this.state.changePasswordError);
   };
 
   updateInfos = (event) => {
     event.preventDefault();
+
     let formData = new FormData();
     formData.append("avatar", sessionStorage.getItem("avatar-post"));
-    console.log("avatar", sessionStorage.getItem("avatar"), "image.png");
     formData.append("surname", this.state.profile.surname);
     formData.append("first_name", this.state.profile.first_name);
     formData.append("birth_day", this.state.profile.birth_day);
@@ -204,7 +202,7 @@ class ProfileDetails extends Component {
     );
     formData.append("address_city", this.state.profile.address_city);
     formData.append("address_country", this.state.profile.address_country);
-    console.log("form data", formData);
+
     createOrUpdateProfile(formData).then((result) => {
       if (result) {
         this.setState({
@@ -223,8 +221,8 @@ class ProfileDetails extends Component {
       });
     });
   };
-  //Validation
 
+  // Validation
   validate = (type) => {
     let err = {};
     switch (type) {
@@ -264,148 +262,134 @@ class ProfileDetails extends Component {
             <Typography variant="h6">Informations de compte</Typography>
             <Divider className={classes.divider} />
           </div>
-          <Card>
-            <CardContent>
-              <Grid container spacing={3}>
-                <Grid item md={6} xs={12}>
-                  <TextField
-                    fullWidth
-                    id="first_name"
-                    label="Prénom"
-                    name="first_name"
-                    onChange={this.handleChange}
-                    required
-                    value={this.state.profile.first_name}
-                    variant="outlined"
-                    inputProps={{ minLength: 2 }}
-                    error={this.state.error["first_name"]}
-                    helperText={
-                      this.state.error["first_name"]
-                        ? "Le prénom est requis"
-                        : ""
-                    }
-                  />
-                </Grid>
-                <Grid item md={6} xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Nom"
-                    name="surname"
-                    id="surname"
-                    onChange={this.handleChange}
-                    required
-                    value={this.state.profile.surname}
-                    variant="outlined"
-                    inputProps={{ minLength: 5 }}
-                    error={this.state.error["surname"]}
-                    helperText={
-                      this.state.error["surname"]
-                        ? "Le nom de famille est requis"
-                        : ""
-                    }
-                  />
-                </Grid>
-                <Grid item md={6} xs={12}>
-                  <TextField
-                    id="birth_day"
-                    fullWidth
-                    label="Date de naissance"
-                    onChange={this.handleChange}
-                    type="date"
-                    variant="outlined"
-                    name="birth_day"
-                    value={this.state.profile.birth_day}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    error={this.state.error["birth_day"]}
-                    helperText={
-                      this.state.error["birth_day"]
-                        ? "La date de naissance est requis"
-                        : ""
-                    }
-                  />
-                </Grid>
-                <Grid item md={6} xs={12}>
-                  <TextField
-                    id="tel"
-                    fullWidth
-                    label="Téléphone"
-                    name="tel"
-                    type="text"
-                    onChange={this.handleChange}
-                    variant="outlined"
-                    value={this.state.profile.tel}
-                    inputProps={{ minLength: 10, maxLenght: 10 }}
-                    error={this.state.error["tel"]}
-                    helperText={
-                      this.state.error["tel"]
-                        ? "Ce champ est requis et doit être au max 10 caractères"
-                        : ""
-                    }
-                  >
-                    <InputMask mask="(0)999 999 99 99" maskChar=" " />
-                  </TextField>
-                </Grid>
-              </Grid>
-            </CardContent>
-            <Divider />
-          </Card>
+          <Grid container spacing={3}>
+            <Grid item md={6} xs={12}>
+              <TextField
+                fullWidth
+                id="first_name"
+                label="Prénom"
+                name="first_name"
+                onChange={this.handleChange}
+                required
+                value={this.state.profile.first_name}
+                variant="outlined"
+                inputProps={{ minLength: 2 }}
+                error={this.state.error["first_name"]}
+                helperText={
+                  this.state.error["first_name"] ? "Le prénom est requis" : ""
+                }
+              />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <TextField
+                fullWidth
+                label="Nom"
+                name="surname"
+                id="surname"
+                onChange={this.handleChange}
+                required
+                value={this.state.profile.surname}
+                variant="outlined"
+                inputProps={{ minLength: 5 }}
+                error={this.state.error["surname"]}
+                helperText={
+                  this.state.error["surname"]
+                    ? "Le nom de famille est requis"
+                    : ""
+                }
+              />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <TextField
+                id="birth_day"
+                fullWidth
+                label="Date de naissance"
+                onChange={this.handleChange}
+                type="date"
+                variant="outlined"
+                name="birth_day"
+                value={this.state.profile.birth_day}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                error={this.state.error["birth_day"]}
+                helperText={
+                  this.state.error["birth_day"]
+                    ? "La date de naissance est requis"
+                    : ""
+                }
+              />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <TextField
+                id="tel"
+                fullWidth
+                label="Téléphone"
+                name="tel"
+                type="text"
+                onChange={this.handleChange}
+                variant="outlined"
+                value={this.state.profile.tel}
+                inputProps={{ minLength: 10, maxLenght: 10 }}
+                error={this.state.error["tel"]}
+                helperText={
+                  this.state.error["tel"]
+                    ? "Ce champ est requis et doit être au max 10 caractères"
+                    : ""
+                }
+              >
+                <InputMask mask="(0)999 999 99 99" maskChar=" " />
+              </TextField>
+            </Grid>
+          </Grid>
           <div className={classes.adresse}>
             <Typography variant="h6">Adresse</Typography>
             <Divider className={classes.divider} />
           </div>
-          <Card>
-            <Divider />
-            <CardContent>
-              <Grid container spacing={3}>
-                <Grid item md={6} xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Adresse"
-                    name="address_street"
-                    onChange={this.handleChange}
-                    value={this.state.profile.address_street}
-                    variant="outlined"
-                  />
-                </Grid>
-                <Grid item md={6} xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Code postal"
-                    name="address_postal_code"
-                    onChange={this.handleChange}
-                    value={this.state.profile.address_postal_code}
-                    variant="outlined"
-                  />
-                </Grid>
-                <Grid item md={6} xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Ville"
-                    name="address_city"
-                    onChange={this.handleChange}
-                    value={this.state.profile.address_city}
-                    variant="outlined"
-                  />
-                </Grid>
-                <Grid item md={6} xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Pays"
-                    name="address_country"
-                    defaultValue="France"
-                    onChange={this.handleChange}
-                    value={this.state.profile.address_country}
-                    variant="outlined"
-                  />
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-          <Divider />
+          <Grid container spacing={3}>
+            <Grid item md={6} xs={12}>
+              <TextField
+                fullWidth
+                label="Adresse"
+                name="address_street"
+                onChange={this.handleChange}
+                value={this.state.profile.address_street}
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <TextField
+                fullWidth
+                label="Code postal"
+                name="address_postal_code"
+                onChange={this.handleChange}
+                value={this.state.profile.address_postal_code}
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <TextField
+                fullWidth
+                label="Ville"
+                name="address_city"
+                onChange={this.handleChange}
+                value={this.state.profile.address_city}
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <TextField
+                fullWidth
+                label="Pays"
+                name="address_country"
+                defaultValue="France"
+                onChange={this.handleChange}
+                value={this.state.profile.address_country}
+                variant="outlined"
+              />
+            </Grid>
+          </Grid>
           <Button
-            //type="submit"
             variant="contained"
             color="primary"
             className={(classes.submit, classes.button)}
@@ -419,99 +403,88 @@ class ProfileDetails extends Component {
             <Typography variant="h6">Mot de passe</Typography>
             <Divider className={classes.divider} />
           </div>
-          <Card>
-            <Divider />
-            <CardContent>
-              <Grid container spacing={3}>
-                <Grid item md={6} xs={12}>
-                  <FormControl
-                    variant="outlined"
-                    fullWidth
-                    error={!this.state.changePasswordError}
-                    helperText={
-                      !this.state.changePasswordError
-                        ? "Le prénom est requis"
-                        : ""
-                    }
-                  >
-                    <InputLabel htmlFor="new_password">
-                      Nouveau mot de passe
-                    </InputLabel>
-                    <OutlinedInput
-                      id="new_password"
-                      type={this.state.show_new_password ? "text" : "password"}
-                      value={this.state.new_password}
-                      name="new_password"
-                      onChange={this.handleChangePassword}
-                      endAdornment={
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={this.handleClickShowPassword}
-                            onMouseDown={this.handleMouseDownPassword}
-                            edge="end"
-                          >
-                            {this.state.show_new_password ? (
-                              <Visibility />
-                            ) : (
-                              <VisibilityOff />
-                            )}
-                          </IconButton>
-                        </InputAdornment>
-                      }
-                      labelWidth={170}
-                    />
-                  </FormControl>
-                </Grid>
-                <Grid item md={6} xs={12}>
-                  <FormControl variant="outlined" fullWidth>
-                    <InputLabel htmlFor="current_password">
-                      Mot de passe actuel
-                    </InputLabel>
-                    <OutlinedInput
-                      id="current_password"
-                      type={
-                        this.state.show_current_password ? "text" : "password"
-                      }
-                      value={this.state.current_password}
-                      name="current_password"
-                      onChange={(event) => {
-                        event.preventDefault();
-                        this.setState({ current_password: event.target.value });
-                      }}
-                      endAdornment={
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={this.handleClickShowCurPassword}
-                            onMouseDown={this.handleMouseDownPassword}
-                            edge="end"
-                          >
-                            {this.state.show_current_password ? (
-                              <Visibility />
-                            ) : (
-                              <VisibilityOff />
-                            )}
-                          </IconButton>
-                        </InputAdornment>
-                      }
-                      labelWidth={170}
-                    />
-                  </FormControl>
-                </Grid>
-              </Grid>
-            </CardContent>
-            <CardActions>
-              <Button
-                variant="contained"
-                color="primary"
-                className={(classes.submit, classes.cardAction)}
-                onClick={this.setPassword}
+          <Grid container spacing={3}>
+            <Grid item md={6} xs={12}>
+              <FormControl
+                variant="outlined"
+                fullWidth
+                error={!this.state.changePasswordError}
+                helperText={
+                  !this.state.changePasswordError ? "Le prénom est requis" : ""
+                }
               >
-                Modifier mon mot de passe
-              </Button>
-            </CardActions>
-          </Card>
+                <InputLabel htmlFor="new_password">
+                  Nouveau mot de passe
+                </InputLabel>
+                <OutlinedInput
+                  id="new_password"
+                  type={this.state.show_new_password ? "text" : "password"}
+                  value={this.state.new_password}
+                  name="new_password"
+                  onChange={this.handleChangePassword}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={this.handleClickShowPassword}
+                        onMouseDown={this.handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {this.state.show_new_password ? (
+                          <Visibility />
+                        ) : (
+                          <VisibilityOff />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  labelWidth={170}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <FormControl variant="outlined" fullWidth>
+                <InputLabel htmlFor="current_password">
+                  Mot de passe actuel
+                </InputLabel>
+                <OutlinedInput
+                  id="current_password"
+                  type={this.state.show_current_password ? "text" : "password"}
+                  value={this.state.current_password}
+                  name="current_password"
+                  onChange={(event) => {
+                    event.preventDefault();
+                    this.setState({ current_password: event.target.value });
+                  }}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={this.handleClickShowCurPassword}
+                        onMouseDown={this.handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {this.state.show_current_password ? (
+                          <Visibility />
+                        ) : (
+                          <VisibilityOff />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  labelWidth={170}
+                />
+              </FormControl>
+            </Grid>
+          </Grid>
+          <Button
+            variant="contained"
+            color="primary"
+            className={(classes.submit, classes.button)}
+            onClick={this.setPassword}
+          >
+            Modifier mon mot de passe
+          </Button>
         </form>
         <Snackbar
           open={this.state.notification_open}

@@ -85,7 +85,7 @@ export default function SignUp() {
     } else if (!strongPasswordRegex.test(password)) {
       setIsPasswordInvalid(true);
       setPasswordInvalidMessage(
-        "Le mot de passe doit contenir au moins 8 caractères y compris caractères alphanumériques, numériques et spéciaux (&$...)."
+        "Le mot de passe doit contenir au moins 8 caractères y compris caractères alphanumériques et spéciaux (&$...)."
       );
     } else {
       setIsEmailInvalid(false);
@@ -145,12 +145,11 @@ export default function SignUp() {
                 helperText={isEmailInvalid && emailInvalidMessage}
                 onChange={(evt) => {
                   setEmail(evt.target.value);
-                  console.log("change");
                 }}
               />
             </Grid>
             <Grid item xs={12}>
-              <FormControl variant="outlined" fullWidth>
+              <FormControl variant="outlined" fullWidth required>
                 <InputLabel htmlFor="password">Mot de passe</InputLabel>
                 <OutlinedInput
                   id="password"

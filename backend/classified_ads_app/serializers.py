@@ -49,7 +49,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ('first_name', 'surname', 'email', 'tel', 'avatar', 'adress_city', 'adress_postal_code')
+        fields = ('user', 'first_name', 'surname', 'email', 'tel', 'avatar', 'address_city', 'address_postal_code')
         read_only_fields = ('created_at', 'updated_at',)
 
 
@@ -62,8 +62,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = get_user_model()
         fields = ('id', 'email', 'password', 'profile')
 
-        
-        
+
 # User details Serializer
 class UserDetailsSerializer(serializers.ModelSerializer):
     profile = UserProfileSerializer(many=False)

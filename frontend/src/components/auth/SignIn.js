@@ -56,7 +56,8 @@ export default function SignIn() {
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isError, setIsError] = useState(false);
   const [loginErrorMessages, setLoginErrorMessages] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(localStorage.getItem("authEmail") ? localStorage.getItem("authEmail") : "");
+  const [rememberMe, setRememberMe] = useState(localStorage.getItem("authEmail") ? true : false);
   const [password, setPassword] = useState("");
   const [isEmailInvalid, setIsEmailInvalid] = useState(false);
   const [emailInvalidMessage, setEmailInvalidMessage] = useState("");
@@ -115,7 +116,6 @@ export default function SignIn() {
     fetchUserProfile()
       .then((result) => {
         if (result.status === 200) {
-          console.log("resultat", result);
           page = window.location.href = "/";
         } else if (result.status === 204) {
           page = window.location.href = "/account";
@@ -158,7 +158,7 @@ export default function SignIn() {
               />
             </Grid>
             <Grid item lg={12} md={12} xs={12}>
-              <FormControl variant="outlined" fullWidth>
+              <FormControl variant="outlined" fullWidth required>
                 <InputLabel htmlFor="password">Mot de passe</InputLabel>
                 <OutlinedInput
                   id="password"
@@ -197,8 +197,20 @@ export default function SignIn() {
 
             <Grid item lg={6} md={6} xs={12}>
               <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="se souvenir de moi"
+                control={
+                  <Checkbox
+                    checked={rememberMe}
+                    onChange={(evt) => {
+                      setRememberMe(evt.target.checked)
+                      if (evt.target.checked)
+                        localStorage.setItem("authEmail", email);
+                      else if (localStorage.getItem("authEmail"))
+                        localStorage.removeItem("authEmail");
+                    }}
+                    color="primary"
+                  />
+                }
+                label="Se souvenir de moi"
               />
             </Grid>
           </Grid>

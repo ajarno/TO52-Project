@@ -1,5 +1,10 @@
+import { useState } from "react";
 import API from "./API";
+import { useEffectOnlyOnce } from "./Utils";
 
+// ---------------------------------------------------------
+// --------------------- DEFINE HEADERS --------------------
+// ---------------------------------------------------------
 function authHeader() {
   if (sessionStorage.getItem("token")) {
     return {
@@ -23,45 +28,18 @@ function authHeaderForm() {
   }
 }
 
-const signIn = (email, password) =>
-  API.post("auth/jwt/create/", { email, password });
-
+// ---------------------------------------------------------
+// ------- DEFINE USUAL FONCTIONS FOR AUTHENTICATION -------
+// ---------------------------------------------------------
 const signUp = (email, password) =>
   API.post("auth/users/", { email, password });
 
-const fetchUsers = () => API.get("auth/users/");
+const signIn = (email, password) =>
+  API.post("auth/jwt/create/", { email, password });
 
 const fetchCurrentUser = () => API.get("auth/users/me/", authHeader);
 
 const verifyToken = (body) => API.post("auth/jwt/verify/", body);
-
-function logout() {
-  sessionStorage.removeItem("token");
-  window.location.href = "/auth/sign-in";
-}
-function isAuthentificated() {
-  return new Promise((resolve, reject) => {
-    if (sessionStorage.getItem("token")) {
-      const body = { token: sessionStorage.getItem("token") };
-      console.log(body);
-      verifyToken(body)
-        .then((result) => {
-          if (result.status === 200) {
-            resolve(true);
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-          resolve(false);
-          reject(Error("La vérification de token a échouée"));
-        });
-    }
-  });
-}
-const verify = (uid, token) => {
-  const body = JSON.stringify({ uid, token });
-  API.post("auth/users/activation/", body);
-};
 
 const updatePassword = (new_password, re_new_password, current_password) =>
   API.post(
@@ -94,17 +72,50 @@ const resetPasswordConfirm = (uid, token, new_password) =>
     { headers: authHeader() }
   );
 
+// ---------------------------------------------------------
+// -------------- DEFINE CONVENIENT FONCTIONS --------------
+// ---------------------------------------------------------
+function isAuthentificated() {
+  return new Promise((resolve, reject) => {
+    if (sessionStorage.getItem("token")) {
+      const body = { token: sessionStorage.getItem("token") };
+      verifyToken(body)
+        .then((result) => {
+          if (result.status === 200) {
+            resolve(true);
+          }
+        })
+        .catch((e) => {
+          sessionStorage.removeItem("token")
+          resolve(false);
+          reject(Error("La vérification de token a échouée"));
+        });
+    }
+  });
+}
+
+function useAuthenticated() {
+  return sessionStorage.getItem("token") !== null;
+}
+
+function logout() {
+  sessionStorage.removeItem("token");
+  window.location.href = "/auth/sign-in";
+}
+
+// ---------------------------------------------------------
+// ------------------------ EXPORTS ------------------------
+// ---------------------------------------------------------
 export {
-  fetchUsers,
+  authHeader,
+  authHeaderForm,
   signIn,
   signUp,
-  logout,
-  isAuthentificated,
   fetchCurrentUser,
-  authHeader,
-  verify,
   updatePassword,
   resetPassword,
   resetPasswordConfirm,
-  authHeaderForm,
+  isAuthentificated,
+  useAuthenticated,
+  logout,
 };
