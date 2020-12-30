@@ -1,8 +1,7 @@
 import React from "react";
-import { Box, Grid, makeStyles } from "@material-ui/core";
+import { Grid, makeStyles } from "@material-ui/core";
 import Profile from "./Profile";
 import ProfileDetails from "./ProfileDetails";
-import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles((theme) => ({
   root: {
