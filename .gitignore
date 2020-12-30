@@ -1,3 +1,5 @@
 # dev environment 
 .vscode
 .DS_Store
+chat/
+box/
