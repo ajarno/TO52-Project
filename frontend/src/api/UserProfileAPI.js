@@ -20,7 +20,7 @@ function createOrUpdateProfile(formData) {
   return new Promise((resolve, reject) => {
     fetchUserProfile()
       .then((result) => {
-        if (result.status === 200) {
+        if (result.data.profile.id) {
           updateUserProfile(result.data.profile.id, formData).then((result) => {
             if (result.status === 200) {
               resolve(true);
@@ -28,7 +28,7 @@ function createOrUpdateProfile(formData) {
               resolve(false);
             }
           });
-        } else if (result.status === 204) {
+        } else {
           createUserProfile(formData).then((result) => {
             if (result.status === 201) {
               resolve(true);

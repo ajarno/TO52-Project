@@ -65,12 +65,17 @@ class CurrentUserProfilView(RetrieveUpdateDestroyAPIView):
 
         profile = UserProfile.objects.filter(
             user_id=self.request.user.id).values()
+        user = User.objects.get(pk=self.request.user.id)
+
         if len(profile) == 0:
-            status = 204
-            data = ""
-        else:
             status = 200
-            data = list(profile)[0]
+            data = {'email': user.email}
+        else:
+            profile = list(profile)[0]
+            profile['email'] = user.email
+            status = 200
+            data = profile
+
         return Response({'profile': data}, status)
 
 

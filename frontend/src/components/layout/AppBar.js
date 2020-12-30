@@ -104,7 +104,7 @@ export default function DenseAppBar() {
       .then((result) => {
         setIsAuth(true);
         fetchUserProfile().then((result) => {
-          if (result.status === 200) {
+          if (result.data.profile?.avatar) {
             setAvatar(
               "http://127.0.0.1:8000/media/" + result.data.profile.avatar
             );
@@ -113,7 +113,7 @@ export default function DenseAppBar() {
               "http://127.0.0.1:8000/media/" + result.data.profile.avatar
             );
             sessionStorage.setItem("avatar-post", "");
-          } else if (result.status === 204) {
+          } else {
             return;
           }
         });

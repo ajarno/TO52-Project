@@ -81,14 +81,14 @@ class ProfileDetails extends Component {
   fetchProfile() {
     fetchUserProfile()
       .then((result) => {
-        if (result.status === 200) {
+        if (Object.keys(result.data.profile).length > 1) {
           this.setState({
             profile: result.data.profile,
             isLoading: false,
             current_password: "",
             new_password: "",
           });
-        } else if (result.status === 204) {
+        } else {
           return {};
         }
       })
@@ -155,7 +155,7 @@ class ProfileDetails extends Component {
           this.setState({
             notification_open: true,
             notification_message:
-              " Votre mot de passe a été modifié avec succès!",
+              "Votre mot de passe a été modifié avec succès!",
           });
 
           this.showNotification();

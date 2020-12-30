@@ -113,10 +113,16 @@ export default function AdDisplayer(props) {
 
   useEffectOnlyOnce(() => {
     fetchUserProfile().then((result) => {
-      if (result.status === 200) {
-        // console.log(result.data);
-        // setOwner(result.data);
-      } else if (result.status === 204) {
+      if (result.data.profile) {
+        const profile = result.data.profile;
+        console.log(profile);
+        setOwner({
+          name: profile.surname,
+          firstname: profile.first_name,
+          email: profile.email,
+          phone: profile.tel,
+        });
+      } else {
         return;
       }
     });

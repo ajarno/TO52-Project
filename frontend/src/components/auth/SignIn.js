@@ -98,14 +98,14 @@ export default function SignIn() {
             setLoggedIn(false);
             setIsError(true);
             setLoginErrorMessages(
-              "Adresse e-mail ou mot de passe invalide. Il vous reste 3 tentatives."
+              "Adresse e-mail ou mot de passe invalide."
             );
           }
         })
         .catch((e) => {
           setIsError(true);
           setLoginErrorMessages(
-            "Adresse e-mail ou mot de passe invalide. Il vous reste 3 tentatives."
+            "Adresse e-mail ou mot de passe invalide."
           );
         });
     }
@@ -115,9 +115,9 @@ export default function SignIn() {
     var page = "";
     fetchUserProfile()
       .then((result) => {
-        if (result.status === 200) {
+        if (Object.keys(result.data).length > 1) {
           page = window.location.href = "/";
-        } else if (result.status === 204) {
+        } else {
           page = window.location.href = "/account";
         }
       })

@@ -180,6 +180,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'utanonces@noreply.fr'
 EMAIL_HOST_USER = 'anaisgedeonto52@gmail.com'
 EMAIL_HOST_PASSWORD = 'tzrupgsttjlapdbr'
 # mYC00lP4ssw0rd# os.environ['password_key'] suggested
