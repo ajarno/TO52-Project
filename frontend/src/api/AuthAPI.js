@@ -86,7 +86,7 @@ function isAuthentificated() {
           }
         })
         .catch((e) => {
-          sessionStorage.removeItem("token")
+          sessionStorage.removeItem("token");
           resolve(false);
           reject(Error("La vérification de token a échouée"));
         });
@@ -100,6 +100,8 @@ function useAuthenticated() {
 
 function logout() {
   sessionStorage.removeItem("token");
+  sessionStorage.removeItem("avatar-post");
+  sessionStorage.removeItem("avatar-get");
   window.location.href = "/auth/sign-in";
 }
 

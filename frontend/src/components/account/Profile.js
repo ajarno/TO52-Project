@@ -32,6 +32,7 @@ export default function Profile() {
   const [userProfilePic, setUserProfilePic] = useState("");
 
   const handleClickOpen = () => {
+    console.log(sessionStorage.getItem("avatar-post"));
     setIsOpen(true);
   };
   const handleClose = () => {

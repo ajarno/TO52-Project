@@ -80,14 +80,17 @@ def user_avatar_path(instance, filename):
 
 # This class contain extra information about user
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name='profile')
 
     # Attributes
     # upload at specific location
     avatar = models.FileField(upload_to=user_avatar_path, blank=True)
     surname = models.CharField(max_length=35, blank=True)
     first_name = models.CharField(max_length=35, blank=True)
-    birth_day = models.DateField(blank=True)
+    birth_day = models.DateField(null=True, blank=True)
+    # birth_day = models.DateTimeField(auto_now_add=False, auto_now=False,
+    #                                 )
     tel = models.CharField(max_length=10, blank=True)
     address_street = models.CharField(
         max_length=200, db_column='UserAddressStreet', blank=True)
@@ -151,15 +154,19 @@ class Location(models.Model):
 # Define the model describing an Ad
 class Ad(models.Model):
     # Foreign keys
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='classifiedads')
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='classifiedads')
-    location = models.ForeignKey(Location, related_name="ad", on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='classifiedads')
+    category = models.ForeignKey(
+        Category, on_delete=models.CASCADE, related_name='classifiedads')
+    location = models.ForeignKey(
+        Location, related_name="ad", on_delete=models.CASCADE)
 
     # Attributes
     published = models.DateField(auto_now_add=True)
     headline = models.CharField(max_length=75)
     description = models.TextField(max_length=1500)
-    price = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(500000)])
+    price = models.IntegerField(default=0, validators=[
+                                MinValueValidator(0), MaxValueValidator(500000)])
 
     def __str__(self):
         return self.headline + " - " + self.price.__str__() + "€"
@@ -184,7 +191,8 @@ def path_and_rename(instance, filename):
 # TODO: Save online the pictures instead of inside the folder
 # Define the Picture model linked to an Ad
 class Picture(models.Model):
-    relatedAd = models.ForeignKey(Ad, on_delete=models.SET_NULL, related_name='pictures', null=True)
+    relatedAd = models.ForeignKey(
+        Ad, on_delete=models.SET_NULL, related_name='pictures', null=True)
     pic = models.ImageField(upload_to=path_and_rename, blank=True)
 
     def __str__(self):

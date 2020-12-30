@@ -93,9 +93,8 @@ export default function DenseAppBar() {
 
   // return focus to the button when we transitioned from !open -> open
   const prevOpen = React.useRef(open);
-  
-  useEffectOnlyOnce(() => {
 
+  useEffectOnlyOnce(() => {
     if (prevOpen.current === true && open === false) {
       anchorRef.current.focus();
     }
@@ -109,6 +108,11 @@ export default function DenseAppBar() {
             setAvatar(
               "http://127.0.0.1:8000/media/" + result.data.profile.avatar
             );
+            sessionStorage.setItem(
+              "avatar-get",
+              "http://127.0.0.1:8000/media/" + result.data.profile.avatar
+            );
+            sessionStorage.setItem("avatar-post", "");
           } else if (result.status === 204) {
             return;
           }

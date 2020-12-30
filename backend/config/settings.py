@@ -73,8 +73,8 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        # 'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        # 'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -107,7 +107,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 
 }
@@ -132,7 +132,7 @@ DJOSER = {
     'EMAIL': {
         'activation': 'classified_ads_app.email.ActivationEmail',
         'password_reset': 'classified_ads_app.email.PasswordResetEmail',
-        # 'password_changed_confirmation': 'classified_ads_app.email.PasswordChangedConfirmationEmail',
+        'password_changed_confirmation': 'classified_ads_app.email.PasswordChangedConfirmationEmail',
     }
 }
 

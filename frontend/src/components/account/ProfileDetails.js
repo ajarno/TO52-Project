@@ -220,6 +220,7 @@ class ProfileDetails extends Component {
         notification_open: true,
       });
     });
+    setTimeout(window.location.reload(false), 5000);
   };
 
   // Validation
@@ -349,6 +350,7 @@ class ProfileDetails extends Component {
           <Grid container spacing={3}>
             <Grid item md={6} xs={12}>
               <TextField
+                id="address_street"
                 fullWidth
                 label="Adresse"
                 name="address_street"
