@@ -225,18 +225,15 @@ class AvatarChooser extends Component {
                   </Typography>
                 </Grid>
                 <Grid item xs={4}></Grid>
-                <Grid item xs={12}>
-                  <Box p={2}>
+                <Grid item xs={12} style={{ paddingBottom: 25 }}>
+                  <Box p={1}>
                     <Typography variant="h6" gutterBottom>
                       Sublime !
                     </Typography>
                     <Typography variant="body2" gutterBottom>
-                      Si cette photo vous convient, allez y!
+                      Si cette photo vous convient, allez-y !
                     </Typography>
                   </Box>
-                </Grid>
-                <Grid item xs={12}>
-                  <Box p={2}></Box>
                 </Grid>
                 <Grid item xs={6}>
                   <Button
@@ -274,13 +271,13 @@ class AvatarChooser extends Component {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <Box p={4}>
+                  <Box p={2}>
                     <Typography variant="h6" gutterBottom>
                       Photo de profil
                     </Typography>
                   </Box>
                   <Typography gutterBottom>
-                    Nous sommes ravis de vous rencontrer pour de vrai !
+                    Nous sommes ravis de vous rencontrer !
                   </Typography>
                   <input
                     accept="image/png, image/jpeg"
@@ -308,7 +305,7 @@ class AvatarChooser extends Component {
                     Votre photo ne doit pas être contraire aux bonnes mœurs ou à
                     l'ordre public, ni porter atteinte aux droits de tiers.
                   </Typography>
-                  <Box p={4}>
+                  <Box p={2}>
                     <Typography variant="caption" gutterBottom>
                       Nous acceptons les formats : jpg, jpeg, png • Poids max :
                       8 Mo

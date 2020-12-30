@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { useCategories } from "../../api/CategoriesAPI";
 // import { postAd } from "../../api/AdsAPI";
+import { fetchUserProfile } from "../../api/UserProfileAPI";
+import { useEffectOnlyOnce } from "../../api/Utils";
 import BackBar from "../../shared/components/BackBar";
 import PicturesDropzone from "../../shared/components/PicturesDropzone";
 import AutcompleteLocation from "../../shared/components/AutocompleteLocation";
@@ -20,6 +22,7 @@ import {
   OutlinedInput,
   InputLabel,
   FormHelperText,
+  Grid,
 } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
@@ -51,6 +54,9 @@ const useStyles = makeStyles((theme) => ({
   },
   text: {
     width: "90%",
+    "& .MuiInputBase-input.Mui-disabled": {
+      cursor: "not-allowed",
+    },
   },
 }));
 
@@ -76,7 +82,7 @@ export default function AdDisplayer(props) {
   // ======================= HELPERS FUNCTIONS =======================
   // =================================================================
   function isOptionnalSteps(stepNumber) {
-    return ["pictures", "owner"].includes(mapTypeToIndex[stepNumber]);
+    return ["pictures"].includes(mapTypeToIndex[stepNumber]);
   }
 
   const allStepsCompleted = () => {
@@ -94,9 +100,27 @@ export default function AdDisplayer(props) {
     uploadedPictures: [],
     location: {},
   });
+  const [owner, setOwner] = useState({
+    name: "",
+    firstname: "",
+    phone: "",
+    email: "",
+  });
   const [error, setError] = useState({});
+  const [ownerError, setOwnerError] = useState({});
   const [activeStep, setActiveStep] = useState(0);
   const [completed, setCompleted] = useState({});
+
+  useEffectOnlyOnce(() => {
+    fetchUserProfile().then((result) => {
+      if (result.status === 200) {
+        // console.log(result.data);
+        // setOwner(result.data);
+      } else if (result.status === 204) {
+        return;
+      }
+    });
+  });
 
   // =================================================================
   // ================== DEFINITION OF THE FUNCTIONS ==================
@@ -136,7 +160,17 @@ export default function AdDisplayer(props) {
 
   // --------------------- UPDATE AND VALIDATION ---------------------
   function completeStepWhitoutError() {
-    const containsError = validate(ad)[activeStep];
+    let containsError;
+    if (mapTypeToIndex[activeStep] !== "owner")
+      containsError = validate(ad)[activeStep];
+    else {
+      containsError = false;
+      let error = ownerError;
+      Object.keys(owner).forEach((type) => {
+        error = validateOwner(type, error);
+        containsError = error[type] === true || containsError;
+      });
+    }
     handleComplete(!containsError);
   }
 
@@ -155,6 +189,13 @@ export default function AdDisplayer(props) {
       : evt.target.value;
     setAd(updated);
     validate(updated);
+  }
+
+  function handleOwnerChange(evt, type) {
+    let updated = { ...owner };
+    updated[type] = evt.target.value;
+    setOwner(updated);
+    validateOwner(type);
   }
 
   const validate = (ad) => {
@@ -179,6 +220,14 @@ export default function AdDisplayer(props) {
       default:
         return error;
     }
+  };
+
+  const validateOwner = (type, error = ownerError) => {
+    let newError = { ...error };
+    const elementIdToVerify = "ad-owner-".concat(type);
+    newError[type] = !document.getElementById(elementIdToVerify).validity.valid;
+    setOwnerError(newError);
+    return newError;
   };
 
   function setTypeError(boolean) {
@@ -328,6 +377,77 @@ export default function AdDisplayer(props) {
               }}
             />
           </React.Fragment>
+        );
+      case mapTypeToIndex.indexOf("owner"):
+        return (
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6} lg={5}>
+              <TextField
+                required
+                autoComplete="family-name"
+                error={ownerError["name"]}
+                helperText={ownerError["name"] ? "Ce champs est requis" : ""}
+                value={owner.name}
+                onChange={(evt) => handleOwnerChange(evt, "name")}
+                className={classes.text}
+                id="ad-owner-name"
+                variant="outlined"
+                label="Nom"
+              />
+            </Grid>
+            <Grid item xs={12} md={6} lg={5}>
+              <TextField
+                required
+                autoComplete="given-name"
+                error={ownerError["firstname"]}
+                helperText={
+                  ownerError["firstname"] ? "Ce champs est requis" : ""
+                }
+                value={owner.firstname}
+                onChange={(evt) => handleOwnerChange(evt, "firstname")}
+                className={classes.text}
+                id="ad-owner-firstname"
+                variant="outlined"
+                label="Prénom"
+              />
+            </Grid>
+            <Grid item xs={12} md={6} lg={5}>
+              <TextField
+                inputProps={{ readonly: true }}
+                required
+                autoComplete="email"
+                type="email"
+                error={ownerError["email"]}
+                helperText={
+                  "L'adresse mail associée à l'annonce est liée à votre compte"
+                }
+                value={owner.email}
+                className={classes.text}
+                id="ad-owner-email"
+                variant="outlined"
+                label="Email"
+              />
+            </Grid>
+            <Grid item xs={12} md={6} lg={5}>
+              <TextField
+                required
+                autoComplete="tel"
+                type="tel"
+                error={ownerError["phone"]}
+                helperText={
+                  ownerError["phone"]
+                    ? "Ce champs est requis et doit être un numéro de téléphone valide"
+                    : ""
+                }
+                value={owner.phone}
+                onChange={(evt) => handleOwnerChange(evt, "phone")}
+                className={classes.text}
+                id="ad-owner-phone"
+                variant="outlined"
+                label="Numéro de téléphone"
+              />
+            </Grid>
+          </Grid>
         );
       default:
         return <Typography>Etape inconnue</Typography>;
