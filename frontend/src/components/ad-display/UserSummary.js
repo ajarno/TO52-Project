@@ -84,19 +84,23 @@ export default function UserSummary(props) {
                   {username}
                 </Typography>
               </div>
-              <Divider variant="middle" light className={classes.spaced} />
-              <div className={classes.rowAligned}>
-                <LocationOnIcon />
-                <Typography
-                  variant="subtitle2"
-                  component="span"
-                  style={{ marginLeft: "0.3em" }}
-                >
-                  {props.user.address_postal_code +
-                    ", " +
-                    props.user.address_city}
-                </Typography>
-              </div>
+              {props.user.address_postal_code && props.user.address_city && (
+                <React.Fragment>
+                  <Divider variant="middle" light className={classes.spaced} />
+                  <div className={classes.rowAligned}>
+                    <LocationOnIcon />
+                    <Typography
+                      variant="subtitle2"
+                      component="span"
+                      style={{ marginLeft: "0.3em" }}
+                    >
+                      {props.user.address_postal_code +
+                        ", " +
+                        props.user.address_city}
+                    </Typography>
+                  </div>
+                </React.Fragment>
+              )}
             </CardContent>
             <CardActions>
               <div className={classes.actionButtons}>

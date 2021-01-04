@@ -100,7 +100,7 @@ export default function SignUp() {
             setIsSignUp(false);
             setIsError(true);
             setSignUpErrorMessages(
-              "Une erreur est survenue lors de la création du compte, vérifiez si vous n'avez pas déjà un compte avec cet email ."
+              "Une erreur est survenue lors de la création du compte, vérifiez si vous n'avez pas déjà un compte avec cet email."
             );
           }
         })
@@ -108,7 +108,7 @@ export default function SignUp() {
           setIsSignUp(false);
           setIsError(true);
           setSignUpErrorMessages(
-            "Une erreur est survenue lors de la création du compte, vérifiez si vous n'avez pas déjà un compte avec cet email ."
+            "Une erreur est survenue lors de la création du compte, vérifiez si vous n'avez pas déjà un compte avec cet email."
           );
         });
     }

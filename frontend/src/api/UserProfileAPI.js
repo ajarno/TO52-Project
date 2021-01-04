@@ -23,15 +23,16 @@ function createOrUpdateProfile(formData) {
         if (result.data.profile.id) {
           updateUserProfile(result.data.profile.id, formData).then((result) => {
             if (result.status === 200) {
-              resolve(true);
+              resolve(result.data);
             } else {
               resolve(false);
             }
           });
         } else {
           createUserProfile(formData).then((result) => {
+            // console.log(result.data)
             if (result.status === 201) {
-              resolve(true);
+              resolve(result);
             } else {
               resolve(false);
             }

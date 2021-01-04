@@ -115,7 +115,7 @@ export default function SignIn() {
     var page = "";
     fetchUserProfile()
       .then((result) => {
-        if (Object.keys(result.data).length > 1) {
+        if (Object.keys(result.data.profile).length > 1) {
           page = window.location.href = "/";
         } else {
           page = window.location.href = "/account";

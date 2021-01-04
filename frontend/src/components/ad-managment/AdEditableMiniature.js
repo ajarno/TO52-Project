@@ -107,8 +107,11 @@ export default function AdEditableMiniature(props) {
 
   const handleModalConfirm = (event) => {
     setOpenModal(false);
-    deleteAd(ad.id);
-    window.location.reload();
+    deleteAd(ad.id)
+      .then(() => window.location.reload())
+      .catch((err) => {
+        return;
+      });
   };
 
   return (

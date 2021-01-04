@@ -31,7 +31,11 @@ class LocationSerializer(serializers.ModelSerializer):
 class LocationMiniSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
-        fields = ('country', 'countryCode', 'region', 'county', 'postalCode', 'city', 'street', 'lat', 'lng')
+        fields = ('id', 'country', 'countryCode', 'region', 'county', 'postalCode', 'city', 'street', 'lat', 'lng')
+
+    def create(self, validated_data):
+        loc_instance = Location.objects.create(**validated_data)
+        return loc_instance
 
 
 # User Serializer class for our custom user
@@ -81,6 +85,18 @@ class AdSerializer(serializers.ModelSerializer):
         model = Ad
         fields = ['id', 'author', 'headline', 'description', 'pictures',
                   'category', 'price', 'published', 'location']
+
+
+class AdCompleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ad
+        fields = '__all__'
+
+    def create(self, validated_data):
+        # owner = validated_data.pop('author')
+        # owner_instance, created = User.objects.all().filter(email=owner)
+        ad_instance = Ad.objects.create(**validated_data)#, author_id=owner_instance.id)
+        return ad_instance
 
 
 class AdMiniSerializer(serializers.ModelSerializer):

@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { useCategories } from "../../api/CategoriesAPI";
-// import { postAd } from "../../api/AdsAPI";
-import { fetchUserProfile } from "../../api/UserProfileAPI";
+import { postAd, postLocationAd, postPictureAd } from "../../api/AdsAPI";
+import {
+  createOrUpdateProfile,
+  fetchUserProfile,
+} from "../../api/UserProfileAPI";
 import { useEffectOnlyOnce } from "../../api/Utils";
 import BackBar from "../../shared/components/BackBar";
 import PicturesDropzone from "../../shared/components/PicturesDropzone";
@@ -60,6 +63,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const toBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+
 export default function AdDisplayer(props) {
   const classes = useStyles();
 
@@ -77,6 +88,7 @@ export default function AdDisplayer(props) {
   ];
   const steps = getSteps();
   const categories = useCategories();
+  const [profile, setProfile] = useState({});
 
   // =================================================================
   // ======================= HELPERS FUNCTIONS =======================
@@ -106,6 +118,7 @@ export default function AdDisplayer(props) {
     phone: "",
     email: "",
   });
+  const [ownerProfileChanged, setOwnerProfileChanged] = useState(false);
   const [error, setError] = useState({});
   const [ownerError, setOwnerError] = useState({});
   const [activeStep, setActiveStep] = useState(0);
@@ -114,19 +127,110 @@ export default function AdDisplayer(props) {
   useEffectOnlyOnce(() => {
     fetchUserProfile().then((result) => {
       if (result.data.profile) {
-        const profile = result.data.profile;
-        console.log(profile);
+        const _profile = result.data.profile;
+        setProfile(_profile);
         setOwner({
-          name: profile.surname,
-          firstname: profile.first_name,
-          email: profile.email,
-          phone: profile.tel,
+          name: _profile.surname,
+          firstname: _profile.first_name,
+          email: _profile.email,
+          phone: _profile.tel,
         });
       } else {
         return;
       }
     });
   });
+
+  const createAd = async () => {
+    const createAdAccordingToOwnerId = (ownerId) => {
+      // Create the location
+      const newLocation = {
+        country: ad.location.country,
+        countryCode: ad.location.countryCode,
+        region: ad.location.administrative,
+        county: ad.location.county,
+        postalCode: ad.location.postcode,
+        city: ad.location.city ? ad.location.city : ad.location.name,
+        lat: ad.location.latlng.lat,
+        lng: ad.location.latlng.lng,
+      };
+      if (ad.location.city) newLocation["street"] = ad.location.name;
+      postLocationAd(newLocation).then((result) => {
+        // Create the ad using the new location
+        const newAd = {
+          author: ownerId,
+          category: ad.category,
+          headline: ad.headline,
+          description: ad.description,
+          price: ad.price,
+          location: result.data.id,
+        };
+        postAd(newAd).then((result) => {
+          if (ad.pictures.length > 0) {
+            // Create the pictures according to the new ad
+            ad.pictures.forEach((pic, index) => {
+              const picture = new FormData();
+              picture.append("relatedAd", result.data.id);
+              toBase64(pic).then((base64Img) => {
+                picture.append("pic", base64Img);
+                postPictureAd(picture).then(() => {
+                  if (index + 1 === ad.pictures.length) {
+                    window.location.href = "/ads/".concat(result.data.id);
+                  }
+                });
+              });
+            });
+          } else {
+            window.location.href = "/ads/".concat(result.data.id);
+          }
+        });
+        // .catch((err) => console.log(err));
+      });
+      // .catch((err) => console.log(err));
+    };
+    // Create owner profile if non-existent
+    if (ownerProfileChanged) {
+      updateOwnerProfile().then(() => {
+        fetchUserProfile().then((result) => {
+          if (result.data.profile) {
+            createAdAccordingToOwnerId(result.data.profile.user_id);
+          }
+        });
+      });
+    } else {
+      createAdAccordingToOwnerId(profile.user_id);
+    }
+  };
+
+  const updateOwnerProfile = async () => {
+    let formData = new FormData();
+    const existOrEmptyString = (string) => {
+      return string ? string : "";
+    };
+    formData.append(
+      "avatar",
+      existOrEmptyString(sessionStorage.getItem("get-avatar"))
+    );
+    formData.append("surname", owner.name);
+    formData.append("first_name", owner.firstname);
+    formData.append("birth_day", existOrEmptyString(profile.birth_day));
+    formData.append("tel", owner.phone);
+    formData.append(
+      "address_street",
+      existOrEmptyString(profile.address_street)
+    );
+    formData.append(
+      "address_postal_code",
+      existOrEmptyString(profile.address_postal_code)
+    );
+    formData.append("address_city", existOrEmptyString(profile.address_city));
+    formData.append(
+      "address_country",
+      existOrEmptyString(profile.address_country)
+    );
+
+    return createOrUpdateProfile(formData);
+  };
 
   // =================================================================
   // ================== DEFINITION OF THE FUNCTIONS ==================
@@ -200,6 +304,7 @@ export default function AdDisplayer(props) {
   function handleOwnerChange(evt, type) {
     let updated = { ...owner };
     updated[type] = evt.target.value;
+    setOwnerProfileChanged(true);
     setOwner(updated);
     validateOwner(type);
   }
@@ -303,7 +408,7 @@ export default function AdDisplayer(props) {
           >
             {categories &&
               categories.map((category) => (
-                <MenuItem key={category.slug} value={category.name}>
+                <MenuItem key={category.slug} value={category.slug}>
                   {category.name}
                 </MenuItem>
               ))}
@@ -507,7 +612,7 @@ export default function AdDisplayer(props) {
               variant="contained"
               color="secondary"
               disabled={!Object.keys(error).every((type) => !error[type])}
-              onClick={() => console.log("Annonce soumise")}
+              onClick={createAd}
               className={classes.button}
             >
               Soumettre l'annonce

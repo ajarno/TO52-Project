@@ -1,5 +1,16 @@
 import API from "./API";
 
+function authHeaders() {
+  if (sessionStorage.getItem("token")) {
+    return {
+      Authorization: "JWT " + sessionStorage.getItem("token"),
+      accept: "application/json",
+    };
+  } else {
+    return {};
+  }
+}
+
 // -----------------------------------------------------------------
 //                        GET REQUESTS
 // -----------------------------------------------------------------
@@ -31,20 +42,20 @@ const fetchAdById = (id) => API.get("/classifiedads/" + id);
 // -----------------------------------------------------------------
 //                        POST REQUESTS
 // -----------------------------------------------------------------
-const postAd = () => API.post("/classifiedads/");
-const postPictureAd = (picture) => API.post("/pictures/", picture);
-const postLocationAd = (loc) => API.post("/locations/", loc);
+const postAd = (data) => API.post("/classifiedads/", data, { headers: authHeaders() });
+const postPictureAd = (picture) => API.post("/pictures/", picture, { headers: authHeaders() });
+const postLocationAd = (loc) => API.post("/locations/", loc, { headers: authHeaders() });
 
 // -----------------------------------------------------------------
 //                        PUT REQUESTS
 // -----------------------------------------------------------------
-const putAd = (ad) => API.patch(`/classifiedads/${ad.id}/`, ad);
+const putAd = (ad) => API.patch(`/classifiedads/${ad.id}/`, ad, { headers: authHeaders() });
 
 // -----------------------------------------------------------------
 //                       DELETE REQUESTS
 // -----------------------------------------------------------------
-const deleteAd = (id) => API.delete("/classifiedads/" + id);
-const deletePictureAd = (id) => API.delete("/pictures/" + id);
+const deleteAd = (id) => API.delete("/classifiedads/" + id, { headers: authHeaders() });
+const deletePictureAd = (id) => API.delete("/pictures/" + id, { headers: authHeaders() });
 
 // -----------------------------------------------------------------
 //                           EXPORTS

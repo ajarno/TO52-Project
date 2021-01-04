@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Grid, Typography } from "@material-ui/core";
 import AdEditableMiniature from "./AdEditableMiniature";
 import { fetchAdsByUser } from "../../api/AdsAPI";
+import { fetchUserProfile } from "../../api/UserProfileAPI";
+import { useEffectOnlyOnce } from "../../api/Utils";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
@@ -17,16 +19,22 @@ export default function AdListManagment(props) {
 
   const [ads, setAds] = useState([]);
 
-  React.useEffect(() => {
-    fetchAdsByUser(1)
-      .then((_ads) => {
-        setAds(_ads.data);
-        // console.log(_ads.data);
-      })
-      .catch((err) => {
-        console.error(err.message);
-      });
-  }, []);
+  useEffectOnlyOnce(() => {
+    fetchUserProfile().then((result) => {
+      if (result.data.profile) {
+        fetchAdsByUser(result.data.profile.user_id)
+          .then((_ads) => {
+            setAds(_ads.data);
+            // console.log(_ads.data);
+          })
+          .catch((err) => {
+            console.error(err.message);
+          });
+      } else {
+        return;
+      }
+    });
+  });
 
   return (
     <React.Fragment>

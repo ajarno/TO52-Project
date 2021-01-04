@@ -85,21 +85,19 @@ class UserProfile(models.Model):
 
     # Attributes
     # upload at specific location
-    avatar = models.FileField(upload_to=user_avatar_path, blank=True)
-    surname = models.CharField(max_length=35, blank=True)
-    first_name = models.CharField(max_length=35, blank=True)
+    avatar = models.FileField(upload_to=user_avatar_path, null=True, blank=True)
+    surname = models.CharField(max_length=35, null=True, blank=True)
+    first_name = models.CharField(max_length=35, null=True, blank=True)
     birth_day = models.DateField(null=True, blank=True)
-    # birth_day = models.DateTimeField(auto_now_add=False, auto_now=False,
-    #                                 )
-    tel = models.CharField(max_length=10, blank=True)
+    tel = models.CharField(max_length=10, null=True, blank=True)
     address_street = models.CharField(
-        max_length=200, db_column='UserAddressStreet', blank=True)
+        max_length=200, db_column='UserAddressStreet', null=True, blank=True)
     address_postal_code = models.CharField(
-        max_length=10, db_column='UserAddressPostalCode', blank=True)
+        max_length=10, db_column='UserAddressPostalCode', null=True, blank=True)
     address_city = models.CharField(
-        max_length=30, db_column='UserAddressCity', blank=True)
+        max_length=30, db_column='UserAddressCity', null=True, blank=True)
     address_country = models.CharField(
-        max_length=20, blank=True, default="France")
+        max_length=20, null=True, blank=True)
 
     def __str__(self):
         return self.first_name + " " + self.surname
