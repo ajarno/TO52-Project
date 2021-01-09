@@ -1,1 +1,14 @@
-venv/
+#Virtual environnement
+venv
+#OS 
+.DS_Store
+
+**/__pycache__/
+.idea
+**/migrations/
+db.sqlite3
+static
+media
+images
+personal-scripts
+#git rm -r --cached . && git add . && git commit -m "fixing .gitignore"
