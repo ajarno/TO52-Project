@@ -56,8 +56,12 @@ export default function SignIn() {
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isError, setIsError] = useState(false);
   const [loginErrorMessages, setLoginErrorMessages] = useState("");
-  const [email, setEmail] = useState(localStorage.getItem("authEmail") ? localStorage.getItem("authEmail") : "");
-  const [rememberMe, setRememberMe] = useState(localStorage.getItem("authEmail") ? true : false);
+  const [email, setEmail] = useState(
+    localStorage.getItem("authEmail") ? localStorage.getItem("authEmail") : ""
+  );
+  const [rememberMe, setRememberMe] = useState(
+    localStorage.getItem("authEmail") ? true : false
+  );
   const [password, setPassword] = useState("");
   const [isEmailInvalid, setIsEmailInvalid] = useState(false);
   const [emailInvalidMessage, setEmailInvalidMessage] = useState("");
@@ -97,16 +101,12 @@ export default function SignIn() {
           } else if (result.status === 401) {
             setLoggedIn(false);
             setIsError(true);
-            setLoginErrorMessages(
-              "Adresse e-mail ou mot de passe invalide."
-            );
+            setLoginErrorMessages("Adresse e-mail ou mot de passe invalide.");
           }
         })
         .catch((e) => {
           setIsError(true);
-          setLoginErrorMessages(
-            "Adresse e-mail ou mot de passe invalide."
-          );
+          setLoginErrorMessages("Adresse e-mail ou mot de passe invalide.");
         });
     }
   }
@@ -201,7 +201,7 @@ export default function SignIn() {
                   <Checkbox
                     checked={rememberMe}
                     onChange={(evt) => {
-                      setRememberMe(evt.target.checked)
+                      setRememberMe(evt.target.checked);
                       if (evt.target.checked)
                         localStorage.setItem("authEmail", email);
                       else if (localStorage.getItem("authEmail"))

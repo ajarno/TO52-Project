@@ -24,14 +24,16 @@ class PictureMiniSerializer(serializers.ModelSerializer):
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
-        fields = ('id', 'country', 'countryCode', 'region', 'county', 'postalCode', 'city', 'street', 'lat', 'lng', 'ad')
+        fields = ('id', 'country', 'countryCode', 'region', 'county',
+                  'postalCode', 'city', 'street', 'lat', 'lng', 'ad')
 
 
 # Location Serializer
 class LocationMiniSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
-        fields = ('country', 'countryCode', 'region', 'county', 'postalCode', 'city', 'street', 'lat', 'lng')
+        fields = ('country', 'countryCode', 'region', 'county',
+                  'postalCode', 'city', 'street', 'lat', 'lng')
 
 
 # User Serializer class for our custom user
@@ -49,7 +51,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ('user', 'first_name', 'surname', 'email', 'tel', 'avatar', 'address_city', 'address_postal_code')
+        fields = ('user', 'first_name', 'surname', 'email', 'tel',
+                  'avatar', 'address_city', 'address_postal_code')
         read_only_fields = ('created_at', 'updated_at',)
 
 
@@ -85,7 +88,8 @@ class AdSerializer(serializers.ModelSerializer):
 
 class AdMiniSerializer(serializers.ModelSerializer):
     first_picture = serializers.SerializerMethodField(read_only=True)
-    total_pictures = serializers.IntegerField(source="pictures.count", read_only=True)
+    total_pictures = serializers.IntegerField(
+        source="pictures.count", read_only=True)
     location_city = serializers.CharField(source='location.city')
 
     def get_first_picture(self, obj):
@@ -101,7 +105,9 @@ class AdMiniSerializer(serializers.ModelSerializer):
 class ChatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chat
-        fields = ('id', 'sender', 'receiver', 'related_ad', 'created_at', 'content')
+        fields = ['id', 'sender', 'receiver',
+                  'related_ad', 'created_at', 'content'
+                  ]
 
 
 # Category Serializer

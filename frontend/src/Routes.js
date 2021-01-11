@@ -14,6 +14,7 @@ import ConfirmActivation from "./components/auth/ConfirmActivation";
 import ResetPassword from "./components/auth/ResetPassword";
 import ResetPasswordConfirm from "./components/auth/ResetPasswordConfirm";
 import Account from "./components/account/index";
+import Chat from "./components/chat/Chat";
 import PrivateRoute from "./components/layout/PrivateRoute";
 // import PrivateRoute from "./shared/components/PrivateRoute";
 
@@ -22,6 +23,7 @@ export default () => {
     <BrowserRouter>
       <Switch>
         <Layout exact path="/" component={App} />
+        <PrivateRoute exact path="/chat/" component={Chat} />
         <PrivateRoute exact path="/ads/new-ad" component={NewAd} />
         <PrivateRoute exact path="/ads/my-ads" component={AdListManagment} />
         <PrivateRoute exact path="/ads/edit/:id" component={AdEditable} />

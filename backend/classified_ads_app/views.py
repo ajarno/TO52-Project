@@ -16,6 +16,7 @@ from .permissions import IsOwnerProfileOrReadOnly, IsOwnerChatOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as filters
 from django.db.models import Q
+import json
 
 
 # Define the Filters
@@ -24,9 +25,11 @@ from django.db.models import Q
 class AdFilter(filters.FilterSet):
     min_price = filters.NumberFilter(field_name="price", lookup_expr='gte')
     max_price = filters.NumberFilter(field_name="price", lookup_expr='lte')
-    location = filters.CharFilter(field_name='location__city', lookup_expr='exact')
+    location = filters.CharFilter(
+        field_name='location__city', lookup_expr='exact')
     userId = filters.CharFilter(field_name='author__id', lookup_expr='exact')
-    text = filters.CharFilter(method='filter_contains_text', label='Ad text contains')
+    text = filters.CharFilter(
+        method='filter_contains_text', label='Ad text contains')
 
     class Meta:
         model = Ad
@@ -79,6 +82,27 @@ class CurrentUserProfilView(RetrieveUpdateDestroyAPIView):
         return Response({'profile': data}, status)
 
 
+class ChatFromContactByAd(RetrieveUpdateDestroyAPIView):
+    # chat received by the user for a particular ad
+
+    def get(self, request, contact_id=None, ad_id=None):
+        print("contact", contact_id, "ad id", ad_id)
+        user = request.user
+        related_ad = Ad.objects.get(id=ad_id)
+        chats = []
+        chats_from = Chat.objects.all().filter(
+            Q(sender=contact_id), Q(
+                receiver=user), related_ad=related_ad)
+        chats_to = Chat.objects.all().filter(
+            Q(receiver=contact_id), Q(sender=user), related_ad=related_ad)
+        chats_from.union(chats_to)
+        chats.append(chats_from.values())
+        chats.append(chats_to.values())
+        print(chats_to.values())
+        print(chats_from.values())
+        return Response({'chats': chats_from.values()}, status=200)
+
+
 class UserActivationView(APIView):
     permission_classes = [AllowAny]
 
@@ -102,7 +126,7 @@ class ResetPasswordConfirmationView(APIView):
         requests.post(post_url, data=post_data)
         return redirect('http://localhost:3000/auth/new-password/',  {'uid': uid, 'token': token})
 
-      
+
 # Get user profile details
 class UserProfileDetailView(RetrieveUpdateDestroyAPIView):
     queryset = UserProfile.objects.all()
@@ -116,39 +140,29 @@ class UserChatViewSet(viewsets.ModelViewSet):
     serializer_class = ChatSerializer
     permission_classes = [IsAuthenticated, IsOwnerChatOrReadOnly]
 
-    # chat sent by the user for a particular ad
-    def ad_chats_sent_byuser(self, request, pk=None):
-        user = request.user
-        related_ad = Ad.objects.get(id=pk)
-        chats = Chat.objects.all().filter(sender=user, related_ad=related_ad)
-        return chats
+    # This method returns the contacts of the connected users,
+    # , last message and  related ad.
+    @ action(
+        methods=['get'],
+        detail=False,
+        url_path='contacts',
+        url_name='contacts',
+    )
+    def contacts(self, request):
+        user = self.request.user
+        contacts = list()
+        chats = Chat.objects.filter(Q(sender=user) | Q(
+            receiver=user)).order_by('created_at')
+        if len(chats) > 0:
+            for chat in chats:
+                if(chat.receiver.id != user.id):
+                    profile = UserProfile.objects.filter(
+                        user_id=chat.receiver.id).values()[0]
+                    contacts.append(
+                        {'id': chat.receiver.id, 'ad_id': chat.related_ad.id, 'surname': profile['surname'], 'first_name': profile['first_name'],
+                            'avatar': profile['avatar'], "last_message": chat.content, "related_ad": chat.related_ad.headline})
 
-    # chat received by the user for a particular ad
-    def ad_chats_received_byuser(self, request, pk=None):
-        user = request.user
-        related_ad = Ad.objects.get(id=pk)
-        chats = Chat.objects.all().filter(receiver=user, related_ad=related_ad)
-        return chats
-
-    # chat received and sent by the user for a particular ad
-    @ action(detail=True, methods=['POST'])
-    def ad_chats_byuser(self, request, pk=None):
-        ad_chats_byuser = self.ad_chats_sent_byuser(request, pk).concat(
-            self.ad_chats_received_byuser(request, pk))
-        try:
-            response = {
-                'messages': 'Les messages reçus et envoyés par l''utilisateur pour une annonce donnée', 'result': ad_chats_byuser}
-            return Response(response, status=status.HTTP_200_OK)
-        except:
-            response = "Une erreur est survenue lors du traitement de l'opération"
-            return Response(response, status=status.HTTP_200_OK)
-
-
-# Chat ViewSets for the admin
-class AdminChatViewSet(viewsets.ModelViewSet):
-    queryset = Chat.objects.all()
-    serializer_class = ChatSerializer
-    permission_classes = [IsAuthenticated, IsAdminUser]
+        return Response({'contacts': contacts}, status=200)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):

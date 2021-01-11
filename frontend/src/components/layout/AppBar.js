@@ -21,6 +21,7 @@ import {
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import LocalOfferIcon from "@material-ui/icons/LocalOffer";
+import MessageIcon from "@material-ui/icons/Message";
 import logo from "../../assets/logo.svg";
 import { logout, isAuthentificated } from "../../api/AuthAPI";
 import { fetchUserProfile } from "../../api/UserProfileAPI";
@@ -198,6 +199,21 @@ export default function DenseAppBar() {
                     to="/ads/my-ads"
                   >
                     <LocalOfferIcon />
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip
+                  title="Ma messagerie"
+                  aria-label="chat button"
+                  enterDelay={500}
+                >
+                  <IconButton
+                    aria-label="chat"
+                    color="primary"
+                    component={Link}
+                    to="/chat"
+                  >
+                    <MessageIcon />
                   </IconButton>
                 </Tooltip>
 
