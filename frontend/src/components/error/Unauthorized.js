@@ -1,6 +1,7 @@
 import React from "react";
 import { Container, Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import picture from "../../assets/authentication.svg";
 
 export default function Unauthorized(props) {
   return (
@@ -23,6 +24,7 @@ export default function Unauthorized(props) {
             >
               Me connecter
             </Button>
+            <img src={picture} alt="Need authentication" style={{ marginTop: "1rem", width: "20rem", maxWidth: "100%" }}/>
           </div>
         </div>
       </section>

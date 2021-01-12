@@ -12,20 +12,31 @@ function useCategories() {
     if (storedCategories) {
       setCategories(storedCategories);
     } else {
-      fetchCategories().then((result) => {
-        const _categories = result.data;
-        if (_categories.length > 0) {
-          setCategories(_categories);
-          sessionStorage.setItem(
-            "categories",
-            JSON.stringify(_categories)
-          );
-        }
-      }).catch(e => {});
+      fetchCategories()
+        .then((result) => {
+          const _categories = result.data;
+          if (_categories.length > 0) {
+            sessionStorage.setItem("categories", JSON.stringify(_categories));
+            setCategories(_categories);
+          }
+        })
+        .catch((e) => {});
     }
   });
 
   return categories;
 }
 
-export { fetchCategories, useCategories };
+function refreshCategories() {
+  fetchCategories()
+    .then((result) => {
+      const _categories = result.data;
+      if (_categories.length > 0) {
+        sessionStorage.setItem("categories", JSON.stringify(_categories));
+        return _categories;
+      }
+    })
+    .catch((e) => {});
+}
+
+export { fetchCategories, useCategories, refreshCategories };

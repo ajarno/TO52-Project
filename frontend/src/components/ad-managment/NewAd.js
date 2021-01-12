@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { useCategories } from "../../api/CategoriesAPI";
+import { useCategories, refreshCategories } from "../../api/CategoriesAPI";
 import { postAd, postLocationAd, postPictureAd } from "../../api/AdsAPI";
 import {
   createOrUpdateProfile,
@@ -181,6 +181,7 @@ export default function AdDisplayer(props) {
               });
             });
           } else {
+            refreshCategories();
             window.location.href = "/ads/".concat(result.data.id);
           }
         });

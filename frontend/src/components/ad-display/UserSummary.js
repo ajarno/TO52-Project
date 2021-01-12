@@ -14,6 +14,7 @@ import TextsmsIcon from "@material-ui/icons/Textsms";
 import PhoneIcon from "@material-ui/icons/Phone";
 import MailIcon from "@material-ui/icons/Mail";
 import RevealButton from "../../shared/components/RevealButton";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -23,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   sticky: {
-    top: "5vh",
+    top: "12vh",
     position: "sticky",
     WebkitPosition: "-webkit-sticky",
   },
@@ -108,6 +109,8 @@ export default function UserSummary(props) {
                   startIcon={<TextsmsIcon />}
                   variant="contained"
                   color="secondary"
+                  component={Link}
+                  to="/chats"
                 >
                   Envoyer un message
                 </Button>

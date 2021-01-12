@@ -15,7 +15,7 @@ import ResetPassword from "./components/auth/ResetPassword";
 import ResetPasswordConfirm from "./components/auth/ResetPasswordConfirm";
 import Account from "./components/account/index";
 import PrivateRoute from "./components/layout/PrivateRoute";
-// import PrivateRoute from "./shared/components/PrivateRoute";
+import UnderConstruction from "./components/error/UnderConstruction";
 
 export default () => {
   return (
@@ -41,6 +41,7 @@ export default () => {
           component={ResetPasswordConfirm}
         />
         <PrivateRoute exact path="/account" component={Account} />
+        <PrivateRoute exact path="/chats" component={UnderConstruction} />
         <Layout component={NotFound} />
       </Switch>
     </BrowserRouter>

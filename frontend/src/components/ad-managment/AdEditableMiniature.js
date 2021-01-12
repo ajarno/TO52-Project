@@ -21,6 +21,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { Link } from "react-router-dom";
 import truncate from "../../shared/functions/TruncatePipe";
 import ConfirmModal from "../../shared/components/ConfirmModal";
+import { refreshCategories } from "../../api/CategoriesAPI";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -108,7 +109,10 @@ export default function AdEditableMiniature(props) {
   const handleModalConfirm = (event) => {
     setOpenModal(false);
     deleteAd(ad.id)
-      .then(() => window.location.reload())
+      .then(() => {
+        refreshCategories();
+        window.location.reload();
+      })
       .catch((err) => {
         return;
       });
